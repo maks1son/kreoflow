@@ -13,7 +13,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "KreoFlow - production line for short video creatives",
   description:
-    "KreoFlow turns a business brief into scripts, short video creatives, captions and a client delivery page for beauty and fitness brands.",
+    "KreoFlow turns one business offer into short video creatives, hooks, captions and a client delivery page.",
 };
 
 export default function RootLayout({

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Brand } from "@/components/brand";
+
+const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
 
 const nav = [
   ["Метод", "#method"],
@@ -13,12 +14,6 @@ const productionRows = [
   ["02", "Матрица", "боль, доверие, демонстрация, акция", "18 мин"],
   ["03", "Сценарии", "хуки, кадры, подписи, CTA", "40 мин"],
   ["04", "Сборка", "UGC, монтаж, субтитры, обложки", "72 ч"],
-];
-
-const shots = [
-  ["H01", "Первый визит без страха", "UGC"],
-  ["E04", "Эксперт объясняет процедуру", "Expert"],
-  ["O12", "Запись на пробную неделю", "Offer"],
 ];
 
 const delivery = [
@@ -41,8 +36,8 @@ const proof = [
   },
   {
     label: "Первый рынок",
-    title: "Бьюти и фитнес",
-    text: "Там постоянно нужны Reels, Shorts и VK Clips, а результат легко показать через доверие, процесс и запись.",
+    title: "Визуальные бизнесы",
+    text: "Кафе, шоурумы, фитнес, бьюти, курсы и локальные сервисы покупают не AI, а регулярный поток понятных видео.",
   },
 ];
 
@@ -57,47 +52,8 @@ export default function Home() {
     <main className="min-h-screen overflow-hidden bg-[#080909] text-[#f5f1e8]">
       <div className="rf-noise" aria-hidden="true" />
 
-      <header className="mx-auto flex w-full max-w-[1380px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Brand />
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
-          {nav.map(([label, href]) => (
-            <Link key={label} href={href} className="rf-focus rf-nav-link">
-              {label}
-            </Link>
-          ))}
-        </nav>
-      </header>
-
-      <section className="mx-auto grid max-w-[1380px] gap-5 px-4 pb-8 pt-4 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:px-8">
-        <div className="rf-plate rf-hero-copy">
-          <div className="rf-microline">
-            <span>creative production desk</span>
-            <span>72h sprint</span>
-          </div>
-
-          <h1 className="rf-hero-title">
-            Не SMM. Не генератор. Линия производства роликов.
-          </h1>
-
-          <p className="rf-hero-text">
-            KreoFlow превращает бриф бьюти или фитнес-бизнеса в сценарии, короткие креативы,
-            подписи и страницу выдачи. Без случайных идей, потерянных файлов и бесконечных чатов.
-          </p>
-
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Link href="/brief" className="rf-focus rf-main-cta">
-              Запустить тестовый пакет
-              <span aria-hidden="true">↗</span>
-            </Link>
-            <Link href="/delivery?orderId=rf-demo-beauty" className="rf-focus rf-secondary-cta">
-              Смотреть выдачу
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-
-        <ProductionDesk />
-      </section>
+      <Hero />
+      <DemoCreative />
 
       <section id="method" className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:px-8">
         <div className="rf-section-title">
@@ -177,39 +133,104 @@ export default function Home() {
   );
 }
 
-function ProductionDesk() {
+function Hero() {
   return (
-    <div className="rf-desk" aria-label="Пример производственного стола KreoFlow">
-      <div className="rf-desk-top">
-        <span>order KF-072</span>
-        <span>beauty studio launch</span>
-        <span>stage 03 / scripts</span>
-      </div>
+    <section className="kf-hero" aria-label="KreoFlow video creative lab">
+      <video
+        className="kf-hero-video"
+        src={`${mediaBase}/media/kreoflow-lab-hero.mp4`}
+        poster={`${mediaBase}/media/kreoflow-lab-poster.png`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+      <div className="kf-hero-grade" aria-hidden="true" />
 
-      <div className="rf-shot-grid">
-        {shots.map(([code, title, type], index) => (
-          <figure key={code} className="rf-shot-card">
-            <div className={`rf-shot-visual rf-shot-visual-${index + 1}`}>
-              <span>{code}</span>
+      <header className="kf-hero-top">
+        <Link href="/" className="rf-focus kf-wordmark" aria-label="KreoFlow на главную">
+          KreoFlow
+        </Link>
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
+          {nav.map(([label, href]) => (
+            <Link key={label} href={href} className="rf-focus rf-nav-link kf-nav-link">
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <Link href="/brief" className="rf-focus kf-menu-link" aria-label="Перейти к брифу">
+          <span />
+          <span />
+          <span />
+        </Link>
+      </header>
+
+      <div className="kf-hero-content">
+        <div className="kf-hero-meta">
+          <span>universal demo case</span>
+          <span>local retail / offer launch</span>
+          <span>10 sec creative asset</span>
+        </div>
+
+        <div className="kf-hero-bottom">
+          <h1>Video Creative Lab</h1>
+          <div className="kf-hero-actions">
+            <p>
+              Один оффер превращаем в серию роликов, хуков, подписей и страницу выдачи. Это можно показать клиенту до продажи пакета.
+            </p>
+            <div>
+              <Link href="/brief" className="rf-focus rf-main-cta">
+                Запустить бриф
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link href="#demo-creative" className="rf-focus rf-secondary-cta">
+                Смотреть креатив
+                <span aria-hidden="true">↓</span>
+              </Link>
             </div>
-            <figcaption>
-              <strong>{title}</strong>
-              <span>{type}</span>
-            </figcaption>
-          </figure>
-        ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DemoCreative() {
+  return (
+    <section
+      id="demo-creative"
+      className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8"
+    >
+      <div className="kf-demo-phone">
+        <video
+          src={`${mediaBase}/media/kreoflow-local-retail-demo.mp4`}
+          poster={`${mediaBase}/media/kreoflow-lab-poster.png`}
+          controls
+          muted
+          playsInline
+          preload="metadata"
+        />
       </div>
 
-      <div className="rf-script-panel">
-        <div>
-          <span>script extract</span>
-          <strong>“Покажите не идеальную картинку, а момент решения: человек понимает, что ему не надо разбираться самому.”</strong>
+      <div className="kf-demo-copy">
+        <div className="rf-microline">
+          <span>sellable sample</span>
+          <span>free production test</span>
         </div>
-        <div>
-          <span>output</span>
-          <strong>12 роликов, 24 подписи, 4 CTA, 1 delivery page</strong>
+        <h2>Не фон для красоты, а пример того, что мы продаем.</h2>
+        <p>
+          Универсальный кейс: локальный визуальный бизнес запускает оффер. Из одного кадра собирается ролик для Reels,
+          Shorts или VK Clips: хук, крупная типографика, понятный результат и CTA.
+        </p>
+        <div className="kf-demo-prompt">
+          <span>Prompt direction</span>
+          <p>
+            cinematic image-to-video, slow dolly-in, premium local retail studio, product display, concrete wall, red production cord,
+            editorial commercial lighting, no logos, no readable text, room for oversized lime typography.
+          </p>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
