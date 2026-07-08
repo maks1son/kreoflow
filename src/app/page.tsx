@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HeroVideoRotator } from "@/components/hero-video-rotator";
 
 const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
 
@@ -136,16 +137,7 @@ export default function Home() {
 function Hero() {
   return (
     <section className="kf-hero" aria-label="KreoFlow video creative lab">
-      <video
-        className="kf-hero-video"
-        src={`${mediaBase}/media/kreoflow-lab-hero.mp4`}
-        poster={`${mediaBase}/media/kreoflow-lab-poster.png`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-      />
+      <HeroVideoRotator mediaBase={mediaBase} />
       <div className="kf-hero-grade" aria-hidden="true" />
 
       <header className="kf-hero-top">
@@ -169,8 +161,8 @@ function Hero() {
       <div className="kf-hero-content">
         <div className="kf-hero-meta">
           <span>universal demo case</span>
-          <span>local retail / offer launch</span>
-          <span>6 sec calm hero asset</span>
+          <span>craft / leather / cafe process</span>
+          <span>3 calm stock clips</span>
         </div>
 
         <div className="kf-hero-bottom">
@@ -215,8 +207,8 @@ function DemoCreative() {
 
       <div className="kf-demo-copy">
         <div className="rf-microline">
-          <span>sellable sample</span>
-          <span>free production test</span>
+          <span>real footage sample</span>
+          <span>web hero + vertical cut</span>
         </div>
         <h2>Не фон для красоты, а пример того, что мы продаем.</h2>
         <p>
@@ -226,8 +218,8 @@ function DemoCreative() {
         <div className="kf-demo-prompt">
           <span>Prompt direction</span>
           <p>
-            cinematic image-to-video, slow dolly-in, premium local retail studio, product display, concrete wall, red production cord,
-            editorial commercial lighting, no logos, no readable text, room for restrained oversized ivory typography.
+            Real 4K craft/process footage, tactile movement, no watermark, no AI artifacts. This is the quality bar for public hero
+            assets before testing custom generated client scenes.
           </p>
         </div>
       </div>
