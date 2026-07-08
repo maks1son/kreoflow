@@ -205,28 +205,28 @@ a {
 }
 
 .kf-hero-bottom h1 {
-  max-width: 1280px;
+  max-width: 980px;
   color: #d8ff3e;
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(4.6rem, 11.7vw, 13.5rem);
+  font-size: clamp(3.8rem, 7.9vw, 8.8rem);
   font-weight: 800;
-  letter-spacing: -0.08em;
-  line-height: 0.76;
+  letter-spacing: -0.065em;
+  line-height: 0.84;
   text-transform: uppercase;
 }
 
 .kf-hero-actions {
   display: grid;
-  grid-template-columns: minmax(0, 34rem) auto;
+  grid-template-columns: minmax(0, 31rem) auto;
   gap: 1rem;
   align-items: end;
-  margin-top: clamp(1rem, 2vw, 1.35rem);
+  margin-top: clamp(0.75rem, 1.4vw, 1rem);
 }
 
 .kf-hero-actions p {
   margin: 0;
   color: rgb(245 241 232 / 0.82);
-  font-size: clamp(1rem, 1.4vw, 1.28rem);
+  font-size: clamp(0.95rem, 1.18vw, 1.08rem);
   font-weight: 600;
   line-height: 1.35;
 }
@@ -852,7 +852,7 @@ a {
   }
 
   .kf-hero-video {
-    object-position: 57% center;
+    object-position: 43% center;
   }
 
   .kf-hero-meta span:nth-child(3) {
@@ -860,8 +860,8 @@ a {
   }
 
   .kf-hero-bottom h1 {
-    font-size: clamp(4.15rem, 19vw, 5.8rem);
-    line-height: 0.78;
+    font-size: clamp(3.05rem, 14vw, 4.35rem);
+    line-height: 0.88;
   }
 
   .kf-hero-actions > div {

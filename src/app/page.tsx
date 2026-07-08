@@ -174,7 +174,7 @@ function Hero() {
         </div>
 
         <div className="kf-hero-bottom">
-          <h1>Video Creative Lab</h1>
+          <h1>AI Video Lab</h1>
           <div className="kf-hero-actions">
             <p>
               Один оффер превращаем в серию роликов, хуков, подписей и страницу выдачи. Это можно показать клиенту до продажи пакета.
