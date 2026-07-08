@@ -14,7 +14,7 @@ export function Brand({ className }: BrandProps) {
     >
       <span className="leading-none">
         <span className="block font-display text-xl font-black uppercase tracking-tight">KreoFlow</span>
-        <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[#d8ff3e]">
+        <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">
           content line
         </span>
       </span>

@@ -170,7 +170,7 @@ function Hero() {
         <div className="kf-hero-meta">
           <span>universal demo case</span>
           <span>local retail / offer launch</span>
-          <span>10 sec creative asset</span>
+          <span>6 sec calm hero asset</span>
         </div>
 
         <div className="kf-hero-bottom">
@@ -227,7 +227,7 @@ function DemoCreative() {
           <span>Prompt direction</span>
           <p>
             cinematic image-to-video, slow dolly-in, premium local retail studio, product display, concrete wall, red production cord,
-            editorial commercial lighting, no logos, no readable text, room for oversized lime typography.
+            editorial commercial lighting, no logos, no readable text, room for restrained oversized ivory typography.
           </p>
         </div>
       </div>
