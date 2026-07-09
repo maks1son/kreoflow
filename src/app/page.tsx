@@ -48,6 +48,57 @@ const packages = [
   ["Content sprint", "40 000-90 000 ₽", "10-15 роликов, подписи, обложки, календарь и правки."],
 ];
 
+const businessCases = [
+  {
+    label: "product / ecommerce",
+    title: "Товар можно показать в руках",
+    text: "Косметика, аксессуары, упаковка, маркетплейс-карточка или новый запуск.",
+    output: "product demo / offer clip",
+    video: "/media/cases/kf-case-product.mp4",
+    poster: "/media/cases/kf-case-product-poster.png",
+  },
+  {
+    label: "restaurant / food",
+    title: "Еду можно превратить в желание",
+    text: "Блюдо, ингредиенты, подача, сезонное меню, доставка или спецпредложение.",
+    output: "menu reel / promo",
+    video: "/media/cases/kf-case-restaurant.mp4",
+    poster: "/media/cases/kf-case-restaurant-poster.png",
+  },
+  {
+    label: "cafe / local service",
+    title: "Локальный бизнес получает атмосферу",
+    text: "Кофейня, бар, студия, салон, шоурум или место, куда хочется прийти.",
+    output: "place story / reels pack",
+    video: "/media/cases/kf-case-cafe.mp4",
+    poster: "/media/cases/kf-case-cafe-poster.png",
+  },
+  {
+    label: "flowers / gifts",
+    title: "Подарок продается через процесс",
+    text: "Сборка букета, упаковка заказа, подготовка набора, сезонная акция.",
+    output: "process reel / gift offer",
+    video: "/media/cases/kf-case-florist.mp4",
+    poster: "/media/cases/kf-case-florist-poster.png",
+  },
+  {
+    label: "handmade / workshop",
+    title: "Мастерство можно показать крупно",
+    text: "Кожа, мебель, одежда, ремонт, кастомные изделия, ручная работа.",
+    output: "craft proof / trust clip",
+    video: "/media/cases/kf-case-handmade.mp4",
+    poster: "/media/cases/kf-case-handmade-poster.png",
+  },
+  {
+    label: "premium / jewelry",
+    title: "Детали делают продукт дороже",
+    text: "Украшения, premium-подарки, маленькие предметы, коллекции, лимитки.",
+    output: "detail reel / launch clip",
+    video: "/media/cases/kf-case-jewelry.mp4",
+    poster: "/media/cases/kf-case-jewelry-poster.png",
+  },
+];
+
 export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#080909] text-[#f5f1e8]">
@@ -55,6 +106,7 @@ export default function Home() {
 
       <Hero />
       <DemoCreative />
+      <BusinessVideoCases />
 
       <section id="method" className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:px-8">
         <div className="rf-section-title">
@@ -222,6 +274,45 @@ function DemoCreative() {
             assets before testing custom generated client scenes.
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function BusinessVideoCases() {
+  return (
+    <section className="mx-auto max-w-[1380px] px-4 py-8 sm:px-6 lg:px-8" aria-labelledby="business-cases-title">
+      <div className="kf-cases-head">
+        <div>
+          <p>business proof</p>
+          <h2 id="business-cases-title">Клиент должен увидеть не фон, а возможность снять ролик про свой бизнес.</h2>
+        </div>
+        <span>
+          Берем продукт, услугу, место или процесс. Дальше делаем из этого хук, сценарий, короткий ролик, подпись и страницу
+          выдачи.
+        </span>
+      </div>
+
+      <div className="kf-case-grid">
+        {businessCases.map((item) => (
+          <article key={item.title} className="kf-case-card">
+            <video
+              src={`${mediaBase}${item.video}`}
+              poster={`${mediaBase}${item.poster}`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+            <div className="kf-case-overlay">
+              <p>{item.label}</p>
+              <h3>{item.title}</h3>
+              <span>{item.text}</span>
+              <strong>{item.output}</strong>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );
