@@ -50,52 +50,52 @@ const packages = [
 
 const businessCases = [
   {
-    label: "product / ecommerce",
-    title: "Товар можно показать в руках",
-    text: "Косметика, аксессуары, упаковка, маркетплейс-карточка или новый запуск.",
-    output: "product demo / offer clip",
-    video: "/media/cases/kf-case-product.mp4",
-    poster: "/media/cases/kf-case-product-poster.png",
+    label: "skincare / clean launch",
+    title: "Товар выглядит дороже",
+    text: "Пустая этикетка, спокойный свет, крупный кадр. Подходит для косметики, ухода, wellness и small brand.",
+    output: "minimal product shot",
+    video: "/media/cases/kf-product-serum.mp4",
+    poster: "/media/cases/kf-product-serum-poster.png",
   },
   {
-    label: "restaurant / food",
-    title: "Еду можно превратить в желание",
-    text: "Блюдо, ингредиенты, подача, сезонное меню, доставка или спецпредложение.",
-    output: "menu reel / promo",
-    video: "/media/cases/kf-case-restaurant.mp4",
-    poster: "/media/cases/kf-case-restaurant-poster.png",
-  },
-  {
-    label: "cafe / local service",
-    title: "Локальный бизнес получает атмосферу",
-    text: "Кофейня, бар, студия, салон, шоурум или место, куда хочется прийти.",
-    output: "place story / reels pack",
-    video: "/media/cases/kf-case-cafe.mp4",
-    poster: "/media/cases/kf-case-cafe-poster.png",
-  },
-  {
-    label: "flowers / gifts",
-    title: "Подарок продается через процесс",
-    text: "Сборка букета, упаковка заказа, подготовка набора, сезонная акция.",
-    output: "process reel / gift offer",
-    video: "/media/cases/kf-case-florist.mp4",
-    poster: "/media/cases/kf-case-florist-poster.png",
-  },
-  {
-    label: "handmade / workshop",
-    title: "Мастерство можно показать крупно",
-    text: "Кожа, мебель, одежда, ремонт, кастомные изделия, ручная работа.",
-    output: "craft proof / trust clip",
-    video: "/media/cases/kf-case-handmade.mp4",
-    poster: "/media/cases/kf-case-handmade-poster.png",
+    label: "beauty / detail",
+    title: "Деталь продает ощущение",
+    text: "Один предмет, один жест, один чистый визуальный акцент. Без логотипов и лишнего шума.",
+    output: "macro desire clip",
+    video: "/media/cases/kf-product-lipstick.mp4",
+    poster: "/media/cases/kf-product-lipstick-poster.png",
   },
   {
     label: "premium / jewelry",
-    title: "Детали делают продукт дороже",
-    text: "Украшения, premium-подарки, маленькие предметы, коллекции, лимитки.",
-    output: "detail reel / launch clip",
-    video: "/media/cases/kf-case-jewelry.mp4",
-    poster: "/media/cases/kf-case-jewelry-poster.png",
+    title: "Маленький предмет становится желанием",
+    text: "Украшения, подарки, лимитки, аксессуары. Кадр строится вокруг блеска, фактуры и тишины.",
+    output: "luxury detail reel",
+    video: "/media/cases/kf-product-ring.mp4",
+    poster: "/media/cases/kf-product-ring-poster.png",
+  },
+  {
+    label: "coffee / packaged taste",
+    title: "Вкус можно показать до покупки",
+    text: "Кофе, чай, десерты, напитки, локальная еда. Не кухня, а готовое желание в кадре.",
+    output: "taste product reel",
+    video: "/media/cases/kf-product-coffee.mp4",
+    poster: "/media/cases/kf-product-coffee-poster.png",
+  },
+  {
+    label: "home / scent",
+    title: "Домашний продукт получает настроение",
+    text: "Свечи, интерьер, текстиль, ароматы, декор. Минимальный кадр делает предмет теплее.",
+    output: "ambient product loop",
+    video: "/media/cases/kf-product-candle.mp4",
+    poster: "/media/cases/kf-product-candle-poster.png",
+  },
+  {
+    label: "table / seasonal product",
+    title: "Композиция делает товар сценой",
+    text: "Подарочные наборы, десерты, сервировка, локальные продукты. Атмосфера вместо случайной фотки.",
+    output: "seasonal product story",
+    video: "/media/cases/kf-product-table.mp4",
+    poster: "/media/cases/kf-product-table-poster.png",
   },
 ];
 
@@ -111,7 +111,7 @@ export default function Home() {
       <section id="method" className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:px-8">
         <div className="rf-section-title">
           <p>method</p>
-          <h2>Вся страница построена вокруг одного доказательства: процесс виден.</h2>
+          <h2>Вся страница построена вокруг одного доказательства: продукт можно показать дорого.</h2>
         </div>
 
         <div className="rf-ledger">
@@ -142,7 +142,7 @@ export default function Home() {
           </div>
           <div className="rf-caption-stack">
             <p>Hook: “Почему первая процедура часто не продает сама себя”</p>
-            <p>Caption: “Покажите процесс, а не только результат. Вот три кадра, которые снимают тревогу клиента.”</p>
+            <p>Caption: “Один предмет, спокойный свет и понятный оффер. Вот три кадра, которые делают продукт желанным.”</p>
             <p>CTA: “Напишите ‘уход’, пришлем свободные окна на эту неделю.”</p>
           </div>
         </div>
@@ -213,8 +213,8 @@ function Hero() {
       <div className="kf-hero-content">
         <div className="kf-hero-meta">
           <span>universal demo case</span>
-          <span>craft / leather / cafe process</span>
-          <span>3 calm stock clips</span>
+          <span>brandless product mood</span>
+          <span>3 calm product clips</span>
         </div>
 
         <div className="kf-hero-bottom">
@@ -270,7 +270,7 @@ function DemoCreative() {
         <div className="kf-demo-prompt">
           <span>Prompt direction</span>
           <p>
-            Real 4K craft/process footage, tactile movement, no watermark, no AI artifacts. This is the quality bar for public hero
+            Real product footage, tactile movement, no watermark, no AI artifacts. This is the quality bar for public hero
             assets before testing custom generated client scenes.
           </p>
         </div>
@@ -285,11 +285,11 @@ function BusinessVideoCases() {
       <div className="kf-cases-head">
         <div>
           <p>business proof</p>
-          <h2 id="business-cases-title">Клиент должен увидеть не фон, а возможность снять ролик про свой бизнес.</h2>
+          <h2 id="business-cases-title">Клиент должен увидеть товар, который хочется купить.</h2>
         </div>
         <span>
-          Берем продукт, услугу, место или процесс. Дальше делаем из этого хук, сценарий, короткий ролик, подпись и страницу
-          выдачи.
+          Не показываем производство ради производства. Берем предмет, свет, фактуру и настроение, а потом превращаем это в хук,
+          сценарий, ролик, подпись и страницу выдачи.
         </span>
       </div>
 

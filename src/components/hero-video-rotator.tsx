@@ -4,16 +4,16 @@ import { useEffect, useRef, useState } from "react";
 
 const clips = [
   {
-    src: "/media/kreoflow-hero-craft.mp4",
-    poster: "/media/kreoflow-hero-craft-poster.png",
+    src: "/media/kf-hero-product-serum.mp4",
+    poster: "/media/kf-hero-product-serum-poster.png",
   },
   {
-    src: "/media/kreoflow-hero-leather.mp4",
-    poster: "/media/kreoflow-hero-leather-poster.png",
+    src: "/media/kf-hero-product-lipstick.mp4",
+    poster: "/media/kf-hero-product-lipstick-poster.png",
   },
   {
-    src: "/media/kreoflow-hero-coffee.mp4",
-    poster: "/media/kreoflow-hero-coffee-poster.png",
+    src: "/media/kf-hero-product-table.mp4",
+    poster: "/media/kf-hero-product-table-poster.png",
   },
 ];
 
