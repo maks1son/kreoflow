@@ -50,52 +50,52 @@ const packages = [
 
 const businessCases = [
   {
-    label: "skincare / clean launch",
-    title: "Товар выглядит дороже",
-    text: "Пустая этикетка, спокойный свет, крупный кадр. Подходит для косметики, ухода, wellness и small brand.",
-    output: "minimal product shot",
-    video: "/media/cases/kf-product-serum.mp4",
-    poster: "/media/cases/kf-product-serum-poster.png",
+    label: "black tech / macro",
+    title: "Предмет выглядит новым",
+    text: "Черная поверхность, металл, сетка, блик. Подходит для гаджетов, аудио, аксессуаров и premium-товаров.",
+    output: "launch macro reel",
+    video: "/media/cases/kf-style-speaker.mp4",
+    poster: "/media/cases/kf-style-speaker-poster.png",
   },
   {
-    label: "beauty / detail",
-    title: "Деталь продает ощущение",
-    text: "Один предмет, один жест, один чистый визуальный акцент. Без логотипов и лишнего шума.",
-    output: "macro desire clip",
-    video: "/media/cases/kf-product-lipstick.mp4",
-    poster: "/media/cases/kf-product-lipstick-poster.png",
+    label: "monochrome / motion",
+    title: "Стиль продает без слов",
+    text: "Черно-белая жидкость, чистый контраст, плавное движение. Это язык запуска нового продукта.",
+    output: "black white reveal",
+    video: "/media/cases/kf-style-ink.mp4",
+    poster: "/media/cases/kf-style-ink-poster.png",
   },
   {
-    label: "premium / jewelry",
-    title: "Маленький предмет становится желанием",
-    text: "Украшения, подарки, лимитки, аксессуары. Кадр строится вокруг блеска, фактуры и тишины.",
-    output: "luxury detail reel",
-    video: "/media/cases/kf-product-ring.mp4",
-    poster: "/media/cases/kf-product-ring-poster.png",
+    label: "future space / black",
+    title: "Фон становится событием",
+    text: "Абстрактная 3D-геометрия дает продукту ощущение технологии, скорости и дорогого запуска.",
+    output: "tech launch loop",
+    video: "/media/cases/kf-style-cubes.mp4",
+    poster: "/media/cases/kf-style-cubes-poster.png",
   },
   {
-    label: "coffee / packaged taste",
-    title: "Вкус можно показать до покупки",
-    text: "Кофе, чай, десерты, напитки, локальная еда. Не кухня, а готовое желание в кадре.",
-    output: "taste product reel",
-    video: "/media/cases/kf-product-coffee.mp4",
-    poster: "/media/cases/kf-product-coffee-poster.png",
+    label: "precision / white",
+    title: "Макро делает предмет точным",
+    text: "Белая поверхность, черная линия, плавный ход. Для техники, часов, деталей, интерфейсов и упаковки.",
+    output: "precision close-up",
+    video: "/media/cases/kf-style-clock.mp4",
+    poster: "/media/cases/kf-style-clock-poster.png",
   },
   {
-    label: "home / scent",
-    title: "Домашний продукт получает настроение",
-    text: "Свечи, интерьер, текстиль, ароматы, декор. Минимальный кадр делает предмет теплее.",
-    output: "ambient product loop",
-    video: "/media/cases/kf-product-candle.mp4",
-    poster: "/media/cases/kf-product-candle-poster.png",
+    label: "smoke / light",
+    title: "Свет собирает ожидание",
+    text: "Дым, туман и мягкий контраст работают как reveal перед появлением товара или оффера.",
+    output: "atmospheric reveal",
+    video: "/media/cases/kf-style-smoke.mp4",
+    poster: "/media/cases/kf-style-smoke-poster.png",
   },
   {
-    label: "table / seasonal product",
-    title: "Композиция делает товар сценой",
-    text: "Подарочные наборы, десерты, сервировка, локальные продукты. Атмосфера вместо случайной фотки.",
-    output: "seasonal product story",
-    video: "/media/cases/kf-product-table.mp4",
-    poster: "/media/cases/kf-product-table-poster.png",
+    label: "glass / luxury detail",
+    title: "Блик продает материал",
+    text: "Камень, стекло, металл, глянец. Крупная деталь делает маленький продукт дороже.",
+    output: "material detail reel",
+    video: "/media/cases/kf-style-ring.mp4",
+    poster: "/media/cases/kf-style-ring-poster.png",
   },
 ];
 
@@ -213,8 +213,8 @@ function Hero() {
       <div className="kf-hero-content">
         <div className="kf-hero-meta">
           <span>universal demo case</span>
-          <span>brandless product mood</span>
-          <span>3 calm product clips</span>
+          <span>black / white launch film</span>
+          <span>no brands, no lifestyle</span>
         </div>
 
         <div className="kf-hero-bottom">
@@ -270,8 +270,8 @@ function DemoCreative() {
         <div className="kf-demo-prompt">
           <span>Prompt direction</span>
           <p>
-            Real product footage, tactile movement, no watermark, no AI artifacts. This is the quality bar for public hero
-            assets before testing custom generated client scenes.
+            Black/white product-film language: macro detail, glass, metal, smoke, reflection, no logo, no generic stock
+            lifestyle.
           </p>
         </div>
       </div>

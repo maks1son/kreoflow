@@ -4,16 +4,16 @@ import { useEffect, useRef, useState } from "react";
 
 const clips = [
   {
-    src: "/media/kf-hero-product-serum.mp4",
-    poster: "/media/kf-hero-product-serum-poster.png",
+    src: "/media/kf-hero-style-speaker.mp4",
+    poster: "/media/kf-hero-style-speaker-poster.png",
   },
   {
-    src: "/media/kf-hero-product-lipstick.mp4",
-    poster: "/media/kf-hero-product-lipstick-poster.png",
+    src: "/media/kf-hero-style-cubes.mp4",
+    poster: "/media/kf-hero-style-cubes-poster.png",
   },
   {
-    src: "/media/kf-hero-product-table.mp4",
-    poster: "/media/kf-hero-product-table-poster.png",
+    src: "/media/kf-hero-style-ink.mp4",
+    poster: "/media/kf-hero-style-ink-poster.png",
   },
 ];
 
