@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { AmbientVideo } from "@/components/ambient-video";
+import { FinalCta } from "@/components/final-cta";
 import { HeroVideoRotator } from "@/components/hero-video-rotator";
 import { Button } from "@/components/ui/button";
 
@@ -7,183 +9,97 @@ const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
 
 const nav = [
   ["Метод", "#method"],
-  ["Выдача", "#delivery"],
+  ["Работы", "#work"],
   ["Пакеты", "#packages"],
   ["Бриф", "/brief"],
 ];
 
-const productionRows = [
-  ["01", "Бриф", "оффер, ниша, аудитория, стиль", "12 мин"],
-  ["02", "Матрица", "боль, доверие, демонстрация, акция", "18 мин"],
-  ["03", "Сценарии", "хуки, кадры, подписи, CTA", "40 мин"],
-  ["04", "Сборка", "UGC, монтаж, субтитры, обложки", "72 ч"],
-];
-
-const delivery = [
-  ["12", "коротких видео"],
-  ["24", "хука и подписи"],
-  ["04", "формата сценариев"],
-  ["01", "страница выдачи"],
-];
-
-const proof = [
+const methodSteps = [
   {
-    label: "Что продаем",
-    title: "Поток креативов",
-    text: "Не доступ к генератору. Клиент получает готовый пакет, который можно публиковать и тестировать.",
+    number: "01",
+    title: "Сначала оффер",
+    text: "Вынимаем одну сильную мысль, которую зритель должен понять за первые секунды.",
   },
   {
-    label: "Почему купят",
-    title: "Меньше координации",
-    text: "Бриф, идеи, сценарии, статусы, файлы и правки живут в одном понятном маршруте.",
+    number: "02",
+    title: "Затем визуальный язык",
+    text: "Фиксируем свет, фактуру, движение, композицию и правила для всей серии роликов.",
   },
   {
-    label: "Первый рынок",
-    title: "Визуальные бизнесы",
-    text: "Кафе, шоурумы, фитнес, бьюти, курсы и локальные сервисы покупают не AI, а регулярный поток понятных видео.",
+    number: "03",
+    title: "Не один вариант",
+    text: "Собираем разные хуки и монтажные версии под Reels, Shorts и VK Clips.",
+  },
+  {
+    number: "04",
+    title: "Готово к запуску",
+    text: "Передаем ролики, подписи, обложки и понятную последовательность публикации.",
+  },
+];
+
+const selectedWork = [
+  {
+    label: "Launch macro / 01",
+    title: "Фактура делает продукт новым",
+    video: "/media/cases/kf-style-speaker.mp4",
+    poster: "/media/cases/kf-style-speaker-poster.png",
+    className: "kf-work-card--wide",
+  },
+  {
+    label: "Monochrome / 02",
+    title: "Движение вместо лишних слов",
+    video: "/media/cases/kf-style-ink.mp4",
+    poster: "/media/cases/kf-style-ink-poster.png",
+    className: "",
+  },
+  {
+    label: "Future space / 03",
+    title: "Запуск ощущается как событие",
+    video: "/media/cases/kf-style-cubes.mp4",
+    poster: "/media/cases/kf-style-cubes-poster.png",
+    className: "",
+  },
+  {
+    label: "Material detail / 04",
+    title: "Крупная деталь повышает ценность",
+    video: "/media/cases/kf-style-ring.mp4",
+    poster: "/media/cases/kf-style-ring-poster.png",
+    className: "kf-work-card--wide",
   },
 ];
 
 const packages = [
-  ["Mini audit", "0-5 000 ₽", "5 хуков, 3 угла, пример сценария и демо-выдача."],
-  ["Test pack", "15 000-30 000 ₽", "5 роликов или production-ready концептов для проверки спроса."],
-  ["Content sprint", "40 000-90 000 ₽", "10-15 роликов, подписи, обложки, календарь и правки."],
-];
-
-const businessCases = [
   {
-    label: "black tech / macro",
-    title: "Предмет выглядит новым",
-    text: "Черная поверхность, металл, сетка, блик. Подходит для гаджетов, аудио, аксессуаров и premium-товаров.",
-    output: "launch macro reel",
-    video: "/media/cases/kf-style-speaker.mp4",
-    poster: "/media/cases/kf-style-speaker-poster.png",
+    number: "01",
+    name: "Тест",
+    description: "5 коротких креативов, сценарии и подписи",
+    price: "от 15 000 ₽",
   },
   {
-    label: "monochrome / motion",
-    title: "Стиль продает без слов",
-    text: "Черно-белая жидкость, чистый контраст, плавное движение. Это язык запуска нового продукта.",
-    output: "black white reveal",
-    video: "/media/cases/kf-style-ink.mp4",
-    poster: "/media/cases/kf-style-ink-poster.png",
+    number: "02",
+    name: "Поток",
+    description: "12 роликов, 24 хука и страница выдачи",
+    price: "от 35 000 ₽",
   },
   {
-    label: "future space / black",
-    title: "Фон становится событием",
-    text: "Абстрактная 3D-геометрия дает продукту ощущение технологии, скорости и дорогого запуска.",
-    output: "tech launch loop",
-    video: "/media/cases/kf-style-cubes.mp4",
-    poster: "/media/cases/kf-style-cubes-poster.png",
-  },
-  {
-    label: "precision / white",
-    title: "Макро делает предмет точным",
-    text: "Белая поверхность, черная линия, плавный ход. Для техники, часов, деталей, интерфейсов и упаковки.",
-    output: "precision close-up",
-    video: "/media/cases/kf-style-clock.mp4",
-    poster: "/media/cases/kf-style-clock-poster.png",
-  },
-  {
-    label: "smoke / light",
-    title: "Свет собирает ожидание",
-    text: "Дым, туман и мягкий контраст работают как reveal перед появлением товара или оффера.",
-    output: "atmospheric reveal",
-    video: "/media/cases/kf-style-smoke.mp4",
-    poster: "/media/cases/kf-style-smoke-poster.png",
-  },
-  {
-    label: "glass / luxury detail",
-    title: "Блик продает материал",
-    text: "Камень, стекло, металл, глянец. Крупная деталь делает маленький продукт дороже.",
-    output: "material detail reel",
-    video: "/media/cases/kf-style-ring.mp4",
-    poster: "/media/cases/kf-style-ring-poster.png",
+    number: "03",
+    name: "Месяц",
+    description: "30 креативов и еженедельные новые углы",
+    price: "от 75 000 ₽",
   },
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#080909] text-[#f5f1e8]">
-      <div className="rf-noise" aria-hidden="true" />
-
+    <main className="kf-page">
       <Hero />
-      <DemoCreative />
-      <BusinessVideoCases />
-
-      <section id="method" className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:px-8">
-        <div className="rf-section-title">
-          <p>method</p>
-          <h2>Вся страница построена вокруг одного доказательства: продукт можно показать дорого.</h2>
-        </div>
-
-        <div className="rf-ledger">
-          {productionRows.map(([num, title, text, time]) => (
-            <div key={num} className="rf-ledger-row">
-              <span>{num}</span>
-              <strong>{title}</strong>
-              <p>{text}</p>
-              <em>{time}</em>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="delivery" className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
-        <div className="rf-delivery-board">
-          <div className="rf-delivery-header">
-            <span>client delivery</span>
-            <span>ready for review</span>
-          </div>
-          <div className="rf-delivery-grid">
-            {delivery.map(([value, label]) => (
-              <div key={label}>
-                <strong>{value}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-          <div className="rf-caption-stack">
-            <p>Hook: “Почему первая процедура часто не продает сама себя”</p>
-            <p>Caption: “Один предмет, спокойный свет и понятный оффер. Вот три кадра, которые делают продукт желанным.”</p>
-            <p>CTA: “Напишите ‘уход’, пришлем свободные окна на эту неделю.”</p>
-          </div>
-        </div>
-
-        <div className="rf-proof-grid">
-          {proof.map((item) => (
-            <article key={item.title} className="rf-proof-card">
-              <p>{item.label}</p>
-              <h3>{item.title}</h3>
-              <span>{item.text}</span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="packages" className="mx-auto max-w-[1380px] px-4 py-8 pb-12 sm:px-6 lg:px-8">
-        <div className="rf-package-shell">
-          <div className="rf-package-head">
-            <div>
-              <p>commercial ladder</p>
-              <h2>Продаем маленький вход, а не огромный ретейнер с первого сообщения.</h2>
-            </div>
-            <Link href="/brief" className="rf-focus rf-main-cta rf-main-cta-dark">
-              Перейти к брифу
-              <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
-
-          <div className="rf-package-grid">
-            {packages.map(([name, price, text]) => (
-              <article key={name} className="rf-package-card">
-                <p>{name}</p>
-                <strong>{price}</strong>
-                <span>{text}</span>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <EditorialIntro />
+      <Method />
+      <SelectedWork />
+      <Delivery />
+      <Packages />
+      <FinalCta />
+      <Footer />
     </main>
   );
 }
@@ -213,30 +129,21 @@ function Hero() {
       </header>
 
       <div className="kf-hero-content">
-        <div className="kf-hero-meta">
-          <span>universal demo case</span>
-          <span>black / white launch film</span>
-          <span>no brands, no lifestyle</span>
-        </div>
-
-        <div className="kf-hero-bottom">
+        <div className="kf-hero-bottom kf-hero-bottom--clean">
           <h1>AI Video Lab</h1>
           <div className="kf-hero-actions">
-            <p>
-              Один оффер превращаем в серию роликов, хуков, подписей и страницу выдачи. Это можно показать клиенту до продажи пакета.
-            </p>
-            <div>
-              <Button asChild variant="outline" className="kf-hero-cta">
-                <Link href="/brief">
-                  Оставить заявку
-                  <ArrowUpRight aria-hidden="true" />
-                </Link>
-              </Button>
-              <Link href="#demo-creative" className="rf-focus rf-secondary-cta">
-                Смотреть креатив
-                <span aria-hidden="true">↓</span>
+            <Button asChild className="kf-hero-cta">
+              <Link href="/brief">
+                Оставить заявку
+                <ArrowUpRight aria-hidden="true" />
               </Link>
-            </div>
+            </Button>
+            <Button asChild variant="outline" className="kf-hero-cta kf-hero-cta--secondary">
+              <Link href="#work">
+                Смотреть работы
+                <ArrowDown aria-hidden="true" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -244,80 +151,166 @@ function Hero() {
   );
 }
 
-function DemoCreative() {
+function EditorialIntro() {
   return (
-    <section
-      id="demo-creative"
-      className="mx-auto grid max-w-[1380px] gap-5 px-4 py-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8"
-    >
-      <div className="kf-demo-phone">
-        <video
-          src={`${mediaBase}/media/kreoflow-local-retail-demo.mp4`}
-          poster={`${mediaBase}/media/kreoflow-lab-poster.png`}
-          controls
-          muted
-          playsInline
-          preload="metadata"
-        />
-      </div>
-
-      <div className="kf-demo-copy">
-        <div className="rf-microline">
-          <span>real footage sample</span>
-          <span>web hero + vertical cut</span>
-        </div>
-        <h2>Не фон для красоты, а пример того, что мы продаем.</h2>
-        <p>
-          Универсальный кейс: локальный визуальный бизнес запускает оффер. Из одного кадра собирается ролик для Reels,
-          Shorts или VK Clips: хук, крупная типографика, понятный результат и CTA.
-        </p>
-        <div className="kf-demo-prompt">
-          <span>Prompt direction</span>
+    <section id="demo-creative" className="kf-intro-band" aria-labelledby="intro-title">
+      <div className="kf-band-inner kf-intro-layout">
+        <div className="kf-intro-copy">
+          <p className="kf-kicker">Creative production / 01</p>
+          <h2 id="intro-title">От идеи до ролика, который хочется досмотреть.</h2>
           <p>
-            Black/white product-film language: macro detail, glass, metal, smoke, reflection, no logo, no generic stock
-            lifestyle.
+            KreoFlow превращает оффер бизнеса в визуальную систему: сценарии, короткие видео, подписи и готовую страницу
+            выдачи.
           </p>
+          <Button asChild className="kf-inline-cta">
+            <Link href="/brief">
+              Собрать тестовый пакет
+              <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+
+        <div className="kf-media-mosaic" aria-label="Примеры визуальных направлений">
+          <figure className="kf-mosaic-main">
+            <AmbientVideo
+              src={`${mediaBase}/media/cases/kf-style-clock.mp4`}
+              poster={`${mediaBase}/media/cases/kf-style-clock-poster.png`}
+            />
+            <figcaption>Precision / product film</figcaption>
+          </figure>
+          <figure>
+            <AmbientVideo
+              src={`${mediaBase}/media/cases/kf-style-smoke.mp4`}
+              poster={`${mediaBase}/media/cases/kf-style-smoke-poster.png`}
+            />
+            <figcaption>Atmosphere / reveal</figcaption>
+          </figure>
+          <figure>
+            <AmbientVideo
+              src={`${mediaBase}/media/cases/kf-style-ink.mp4`}
+              poster={`${mediaBase}/media/cases/kf-style-ink-poster.png`}
+            />
+            <figcaption>Motion / identity</figcaption>
+          </figure>
         </div>
       </div>
     </section>
   );
 }
 
-function BusinessVideoCases() {
+function Method() {
   return (
-    <section className="mx-auto max-w-[1380px] px-4 py-8 sm:px-6 lg:px-8" aria-labelledby="business-cases-title">
-      <div className="kf-cases-head">
-        <div>
-          <p>business proof</p>
-          <h2 id="business-cases-title">Клиент должен увидеть товар, который хочется купить.</h2>
+    <section id="method" className="kf-method-band" aria-labelledby="method-title">
+      <div className="kf-band-inner">
+        <div className="kf-editorial-heading">
+          <p className="kf-kicker">Method / 02</p>
+          <h2 id="method-title">Не промпты. Визуальная система.</h2>
+          <p>Каждый ролик отличается, но вся серия говорит одним языком и ведет к одному офферу.</p>
         </div>
-        <span>
-          Не показываем производство ради производства. Берем предмет, свет, фактуру и настроение, а потом превращаем это в хук,
-          сценарий, ролик, подпись и страницу выдачи.
-        </span>
-      </div>
 
-      <div className="kf-case-grid">
-        {businessCases.map((item) => (
-          <article key={item.title} className="kf-case-card">
-            <video
-              src={`${mediaBase}${item.video}`}
-              poster={`${mediaBase}${item.poster}`}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            />
-            <div className="kf-case-overlay">
-              <p>{item.label}</p>
-              <h3>{item.title}</h3>
-              <span>{item.text}</span>
-              <strong>{item.output}</strong>
-            </div>
-          </article>
-        ))}
+        <div className="kf-method-grid">
+          {methodSteps.map((step) => (
+            <article key={step.number}>
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
+  );
+}
+
+function SelectedWork() {
+  return (
+    <section id="work" className="kf-work-band" aria-labelledby="work-title">
+      <div className="kf-band-inner">
+        <div className="kf-work-heading">
+          <p className="kf-kicker">Selected directions / 03</p>
+          <h2 id="work-title">Один продукт. Несколько рекламных языков.</h2>
+        </div>
+
+        <div className="kf-work-grid">
+          {selectedWork.map((item) => (
+            <article key={item.title} className={`kf-work-card ${item.className}`.trim()}>
+              <AmbientVideo
+                src={`${mediaBase}${item.video}`}
+                poster={`${mediaBase}${item.poster}`}
+              />
+              <div>
+                <p>{item.label}</p>
+                <h3>{item.title}</h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Delivery() {
+  const metrics = [
+    ["12", "готовых роликов"],
+    ["24", "хука и подписи"],
+    ["03", "формата площадок"],
+    ["72", "часа на пакет"],
+  ];
+
+  return (
+    <section id="delivery" className="kf-delivery-band" aria-labelledby="delivery-title">
+      <div className="kf-band-inner">
+        <p className="kf-kicker">Delivery / 04</p>
+        <h2 id="delivery-title">Пакет, который можно запускать.</h2>
+        <div className="kf-delivery-metrics">
+          {metrics.map(([value, label]) => (
+            <div key={label}>
+              <strong>{value}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Packages() {
+  return (
+    <section id="packages" className="kf-packages-band" aria-labelledby="packages-title">
+      <div className="kf-band-inner">
+        <div className="kf-packages-heading">
+          <p className="kf-kicker">Packages / 05</p>
+          <h2 id="packages-title">Выберите объем.</h2>
+        </div>
+
+        <div className="kf-package-list">
+          {packages.map((item) => (
+            <article key={item.number}>
+              <span>{item.number}</span>
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              <strong>{item.price}</strong>
+              <Link href="/brief" aria-label={`Выбрать пакет ${item.name}`}>
+                <ArrowUpRight aria-hidden="true" />
+              </Link>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="kf-footer">
+      <div className="kf-band-inner">
+        <strong>KreoFlow</strong>
+        <p>AI video creative production</p>
+        <Link href="/brief">Начать проект</Link>
+      </div>
+    </footer>
   );
 }

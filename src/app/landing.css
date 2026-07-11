@@ -1,0 +1,19 @@
+/* Critical landing selectors are imported separately so Tailwind registers the page layer before global overrides. */
+.kf-page {
+  overflow: clip;
+  background: #080909;
+  color: #f2efe8;
+}
+
+.kf-intro-band {
+  padding-block: 4rem;
+}
+
+.kf-hero-bottom--clean .kf-hero-actions {
+  display: flex;
+}
+
+.kf-hero-cta--secondary {
+  background: rgb(8 9 9 / 0.2);
+  color: #f2efe8;
+}
