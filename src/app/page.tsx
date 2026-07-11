@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { HeroVideoRotator } from "@/components/hero-video-rotator";
+import { Button } from "@/components/ui/button";
 
 const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
 
@@ -224,10 +226,12 @@ function Hero() {
               Один оффер превращаем в серию роликов, хуков, подписей и страницу выдачи. Это можно показать клиенту до продажи пакета.
             </p>
             <div>
-              <Link href="/brief" className="rf-focus rf-main-cta">
-                Запустить бриф
-                <span aria-hidden="true">↗</span>
-              </Link>
+              <Button asChild variant="outline" className="kf-hero-cta">
+                <Link href="/brief">
+                  Оставить заявку
+                  <ArrowUpRight aria-hidden="true" />
+                </Link>
+              </Button>
               <Link href="#demo-creative" className="rf-focus rf-secondary-cta">
                 Смотреть креатив
                 <span aria-hidden="true">↓</span>
