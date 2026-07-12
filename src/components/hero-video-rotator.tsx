@@ -8,12 +8,12 @@ const clips = [
     poster: "/media/kf-hero-style-speaker-poster.png",
   },
   {
-    src: "/media/kf-hero-style-cubes.mp4",
-    poster: "/media/kf-hero-style-cubes-poster.png",
+    src: "/media/kf-product-lens.mp4",
+    poster: "/media/kf-product-lens-poster.jpg",
   },
   {
-    src: "/media/kf-hero-style-ink.mp4",
-    poster: "/media/kf-hero-style-ink-poster.png",
+    src: "/media/kf-product-headphones.mp4",
+    poster: "/media/kf-product-headphones-poster.jpg",
   },
 ];
 
@@ -31,7 +31,7 @@ export function HeroVideoRotator({ mediaBase }: HeroVideoRotatorProps) {
         return;
       }
 
-      video.playbackRate = 0.75;
+      video.playbackRate = 0.8;
       void video.play().catch(() => undefined);
     });
   }, []);
@@ -66,7 +66,7 @@ export function HeroVideoRotator({ mediaBase }: HeroVideoRotatorProps) {
           playsInline
           preload={index === 0 ? "auto" : "metadata"}
           onLoadedMetadata={(event) => {
-            event.currentTarget.playbackRate = 0.75;
+            event.currentTarget.playbackRate = 0.8;
           }}
         />
       ))}

@@ -1842,3 +1842,331 @@ a {
     font-size: clamp(2.65rem, 13vw, 3.6rem);
   }
 }
+
+/* Product-first public landing */
+.kf-hero-grade {
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 0.42) 0%, rgb(0 0 0 / 0.06) 28%, rgb(0 0 0 / 0.12) 58%, rgb(0 0 0 / 0.82) 100%),
+    linear-gradient(90deg, rgb(0 0 0 / 0.18) 0%, transparent 48%, rgb(0 0 0 / 0.08) 100%);
+}
+
+.kf-product-showcase {
+  background: #080909;
+  color: #f2efe8;
+  padding-block: clamp(4rem, 7vw, 7rem);
+}
+
+.kf-product-showcase__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.42fr);
+  gap: clamp(1.5rem, 5vw, 6rem);
+  align-items: end;
+}
+
+.kf-product-showcase__heading h2,
+.kf-compact-method h2,
+.kf-compact-delivery h2 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.kf-product-showcase__heading h2 {
+  max-width: 11ch;
+  font-size: clamp(2.8rem, 5.2vw, 5.2rem);
+  line-height: 0.94;
+}
+
+.kf-product-showcase__heading > p {
+  max-width: 24rem;
+  margin: 0 0 0.35rem;
+  color: rgb(242 239 232 / 0.64);
+  font-size: clamp(1rem, 1.3vw, 1.18rem);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.kf-product-film-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: clamp(2.75rem, 5vw, 4.5rem);
+}
+
+.kf-product-film {
+  min-width: 0;
+  grid-column: span 5;
+  background: #111212;
+}
+
+.kf-product-film--wide {
+  grid-column: span 7;
+}
+
+.kf-product-film__media {
+  height: clamp(25rem, 39vw, 37rem);
+  overflow: hidden;
+  background: #111212;
+}
+
+.kf-product-film__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 850ms var(--ease-out-heavy), filter 500ms ease;
+}
+
+.kf-product-film:hover video {
+  transform: scale(1.018);
+  filter: contrast(1.035);
+}
+
+.kf-product-film footer {
+  display: grid;
+  min-height: 3.75rem;
+  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgb(242 239 232 / 0.13);
+}
+
+.kf-product-film footer span,
+.kf-product-film footer p {
+  margin: 0;
+  color: rgb(242 239 232 / 0.5);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.kf-product-film footer h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.kf-compact-method {
+  background: #efede7;
+  color: #080909;
+  padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+.kf-compact-method header {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.4fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: end;
+}
+
+.kf-compact-method header > p {
+  margin: 0 0 0.45rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kf-compact-method h2 {
+  max-width: 14ch;
+  font-size: clamp(2.75rem, 5vw, 5rem);
+  line-height: 0.94;
+}
+
+.kf-compact-method__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(2.75rem, 5vw, 4.5rem);
+  border-block: 1px solid rgb(8 9 9 / 0.24);
+}
+
+.kf-compact-method__steps article {
+  display: flex;
+  min-height: 7.5rem;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-right: 1px solid rgb(8 9 9 / 0.2);
+}
+
+.kf-compact-method__steps article:first-child {
+  padding-left: 0;
+}
+
+.kf-compact-method__steps article:last-child {
+  border-right: 0;
+}
+
+.kf-compact-method__steps span {
+  color: rgb(8 9 9 / 0.46);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.kf-compact-method__steps h3 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.25rem, 2.1vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+.kf-compact-delivery {
+  background: #5e7cff;
+  color: #080909;
+  padding-block: clamp(3rem, 5.5vw, 5rem);
+}
+
+.kf-compact-delivery .kf-band-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2rem;
+  align-items: end;
+}
+
+.kf-compact-delivery h2 {
+  max-width: 12ch;
+  font-size: clamp(2.75rem, 5vw, 5rem);
+  line-height: 0.92;
+}
+
+.kf-compact-delivery div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.kf-compact-delivery strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.8rem, 3.4vw, 3.25rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.kf-compact-delivery span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.kf-packages-band--compact {
+  padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+.kf-packages-band--compact .kf-packages-heading h2 {
+  font-size: clamp(2.8rem, 5.2vw, 5.2rem);
+  line-height: 0.92;
+}
+
+.kf-package-list--compact {
+  margin-top: clamp(2.5rem, 4vw, 4rem);
+}
+
+.kf-package-list--compact article {
+  min-height: 6.25rem;
+  padding-block: 1.2rem;
+}
+
+.kf-package-list--compact p {
+  color: rgb(8 9 9 / 0.54);
+}
+
+.kf-final-cta {
+  padding-block: clamp(5rem, 9vw, 8rem);
+}
+
+.kf-final-cta h2 {
+  max-width: 11ch;
+  font-size: clamp(2.75rem, 5vw, 5rem);
+  line-height: 0.94;
+}
+
+@media (max-width: 900px) {
+  .kf-product-showcase__heading,
+  .kf-compact-method header {
+    grid-template-columns: 1fr;
+  }
+
+  .kf-product-showcase__heading > p {
+    max-width: 28rem;
+  }
+
+  .kf-product-film,
+  .kf-product-film--wide {
+    grid-column: span 6;
+  }
+
+  .kf-product-film__media {
+    height: clamp(23rem, 58vw, 32rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .kf-product-showcase,
+  .kf-compact-method,
+  .kf-packages-band--compact {
+    padding-block: 3.5rem;
+  }
+
+  .kf-product-film-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .kf-product-film,
+  .kf-product-film--wide {
+    grid-column: 1;
+  }
+
+  .kf-product-film__media {
+    height: min(66vh, 28rem);
+    min-height: 21rem;
+  }
+
+  .kf-product-film footer {
+    min-height: 3.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  .kf-compact-method__steps {
+    grid-template-columns: 1fr;
+    margin-top: 2.5rem;
+  }
+
+  .kf-compact-method__steps article,
+  .kf-compact-method__steps article:first-child {
+    min-height: 5.25rem;
+    padding: 0.8rem 0;
+    border-right: 0;
+    border-bottom: 1px solid rgb(8 9 9 / 0.2);
+  }
+
+  .kf-compact-method__steps article:last-child {
+    border-bottom: 0;
+  }
+
+  .kf-compact-delivery .kf-band-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .kf-compact-delivery div > div {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .kf-package-list--compact article {
+    min-height: auto;
+  }
+}
