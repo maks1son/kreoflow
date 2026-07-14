@@ -436,18 +436,6 @@
   transform: rotate(-1deg);
 }
 
-.kfn-collage-stroke {
-  position: absolute;
-  left: 4%;
-  bottom: 11%;
-  z-index: 6;
-  width: 45%;
-  height: 34px;
-  background: var(--kfn-signal);
-  clip-path: polygon(0 28%, 96% 0, 100% 52%, 3% 100%);
-  transform: rotate(-8deg);
-}
-
 .kfn-system {
   position: relative;
   min-height: 850px;

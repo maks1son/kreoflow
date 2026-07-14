@@ -169,7 +169,6 @@ function CampaignIntro() {
             sizes="(max-width: 767px) 48vw, 23vw"
           />
         </figure>
-        <span className="kfn-collage-stroke" aria-hidden="true" />
       </div>
     </section>
   );
