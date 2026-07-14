@@ -1,19 +1,1007 @@
-/* Critical landing selectors are imported separately so Tailwind registers the page layer before global overrides. */
-.kf-page {
+/* KreoFlow public landing: editorial collage system */
+.kfn-page {
+  --kfn-black: #050505;
+  --kfn-ink: #10100f;
+  --kfn-bone: #f1eee6;
+  --kfn-paper: #d8d0c0;
+  --kfn-taupe: #b7aa90;
+  --kfn-signal: #ff4d2e;
+  --kfn-line: rgb(241 238 230 / 0.22);
   overflow: clip;
-  background: #080909;
-  color: #f2efe8;
+  background: var(--kfn-black);
+  color: var(--kfn-bone);
+  font-family: "Instrument Sans", sans-serif;
 }
 
-.kf-intro-band {
-  padding-block: 4rem;
+.kfn-page a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.kf-hero-bottom--clean .kf-hero-actions {
+.kfn-page a:focus-visible,
+.kfn-page button:focus-visible {
+  outline: 2px solid var(--kfn-signal);
+  outline-offset: 4px;
+}
+
+.kfn-hero {
+  position: relative;
+  min-height: 860px;
+  height: 100dvh;
+  border-bottom: 1px solid var(--kfn-line);
+  background: var(--kfn-black);
+  isolation: isolate;
+}
+
+.kfn-rail {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 20;
   display: flex;
+  width: 72px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-right: 1px solid var(--kfn-line);
+  padding: 24px 0 28px;
 }
 
-.kf-hero-cta--secondary {
-  background: rgb(8 9 9 / 0.2);
-  color: #f2efe8;
+.kfn-rail-mark {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.kfn-rail-copy {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kfn-header {
+  position: absolute;
+  inset: 0 0 auto 72px;
+  z-index: 30;
+  display: grid;
+  min-height: 76px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-bottom: 1px solid var(--kfn-line);
+  padding: 0 30px;
+}
+
+.kfn-wordmark,
+.kfn-footer-brand {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.kfn-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.kfn-nav a,
+.kfn-header-link,
+.kfn-inline-link,
+.kfn-text-cta {
+  transition: color 180ms ease;
+}
+
+.kfn-nav a:hover,
+.kfn-header-link:hover,
+.kfn-inline-link:hover,
+.kfn-text-cta:hover {
+  color: var(--kfn-signal);
+}
+
+.kfn-header-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-self: end;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.kfn-header-link svg,
+.kfn-text-cta svg,
+.kfn-inline-link svg,
+.kfn-button svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.7;
+}
+
+.kfn-hero-stage {
+  position: absolute;
+  inset: 77px 0 76px 72px;
+}
+
+.kfn-hero-title {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 4;
+  display: flex;
+  width: min(78vw, 1180px);
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.kfn-hero-line {
+  display: block;
+  white-space: nowrap;
+  line-height: 0.78;
+  letter-spacing: 0;
+}
+
+.kfn-hero-line--serif {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 8.5rem;
+  font-weight: 500;
+}
+
+.kfn-hero-line--solid {
+  color: var(--kfn-taupe);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12rem;
+  font-weight: 700;
+  line-height: 0.78;
+}
+
+.kfn-hero-shot {
+  position: absolute;
+  z-index: 3;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid rgb(241 238 230 / 0.35);
+  background: #111;
+  box-shadow: 0 22px 50px rgb(0 0 0 / 0.38);
+}
+
+.kfn-hero-shot img,
+.kfn-proof-image img,
+.kfn-system-media img,
+.kfn-case-image img {
+  object-fit: cover;
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kfn-hero-shot:hover img,
+.kfn-proof-image:hover img,
+.kfn-case-image:hover img {
+  transform: scale(1.025);
+}
+
+.kfn-hero-shot--watch {
+  top: 3%;
+  left: 22%;
+  width: 126px;
+  aspect-ratio: 4 / 5;
+  transform: rotate(-2deg);
+}
+
+.kfn-hero-shot--sneaker {
+  top: 2%;
+  right: 12%;
+  width: 150px;
+  aspect-ratio: 1;
+  transform: rotate(1.8deg);
+}
+
+.kfn-hero-shot--eyewear {
+  top: 29%;
+  left: 2.5%;
+  width: 210px;
+  aspect-ratio: 3 / 4;
+  transform: rotate(-1.6deg);
+}
+
+.kfn-hero-shot--perfume {
+  z-index: 8;
+  top: 43%;
+  left: 51%;
+  width: 194px;
+  aspect-ratio: 4 / 5;
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+.kfn-hero-shot--headphones {
+  top: 31%;
+  right: 2.8%;
+  width: 190px;
+  aspect-ratio: 4 / 5;
+  transform: rotate(2deg);
+}
+
+.kfn-hero-shot--speaker {
+  bottom: -4%;
+  left: 14%;
+  width: 230px;
+  aspect-ratio: 16 / 9;
+  transform: rotate(1deg);
+}
+
+.kfn-signal-mark {
+  position: absolute;
+  z-index: 9;
+  top: 38%;
+  left: 58%;
+  color: var(--kfn-signal);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 7rem;
+  font-weight: 600;
+  line-height: 1;
+  transform: rotate(15deg);
+}
+
+.kfn-hero-foot {
+  position: absolute;
+  inset: auto 0 0 72px;
+  z-index: 20;
+  display: grid;
+  min-height: 76px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-top: 1px solid var(--kfn-line);
+  padding: 0 30px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.67rem;
+  text-transform: uppercase;
+}
+
+.kfn-hero-foot p {
+  margin: 0;
+}
+
+.kfn-text-cta,
+.kfn-inline-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.kfn-hero-location {
+  justify-self: end;
+}
+
+.kfn-proof {
+  display: grid;
+  min-height: 760px;
+  grid-template-columns: 0.85fr 1.15fr;
+  border-bottom: 1px solid var(--kfn-line);
+  background: var(--kfn-black);
+}
+
+.kfn-proof-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 72px 8vw;
+}
+
+.kfn-kicker {
+  margin: 0 0 28px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.kfn-proof-copy h2,
+.kfn-method-head h2,
+.kfn-access h2 {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.kfn-proof-copy > p:not(.kfn-kicker),
+.kfn-case-copy > p:not(.kfn-kicker) {
+  max-width: 34rem;
+  margin: 32px 0 0;
+  color: rgb(241 238 230 / 0.7);
+  font-size: 1.06rem;
+  line-height: 1.55;
+}
+
+.kfn-button {
+  display: inline-flex;
+  min-height: 54px;
+  margin-top: 34px;
+  gap: 18px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0 20px;
+  font-weight: 700;
+  box-shadow: none;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.kfn-button--signal {
+  background: var(--kfn-signal);
+  color: var(--kfn-black);
+}
+
+.kfn-button--signal:hover {
+  background: var(--kfn-bone);
+}
+
+.kfn-page .kfn-button--dark {
+  margin-top: 0;
+  background: var(--kfn-black);
+  color: var(--kfn-bone);
+}
+
+.kfn-page .kfn-button--dark:hover {
+  background: var(--kfn-bone);
+  color: var(--kfn-black);
+}
+
+.kfn-proof-collage {
+  position: relative;
+  min-height: 760px;
+  overflow: hidden;
+  border-left: 1px solid var(--kfn-line);
+  background: #0c0c0b;
+}
+
+.kfn-proof-image,
+.kfn-case-image {
+  position: absolute;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid rgb(241 238 230 / 0.24);
+  background: #111;
+}
+
+.kfn-proof-image--main {
+  inset: 11% auto auto 8%;
+  width: 42%;
+  aspect-ratio: 4 / 5;
+  transform: rotate(-2deg);
+}
+
+.kfn-proof-image--top {
+  inset: 7% 7% auto auto;
+  width: 34%;
+  aspect-ratio: 3 / 4;
+  transform: rotate(2deg);
+}
+
+.kfn-proof-image--bottom {
+  inset: auto 13% 5% auto;
+  width: 38%;
+  aspect-ratio: 1;
+  transform: rotate(-1deg);
+}
+
+.kfn-system {
+  position: relative;
+  min-height: 1040px;
+  overflow: hidden;
+  padding: 80px 5vw;
+  background: #9f9a91;
+  color: var(--kfn-black);
+  isolation: isolate;
+}
+
+.kfn-system::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to bottom, rgb(5 5 5 / 0.06), rgb(216 208 192 / 0.5) 62%, rgb(216 208 192 / 0.95));
+  content: "";
+}
+
+.kfn-system-media {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -2;
+  height: 72%;
+}
+
+.kfn-system-media img {
+  object-position: center;
+}
+
+.kfn-system-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.kfn-system-head .kfn-kicker {
+  max-width: 16rem;
+  padding: 9px 12px;
+  background: var(--kfn-bone);
+}
+
+.kfn-system-head h2 {
+  max-width: 840px;
+  margin: 0;
+  color: var(--kfn-bone);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 8rem;
+  font-weight: 700;
+  line-height: 0.8;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.kfn-format-grid {
+  position: absolute;
+  inset: auto 5vw 72px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--kfn-black);
+  border-left: 1px solid var(--kfn-black);
+}
+
+.kfn-format {
+  min-height: 190px;
+  border-right: 1px solid var(--kfn-black);
+  border-bottom: 1px solid var(--kfn-black);
+  background: var(--kfn-bone);
+  padding: 20px;
+}
+
+.kfn-format > span,
+.kfn-step > span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+}
+
+.kfn-format h3 {
+  max-width: 13ch;
+  margin: 28px 0 18px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.kfn-format p {
+  max-width: 27ch;
+  margin: 0;
+  color: rgb(5 5 5 / 0.65);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.kfn-case {
+  display: grid;
+  min-height: 900px;
+  grid-template-columns: 0.9fr 1.1fr;
+  background: var(--kfn-bone);
+  color: var(--kfn-black);
+}
+
+.kfn-case-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 78px 6vw;
+}
+
+.kfn-case-copy h2 {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 7.6rem;
+  font-weight: 700;
+  line-height: 0.78;
+  text-transform: uppercase;
+}
+
+.kfn-case-copy h2 em {
+  color: var(--kfn-signal);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.kfn-case-copy > p:not(.kfn-kicker) {
+  color: rgb(5 5 5 / 0.68);
+}
+
+.kfn-inline-link {
+  margin-top: 30px;
+  border-bottom: 1px solid currentColor;
+}
+
+.kfn-case-gallery {
+  position: relative;
+  overflow: hidden;
+  border-left: 1px solid rgb(5 5 5 / 0.25);
+  background: #d0c8b9;
+}
+
+.kfn-case-image--watch {
+  inset: 7% auto auto 8%;
+  width: 56%;
+  aspect-ratio: 4 / 5;
+  transform: rotate(-2deg);
+}
+
+.kfn-case-image--headphones {
+  inset: auto 7% 5% auto;
+  width: 46%;
+  aspect-ratio: 4 / 5;
+  transform: rotate(2deg);
+}
+
+.kfn-case-image figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  padding: 10px 12px;
+  background: rgb(5 5 5 / 0.88);
+  color: var(--kfn-bone);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+}
+
+.kfn-method {
+  display: grid;
+  min-height: 660px;
+  grid-template-columns: 0.9fr 1.1fr;
+  border-top: 1px solid var(--kfn-line);
+  background: var(--kfn-black);
+}
+
+.kfn-method-head {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 72px 6vw;
+}
+
+.kfn-steps {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  border-left: 1px solid var(--kfn-line);
+}
+
+.kfn-step {
+  display: grid;
+  grid-template-columns: 60px 0.7fr 1fr;
+  align-items: center;
+  gap: 22px;
+  border-bottom: 1px solid var(--kfn-line);
+  padding: 34px 4vw;
+}
+
+.kfn-step:last-child {
+  border-bottom: 0;
+}
+
+.kfn-step h3 {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.kfn-step p {
+  max-width: 30ch;
+  margin: 0;
+  color: rgb(241 238 230 / 0.63);
+  line-height: 1.45;
+}
+
+.kfn-access {
+  min-height: 470px;
+  padding: 62px 5vw 72px;
+  background: var(--kfn-signal);
+  color: var(--kfn-black);
+}
+
+.kfn-access-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr auto;
+  align-items: end;
+  gap: 50px;
+}
+
+.kfn-access h2 {
+  font-size: 7.2rem;
+}
+
+.kfn-access-offer p {
+  margin: 4px 0;
+  font-size: 0.92rem;
+}
+
+.kfn-access-offer strong {
+  font-size: 1.4rem;
+}
+
+.kfn-footer {
+  display: grid;
+  min-height: 120px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 5vw;
+  background: var(--kfn-black);
+  color: var(--kfn-bone);
+}
+
+.kfn-footer p {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.kfn-footer > div {
+  display: flex;
+  justify-self: end;
+  gap: 24px;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 1100px) {
+  .kfn-hero-line--serif {
+    font-size: 6rem;
+  }
+
+  .kfn-hero-line--solid {
+    font-size: 8.5rem;
+  }
+
+  .kfn-hero-shot--eyewear,
+  .kfn-hero-shot--headphones {
+    width: 160px;
+  }
+
+  .kfn-proof-copy h2,
+  .kfn-method-head h2,
+  .kfn-access h2 {
+    font-size: 4.8rem;
+  }
+
+  .kfn-system-head h2 {
+    font-size: 6.4rem;
+  }
+
+  .kfn-case-copy h2 {
+    font-size: 5.6rem;
+  }
+
+  .kfn-access-layout {
+    grid-template-columns: 1.3fr 0.7fr;
+  }
+
+  .kfn-access-layout .kfn-button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 820px) {
+  .kfn-hero {
+    min-height: 760px;
+    height: 100svh;
+  }
+
+  .kfn-rail,
+  .kfn-nav,
+  .kfn-hero-location,
+  .kfn-hero-shot--watch,
+  .kfn-hero-shot--speaker {
+    display: none;
+  }
+
+  .kfn-header {
+    inset-inline-start: 0;
+    min-height: 64px;
+    grid-template-columns: 1fr auto;
+    padding: 0 18px;
+  }
+
+  .kfn-header-link {
+    font-size: 0.78rem;
+  }
+
+  .kfn-hero-stage {
+    inset: 65px 0 76px;
+  }
+
+  .kfn-hero-title {
+    top: 49%;
+    width: 94vw;
+  }
+
+  .kfn-hero-line--serif {
+    font-size: 2.75rem;
+    line-height: 0.84;
+  }
+
+  .kfn-hero-line--solid {
+    font-size: 4.05rem;
+    line-height: 0.82;
+  }
+
+  .kfn-hero-shot--sneaker {
+    top: 5%;
+    right: 6%;
+    width: 102px;
+  }
+
+  .kfn-hero-shot--eyewear {
+    top: 29%;
+    left: -6%;
+    width: 112px;
+  }
+
+  .kfn-hero-shot--perfume {
+    top: 48%;
+    left: 53%;
+    width: 126px;
+  }
+
+  .kfn-hero-shot--headphones {
+    top: 62%;
+    right: -4%;
+    width: 116px;
+  }
+
+  .kfn-signal-mark {
+    top: 39%;
+    left: 64%;
+    font-size: 4.2rem;
+  }
+
+  .kfn-hero-foot {
+    inset-inline-start: 0;
+    min-height: 76px;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 0 18px;
+  }
+
+  .kfn-hero-foot > p:first-child {
+    max-width: 17ch;
+    font-size: 0.55rem;
+    line-height: 1.35;
+  }
+
+  .kfn-text-cta {
+    justify-self: end;
+    font-size: 0.73rem;
+  }
+
+  .kfn-proof,
+  .kfn-case,
+  .kfn-method {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kfn-proof-copy,
+  .kfn-proof-collage,
+  .kfn-case-copy,
+  .kfn-case-gallery,
+  .kfn-method-head,
+  .kfn-steps,
+  .kfn-step {
+    min-width: 0;
+  }
+
+  .kfn-proof-copy,
+  .kfn-case-copy,
+  .kfn-method-head {
+    padding: 64px 20px;
+  }
+
+  .kfn-proof-copy h2,
+  .kfn-method-head h2,
+  .kfn-access h2 {
+    font-size: 4rem;
+  }
+
+  .kfn-method-head h2 {
+    font-size: 3.45rem;
+  }
+
+  .kfn-proof-collage {
+    min-height: 620px;
+    border-top: 1px solid var(--kfn-line);
+    border-left: 0;
+  }
+
+  .kfn-proof-image--main {
+    inset: 8% auto auto 5%;
+    width: 58%;
+  }
+
+  .kfn-proof-image--top {
+    inset: 5% 3% auto auto;
+    width: 39%;
+  }
+
+  .kfn-proof-image--bottom {
+    inset: auto 7% 4% auto;
+    width: 48%;
+  }
+
+  .kfn-system {
+    min-height: 1180px;
+    padding: 48px 16px;
+  }
+
+  .kfn-system-media {
+    height: 42%;
+  }
+
+  .kfn-system-head {
+    display: block;
+  }
+
+  .kfn-system-head h2 {
+    margin-top: 120px;
+    font-size: 3.45rem;
+    text-align: left;
+  }
+
+  .kfn-format-grid {
+    inset: auto 16px 32px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kfn-format {
+    min-height: 160px;
+    padding: 14px;
+  }
+
+  .kfn-format h3 {
+    margin: 20px 0 12px;
+    font-size: 1.55rem;
+  }
+
+  .kfn-format p {
+    font-size: 0.68rem;
+  }
+
+  .kfn-case {
+    min-height: 1180px;
+  }
+
+  .kfn-case-copy h2 {
+    font-size: 3.9rem;
+  }
+
+  .kfn-case-gallery {
+    min-height: 660px;
+    border-top: 1px solid rgb(5 5 5 / 0.25);
+    border-left: 0;
+  }
+
+  .kfn-case-image--watch {
+    inset: 5% auto auto 5%;
+    width: 61%;
+  }
+
+  .kfn-case-image--headphones {
+    inset: auto 5% 4% auto;
+    width: 54%;
+  }
+
+  .kfn-steps {
+    border-top: 1px solid var(--kfn-line);
+    border-left: 0;
+  }
+
+  .kfn-step {
+    min-height: 180px;
+    grid-template-columns: 42px 1fr;
+    gap: 12px;
+    padding: 26px 20px;
+  }
+
+  .kfn-step p {
+    grid-column: 2;
+  }
+
+  .kfn-step h3 {
+    font-size: 2.2rem;
+  }
+
+  .kfn-access {
+    min-height: 560px;
+    padding: 54px 20px;
+  }
+
+  .kfn-access-layout {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 36px;
+  }
+
+  .kfn-access-layout .kfn-button {
+    grid-column: auto;
+  }
+
+  .kfn-footer {
+    min-height: 180px;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    padding: 32px 20px;
+  }
+
+  .kfn-footer p {
+    display: none;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 820px) {
+  .kfn-hero-line--serif {
+    font-size: 4rem;
+  }
+
+  .kfn-hero-line--solid {
+    font-size: 6rem;
+  }
+
+  .kfn-hero-shot--sneaker {
+    width: 132px;
+  }
+
+  .kfn-hero-shot--eyewear,
+  .kfn-hero-shot--headphones {
+    width: 148px;
+  }
+
+  .kfn-hero-shot--perfume {
+    width: 166px;
+  }
+
+  .kfn-system-head h2 {
+    font-size: 5rem;
+  }
+
+  .kfn-case-copy h2 {
+    font-size: 5rem;
+  }
+
+  .kfn-method-head h2 {
+    font-size: 4.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kfn-hero-shot img,
+  .kfn-proof-image img,
+  .kfn-case-image img {
+    transition: none;
+  }
 }

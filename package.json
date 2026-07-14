@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource/barlow": "^5.2.8",
     "@fontsource/barlow-condensed": "^5.2.8",
+    "@fontsource/cormorant-garamond": "^5.2.11",
     "@fontsource/fira-code": "^5.2.7",
     "@fontsource/fira-sans": "^5.2.7",
     "@fontsource/ibm-plex-mono": "^5.2.7",
