@@ -14,6 +14,9 @@ importers:
       '@fontsource/barlow-condensed':
         specifier: ^5.2.8
         version: 5.2.8
+      '@fontsource/bodoni-moda':
+        specifier: ^5.2.7
+        version: 5.2.7
       '@fontsource/cormorant-garamond':
         specifier: ^5.2.11
         version: 5.2.11
@@ -213,6 +216,9 @@ packages:
 
   '@fontsource/barlow@5.2.8':
     resolution: {integrity: sha512-iuFOnY4OI2cd1STrJ3NdJNzWjhcwv6JarmqfdoZzAmz9g0jTVjES86MNbuBxqVR3ydbTEjo4opEl24GXScRM7w==}
+
+  '@fontsource/bodoni-moda@5.2.7':
+    resolution: {integrity: sha512-lsOtgDTdfmoenXOskQ63tbzbVJh05qlc1xLaImG2qayaF88kiVvLAk1nM37eoYRMZTrDZlN5zlu6zG8TnXgn4w==}
 
   '@fontsource/cormorant-garamond@5.2.11':
     resolution: {integrity: sha512-5JjpN023lhA5soijgVT0BdRGzmlijm402ppjccMd6h+vRE0mX2lJnE+41UPfnlidrkV9/rCo1mf58WZlHnB0CA==}
@@ -2279,6 +2285,8 @@ snapshots:
   '@fontsource/barlow-condensed@5.2.8': {}
 
   '@fontsource/barlow@5.2.8': {}
+
+  '@fontsource/bodoni-moda@5.2.7': {}
 
   '@fontsource/cormorant-garamond@5.2.11': {}
 

@@ -8,59 +8,59 @@ const asset = (path: string) => `${mediaBase}${path}`;
 
 const heroShots = [
   {
-    src: "/media/campaign/kreoflow-watch.webp",
-    alt: "Рекламный кадр минималистичных часов",
-    className: "kfn-hero-shot kfn-hero-shot--watch",
+    src: "/media/campaign/kreoflow-editorial-headphones.webp",
+    alt: "Живой рекламный кадр с человеком в серебристых наушниках",
+    className: "kfn-hero-shot kfn-hero-shot--cover",
   },
   {
-    src: "/media/campaign/kreoflow-sneaker.webp",
-    alt: "Рекламный кадр белых кроссовок",
-    className: "kfn-hero-shot kfn-hero-shot--sneaker",
+    src: "/media/campaign/kreoflow-editorial-portrait.webp",
+    alt: "Редакционный портрет в очках с ручной коллажной обработкой",
+    className: "kfn-hero-shot kfn-hero-shot--portrait",
   },
   {
-    src: "/media/campaign/kreoflow-eyewear.webp",
-    alt: "Рекламный кадр чёрных очков",
-    className: "kfn-hero-shot kfn-hero-shot--eyewear",
+    src: "/media/campaign/kreoflow-editorial-group.webp",
+    alt: "Кампания с людьми и предметами в цветном студийном свете",
+    className: "kfn-hero-shot kfn-hero-shot--group",
   },
   {
-    src: "/media/campaign/kreoflow-perfume.webp",
-    alt: "Рекламный кадр флакона парфюма",
-    className: "kfn-hero-shot kfn-hero-shot--perfume",
+    src: "/media/campaign/kreoflow-editorial-center.webp",
+    alt: "Fashion-портрет с флаконом и ручными штрихами краски",
+    className: "kfn-hero-shot kfn-hero-shot--center",
   },
   {
-    src: "/media/campaign/kreoflow-headphones.webp",
-    alt: "Рекламный кадр чёрных наушников",
-    className: "kfn-hero-shot kfn-hero-shot--headphones",
+    src: "/media/campaign/kreoflow-editorial-sneakers.webp",
+    alt: "Девушка с белыми кроссовками в рекламной фотосессии",
+    className: "kfn-hero-shot kfn-hero-shot--sneakers",
   },
   {
-    src: "/media/campaign/kreoflow-speaker.webp",
-    alt: "Рекламный кадр беспроводной колонки",
-    className: "kfn-hero-shot kfn-hero-shot--speaker",
+    src: "/media/campaign/kreoflow-editorial-backpack.webp",
+    alt: "Рекламный кадр технического рюкзака в формате contact sheet",
+    className: "kfn-hero-shot kfn-hero-shot--backpack",
   },
 ];
 
 const formats = [
-  ["01", "Product hero", "Товар становится главным объектом кадра."],
-  ["02", "Detail film", "Фактура, свет и детали, которые хочется рассмотреть."],
-  ["03", "Lifestyle", "Продукт в живой сцене без дорогой съёмки."],
-  ["04", "Offer cut", "Цена, выгода и CTA без визуального шума."],
-  ["05", "UGC angle", "Нативная подача под Reels, Shorts и Ads."],
-  ["06", "Adaptations", "Версии под площадки, форматы и новые офферы."],
+  ["01", "Первый кадр", "Образ, который останавливает скролл и сразу показывает характер продукта."],
+  ["02", "Деталь", "Фактура, свет и крупный план, чтобы вещь захотелось рассмотреть."],
+  ["03", "В движении", "Продукт на человеке или в живой сцене, а не в пустом мокапе."],
+  ["04", "Оффер", "Понятная версия под запуск, акцию или конкретную аудиторию."],
+  ["05", "Соцсети", "Нативный монтаж и подача для Reels, Shorts и рекламных лент."],
+  ["06", "Серия", "Несколько визуальных ходов из одной идеи для быстрого теста."],
 ];
 
 const steps = [
-  ["01", "Ссылка", "Даёшь карточку товара, сайт или фото."],
-  ["02", "Направление", "Получаешь визуальную идею до производства."],
-  ["03", "Креатив", "Забираешь готовый рекламный ролик."],
+  ["01", "Показываешь продукт", "Ссылка, фотографии, описание и задача. Без длинного технического задания."],
+  ["02", "Выбираешь направление", "Сначала видишь идею, кадры и характер кампании. Потом запускаем производство."],
+  ["03", "Получаешь креативы", "Готовые ролики, обложки и версии под нужные площадки в одной выдаче."],
 ];
 
 export default function Home() {
   return (
     <main id="main-content" className="kfn-page">
       <Hero />
-      <Proof />
-      <CreativeSystem />
-      <CampaignCase />
+      <CampaignIntro />
+      <FormatBoard />
+      <ProductCase />
       <Method />
       <Access />
       <Footer />
@@ -83,10 +83,10 @@ function Hero() {
         <nav className="kfn-nav" aria-label="Основная навигация">
           <a href="#work">Работы</a>
           <a href="#method">Процесс</a>
-          <a href="#access">Доступ</a>
+          <a href="#access">Старт</a>
         </nav>
         <Link href="/brief" prefetch={false} className="kfn-header-link">
-          Начать
+          Обсудить проект
           <ArrowUpRight aria-hidden="true" />
         </Link>
       </header>
@@ -94,8 +94,9 @@ function Hero() {
       <div className="kfn-hero-stage">
         <h1 className="kfn-hero-title" id="hero-title">
           <span className="kfn-hero-line kfn-hero-line--serif">Создаём</span>
-          <span className="kfn-hero-line kfn-hero-line--solid">креативы</span>
-          <span className="kfn-hero-line kfn-hero-line--serif">для продукта</span>
+          <span className="kfn-hero-line kfn-hero-line--serif">рекламу</span>
+          <span className="kfn-hero-line kfn-hero-line--solid">которую</span>
+          <span className="kfn-hero-line kfn-hero-line--serif">не пролистать</span>
         </h1>
 
         {heroShots.map((shot, index) => (
@@ -104,19 +105,20 @@ function Hero() {
               src={asset(shot.src)}
               alt={shot.alt}
               fill
-              priority
-              sizes={index === 5 ? "(max-width: 767px) 36vw, 15vw" : "(max-width: 767px) 34vw, 13vw"}
+              priority={index < 4}
+              sizes="(max-width: 767px) 38vw, (max-width: 1199px) 24vw, 16vw"
             />
           </figure>
         ))}
 
-        <span className="kfn-signal-mark" aria-hidden="true">*</span>
+        <span className="kfn-signal-star" aria-hidden="true">*</span>
+        <span className="kfn-pencil-note" aria-hidden="true">art / product / motion</span>
       </div>
 
       <div className="kfn-hero-foot">
-        <p>AI-реклама для товаров и услуг</p>
+        <p>Рекламные креативы для товаров и сервисов</p>
         <Link href="/brief" prefetch={false} className="kfn-text-cta">
-          Создать первый креатив
+          Показать свой продукт
           <ArrowUpRight aria-hidden="true" />
         </Link>
         <p className="kfn-hero-location">KreoFlow / 2026</p>
@@ -125,14 +127,14 @@ function Hero() {
   );
 }
 
-function Proof() {
+function CampaignIntro() {
   return (
     <section className="kfn-proof" id="work" aria-labelledby="proof-title">
       <div className="kfn-proof-copy">
-        <p className="kfn-kicker">Не шаблон. Рекламная идея.</p>
-        <h2 id="proof-title">Один товар.<br />Серия сцен.</h2>
+        <p className="kfn-kicker">Не шаблон. Кампания.</p>
+        <h2 id="proof-title">Один продукт.<br />Целый мир.</h2>
         <p>
-          Из ссылки на продукт собираем цельную визуальную кампанию: от первого кадра до готового ролика.
+          Собираем визуальную идею, в которой продукт живёт: в руках, на человеке, в свете, фактуре и движении. Потом превращаем её в серию рекламных креативов.
         </p>
         <Button asChild className="kfn-button kfn-button--signal">
           <Link href="/brief" prefetch={false}>
@@ -142,42 +144,43 @@ function Proof() {
         </Button>
       </div>
 
-      <div className="kfn-proof-collage" aria-label="Примеры рекламных направлений">
+      <div className="kfn-proof-collage" aria-label="Фрагменты рекламной кампании">
         <figure className="kfn-proof-image kfn-proof-image--main">
           <Image
-            src={asset("/media/campaign/kreoflow-perfume.webp")}
-            alt="Креатив для парфюмерного продукта"
+            src={asset("/media/campaign/kreoflow-editorial-center.webp")}
+            alt="Портретная рекламная кампания для продукта"
             fill
-            sizes="(max-width: 767px) 62vw, 28vw"
+            sizes="(max-width: 767px) 64vw, 31vw"
           />
         </figure>
         <figure className="kfn-proof-image kfn-proof-image--top">
           <Image
-            src={asset("/media/campaign/kreoflow-eyewear.webp")}
-            alt="Креатив для модных очков"
+            src={asset("/media/campaign/kreoflow-editorial-headphones.webp")}
+            alt="Редакционный кадр продукта на человеке"
             fill
-            sizes="(max-width: 767px) 42vw, 18vw"
+            sizes="(max-width: 767px) 42vw, 19vw"
           />
         </figure>
         <figure className="kfn-proof-image kfn-proof-image--bottom">
           <Image
-            src={asset("/media/campaign/kreoflow-sneaker.webp")}
-            alt="Креатив для спортивной обуви"
+            src={asset("/media/campaign/kreoflow-editorial-group.webp")}
+            alt="Групповой рекламный кадр с несколькими продуктами"
             fill
-            sizes="(max-width: 767px) 44vw, 19vw"
+            sizes="(max-width: 767px) 48vw, 23vw"
           />
         </figure>
+        <span className="kfn-collage-stroke" aria-hidden="true" />
       </div>
     </section>
   );
 }
 
-function CreativeSystem() {
+function FormatBoard() {
   return (
     <section className="kfn-system" aria-labelledby="system-title">
       <div className="kfn-system-media" aria-hidden="true">
         <Image
-          src={asset("/media/campaign/kreoflow-speaker.webp")}
+          src={asset("/media/campaign/kreoflow-editorial-group.webp")}
           alt=""
           fill
           sizes="100vw"
@@ -200,14 +203,14 @@ function CreativeSystem() {
   );
 }
 
-function CampaignCase() {
+function ProductCase() {
   return (
     <section className="kfn-case" aria-labelledby="case-title">
       <div className="kfn-case-copy">
-        <p className="kfn-kicker">Один объект / три характера</p>
-        <h2 id="case-title">Не просто<br />показать.<br /><em>Продать.</em></h2>
+        <p className="kfn-kicker">Продукт в центре</p>
+        <h2 id="case-title">Вещь,<br />которую<br /><em>хочется.</em></h2>
         <p>
-          Для одного продукта можно проверить разные эмоции, аудитории и офферы, не организуя новую съёмку.
+          Не прячем товар за эффектами. Показываем его так, чтобы человек почувствовал характер, материал и желание выбрать именно его.
         </p>
         <a href="#method" className="kfn-inline-link">
           Как это работает
@@ -216,24 +219,23 @@ function CampaignCase() {
       </div>
 
       <div className="kfn-case-gallery">
-        <figure className="kfn-case-image kfn-case-image--watch">
+        <figure className="kfn-case-image kfn-case-image--primary">
           <Image
-            src={asset("/media/campaign/kreoflow-watch.webp")}
-            alt="Минималистичный креатив для часов"
+            src={asset("/media/campaign/kreoflow-editorial-sneakers.webp")}
+            alt="Fashion-кампания с кроссовками на человеке"
             fill
-            sizes="(max-width: 767px) 62vw, 28vw"
+            sizes="(max-width: 767px) 100vw, 42vw"
           />
-          <figcaption>Precision / 01</figcaption>
         </figure>
-        <figure className="kfn-case-image kfn-case-image--headphones">
+        <figure className="kfn-case-image kfn-case-image--secondary">
           <Image
-            src={asset("/media/campaign/kreoflow-headphones.webp")}
-            alt="Технологичный креатив для наушников"
+            src={asset("/media/campaign/kreoflow-editorial-backpack.webp")}
+            alt="Редакционный рекламный кадр рюкзака"
             fill
-            sizes="(max-width: 767px) 54vw, 23vw"
+            sizes="(max-width: 767px) 58vw, 25vw"
           />
-          <figcaption>Energy / 02</figcaption>
         </figure>
+        <p className="kfn-case-caption">Product / people / desire</p>
       </div>
     </section>
   );
@@ -243,8 +245,8 @@ function Method() {
   return (
     <section className="kfn-method" id="method" aria-labelledby="method-title">
       <div className="kfn-method-head">
-        <p className="kfn-kicker">От ссылки до выдачи</p>
-        <h2 id="method-title">Три шага.<br />Ничего лишнего.</h2>
+        <p className="kfn-kicker">Три шага вместо продакшн-хаоса</p>
+        <h2 id="method-title">Как<br />работаем.</h2>
       </div>
       <div className="kfn-steps">
         {steps.map(([number, title, copy]) => (
@@ -262,17 +264,13 @@ function Method() {
 function Access() {
   return (
     <section className="kfn-access" id="access" aria-labelledby="access-title">
-      <p className="kfn-kicker">Early access / первые пользователи</p>
-      <div className="kfn-access-layout">
-        <h2 id="access-title">Твой продукт.<br />Наша подача.</h2>
-        <div className="kfn-access-offer">
-          <p><strong>100</strong> credits</p>
-          <p><strong>990 ₽</strong> на старте</p>
-          <p>Готовые ролики — от 590 ₽</p>
-        </div>
+      <p className="kfn-kicker">Первый запуск</p>
+      <h2 id="access-title">Покажи продукт.<br />Мы покажем идею.</h2>
+      <div className="kfn-access-offer">
+        <p>Короткий бриф, визуальное направление и первый набор сцен для твоей рекламы.</p>
         <Button asChild className="kfn-button kfn-button--dark">
           <Link href="/brief" prefetch={false}>
-            Попробовать KreoFlow
+            Начать проект
             <ArrowUpRight aria-hidden="true" />
           </Link>
         </Button>
@@ -286,10 +284,7 @@ function Footer() {
     <footer className="kfn-footer">
       <Link href="/" className="kfn-footer-brand">KreoFlow</Link>
       <p>AI creative production</p>
-      <div>
-        <Link href="/brief" prefetch={false}>Бриф</Link>
-        <Link href="/studio">Studio</Link>
-      </div>
+      <a href="#main-content">Наверх</a>
     </footer>
   );
 }

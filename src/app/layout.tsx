@@ -3,6 +3,8 @@ import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/600.css";
 import "@fontsource/space-grotesk/700.css";
 import "@fontsource/barlow-condensed/700.css";
+import "@fontsource/bodoni-moda/400.css";
+import "@fontsource/bodoni-moda/500.css";
 import "@fontsource/cormorant-garamond/500.css";
 import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource/instrument-sans/400.css";

@@ -17,5 +17,11 @@ The files under `campaign/` were generated specifically for the KreoFlow editori
 - `kreoflow-watch.webp`
 - `kreoflow-eyewear.webp`
 - `kreoflow-speaker.webp`
+- `kreoflow-editorial-center.webp`
+- `kreoflow-editorial-portrait.webp`
+- `kreoflow-editorial-sneakers.webp`
+- `kreoflow-editorial-group.webp`
+- `kreoflow-editorial-headphones.webp`
+- `kreoflow-editorial-backpack.webp`
 
-They are fictional, brandless product campaign concepts. No logos, trademarks, client work, testimonials, or real performance claims are represented.
+They are fictional, brandless product campaign concepts. The editorial set combines real-photoshoot art direction with paper, tape, marker, paint, and contact-sheet treatments. No logos, trademarks, client work, testimonials, or real performance claims are represented.
