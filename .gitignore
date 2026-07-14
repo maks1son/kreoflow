@@ -44,3 +44,6 @@ next-env.d.ts
 .agents/
 project-docs/
 HANDOFF.md
+
+# isolated agent worktrees
+.worktrees/
