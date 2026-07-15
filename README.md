@@ -34,7 +34,19 @@ Live GitHub Pages build:
 ## Notes
 
 - Data is stored in `localStorage` under `reelsfactory.orders.v1`.
-- No real auth, payments, video APIs or AI APIs are connected in v1.
+- Email OTP auth is ready for Supabase configuration; payments, video APIs and AI APIs are not connected in v1.
 - Heavy video generation is represented as a manual/concierge workflow.
 - The local generator in `src/lib/generator.ts` is the future adapter point for OpenAI, Claude or Gemini.
 - Internal project documentation lives in local-only `project-docs/`.
+
+## Email OTP authentication
+
+The `/login` route implements passwordless email sign-in through Supabase. Sessions are persisted in the browser and refresh automatically, so a user remains signed in until they explicitly sign out, clear browser storage, or the session is revoked.
+
+1. Copy `.env.example` to `.env.local` and add the public project URL and anon/publishable key.
+2. In Supabase Authentication, keep email sign-ups enabled.
+3. Change the email template to include the six-digit token with `{{ .Token }}`.
+4. Use a 10-minute OTP expiry and the default 60-second resend interval.
+5. Add the local and deployed site URLs to the project URL configuration.
+
+For GitHub Pages, create repository variable `NEXT_PUBLIC_SUPABASE_URL` and repository secret `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Never add a service-role key to this frontend.

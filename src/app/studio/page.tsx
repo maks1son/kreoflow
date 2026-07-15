@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { Suspense, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -9,10 +9,13 @@ import {
   ClipboardList,
   ExternalLink,
   Link2,
+  LogOut,
   PanelTop,
   UploadCloud,
 } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { ProtectedRoute } from "@/components/auth/protected-route";
+import { useAuth } from "@/components/auth/auth-provider";
 import {
   getOrdersSnapshot,
   getServerOrdersSnapshot,
@@ -24,6 +27,7 @@ import type { CreativeAsset, Order, OrderStatus } from "@/lib/types";
 import { cn, formatDate, goalLabels, orderedStatuses, statusMeta, styleLabels } from "@/lib/utils";
 
 export default function StudioPage() {
+  const { configured, user, signOut } = useAuth();
   const ordersSnapshot = useSyncExternalStore(
     subscribeOrders,
     getOrdersSnapshot,
@@ -49,11 +53,24 @@ export default function StudioPage() {
   }
 
   return (
+    <Suspense fallback={<main className="grid min-h-screen place-items-center">Загрузка Studio…</main>}>
+    <ProtectedRoute>
     <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <Brand />
           <div className="flex gap-2">
+            {configured && user ? (
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                title={user.email || "Аккаунт KreoFlow"}
+                className="rf-focus inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-rose-600 hover:text-rose-700"
+              >
+                <LogOut size={16} aria-hidden="true" />
+                Выйти
+              </button>
+            ) : null}
             <Link
               href="/"
               className="rf-focus inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-950"
@@ -181,6 +198,8 @@ export default function StudioPage() {
         </div>
       </div>
     </main>
+    </ProtectedRoute>
+    </Suspense>
   );
 }
 
