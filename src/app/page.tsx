@@ -110,13 +110,18 @@ function Hero() {
           <svg viewBox="0 0 112 88" focusable="false">
             <path
               className="kfn-signal-doodle__echo"
-              d="M12 60C26 51 21 28 36 26C49 25 48 53 62 51"
+              d="M10 46C30 17 76 11 103 42C81 73 35 77 10 46Z"
             />
             <path
               className="kfn-signal-doodle__main"
-              d="M8 57C23 48 18 24 35 22C50 20 46 50 61 48C76 46 69 17 86 15C103 13 110 31 100 44C88 59 64 49 57 66C50 84 28 80 31 62C34 46 62 34 80 41"
+              d="M8 43C30 16 74 13 104 41C80 72 33 74 8 43Z"
             />
-            <path className="kfn-signal-doodle__flick" d="M94 8C98 13 104 11 108 15" />
+            <path
+              className="kfn-signal-doodle__flick"
+              d="M48 42C48 32 56 26 65 28C74 30 78 40 74 49C70 58 59 61 51 54C47 51 46 47 48 42Z"
+            />
+            <path className="kfn-signal-doodle__echo" d="M27 14C45 4 75 5 91 15" />
+            <path className="kfn-signal-doodle__flick" d="M66 62C66 70 63 76 66 83" />
           </svg>
         </span>
         <span className="kfn-pencil-note" aria-hidden="true">art / product / motion</span>
