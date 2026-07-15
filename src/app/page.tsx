@@ -119,13 +119,20 @@ function Hero() {
         <span className="kfn-pencil-note" aria-hidden="true">art / product / motion</span>
       </div>
 
-      <Link
-        href="/brief"
-        prefetch={false}
-        className="kfn-hero-cta"
+      <div
+        className="kfn-hero-meta"
+        aria-label="Креативы для бизнеса. Полный цикл производства."
       >
-        Запустить кампанию
-      </Link>
+        <p className="kfn-hero-meta__item">
+          <span>Креативы для бизнеса</span>
+          <strong>Товары · услуги · бренды</strong>
+        </p>
+        <span className="kfn-hero-meta__divider" aria-hidden="true" />
+        <p className="kfn-hero-meta__item">
+          <span>Полный цикл</span>
+          <strong>От идеи до выдачи</strong>
+        </p>
+      </div>
     </section>
   );
 }
