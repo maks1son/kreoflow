@@ -197,10 +197,10 @@
 }
 
 .kfn-hero-shot--center {
-  top: 39%;
+  top: 15%;
   left: 48.2%;
-  z-index: 10;
-  width: clamp(190px, 15.2vw, 244px);
+  z-index: 5;
+  width: clamp(184px, 14vw, 228px);
   aspect-ratio: 2 / 3;
   transform: translate(-50%, -20%) rotate(-4deg);
   box-shadow: 0 26px 70px rgb(0 0 0 / 0.52);
@@ -812,7 +812,7 @@
   }
 
   .kfn-hero-shot--center {
-    top: 44%;
+    top: 22%;
     left: 51%;
     width: 34vw;
   }
@@ -1027,7 +1027,7 @@
   }
 
   .kfn-hero-shot--center {
-    top: 43%;
+    top: 21%;
     width: 36vw;
   }
 
