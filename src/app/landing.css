@@ -214,7 +214,7 @@
 }
 
 .kfn-hero-shot--sneakers {
-  right: -0.4%;
+  right: max(-0.4%, calc((100vw - 1120px) / 2 - 225px));
   bottom: -5%;
   width: clamp(190px, 15.5vw, 250px);
   aspect-ratio: 3 / 4;
