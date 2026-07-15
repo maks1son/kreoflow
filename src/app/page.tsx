@@ -8,8 +8,8 @@ const asset = (path: string) => `${mediaBase}${path}`;
 
 const heroShots = [
   {
-    src: "/media/campaign/kreoflow-editorial-headphones.webp",
-    alt: "Живой рекламный кадр с человеком в серебристых наушниках",
+    src: "/media/campaign/kreoflow-editorial-watch-still-life.webp",
+    alt: "Предметная фотосессия серебристых часов в бумажном коллаже с ручной краской",
     className: "kfn-hero-shot kfn-hero-shot--cover",
   },
   {

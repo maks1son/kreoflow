@@ -180,11 +180,11 @@
 }
 
 .kfn-hero-shot--cover {
-  top: 2%;
-  left: 22%;
-  width: clamp(110px, 10vw, 154px);
-  aspect-ratio: 1;
-  transform: rotate(-2deg);
+  top: 1%;
+  left: 18%;
+  width: clamp(190px, 14vw, 250px);
+  aspect-ratio: 4 / 3;
+  transform: rotate(-2.8deg);
 }
 
 .kfn-hero-shot--portrait {
@@ -800,9 +800,9 @@
   }
 
   .kfn-hero-shot--cover {
-    top: 4%;
-    left: 13%;
-    width: 25vw;
+    top: 3%;
+    left: 7%;
+    width: 31vw;
   }
 
   .kfn-hero-shot--portrait {

@@ -9,7 +9,7 @@ Both source pages were marked free to use when downloaded on 2026-07-11. Keep th
 
 ## Generated campaign stills
 
-The files under `campaign/` were generated specifically for the KreoFlow editorial landing on 2026-07-14 with OpenAI image generation and then converted to optimized WebP assets:
+The files under `campaign/` were generated specifically for the KreoFlow editorial landing on 2026-07-14 and 2026-07-15 with OpenAI image generation and then converted to optimized WebP assets:
 
 - `kreoflow-perfume.webp`
 - `kreoflow-headphones.webp`
@@ -23,5 +23,6 @@ The files under `campaign/` were generated specifically for the KreoFlow editori
 - `kreoflow-editorial-group.webp`
 - `kreoflow-editorial-headphones.webp`
 - `kreoflow-editorial-backpack.webp`
+- `kreoflow-editorial-watch-still-life.webp`
 
 They are fictional, brandless product campaign concepts. The editorial set combines real-photoshoot art direction with paper, tape, marker, paint, and contact-sheet treatments. No logos, trademarks, client work, testimonials, or real performance claims are represented.
