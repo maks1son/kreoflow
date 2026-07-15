@@ -9,9 +9,8 @@ import { createOrderFromBrief } from "@/lib/generator";
 import { upsertOrder } from "@/lib/storage";
 import type { BriefInput, Goal, Niche, Style } from "@/lib/types";
 import { cn, goalLabels, styleLabels } from "@/lib/utils";
+import campaignGroup from "../../../public/media/campaign/kreoflow-editorial-group.webp";
 
-const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
-const asset = (path: string) => `${mediaBase}${path}`;
 const draftKey = "reelsfactory.brief-draft.v1";
 
 const initialBrief: BriefInput = {
@@ -182,7 +181,7 @@ export default function BriefPage() {
 
           <figure className="brief-aside-visual">
             <Image
-              src={asset("/media/campaign/kreoflow-editorial-group.webp")}
+              src={campaignGroup}
               alt="Рекламная съёмка продукта в цветном студийном свете"
               fill
               sizes="(max-width: 920px) 0px, 34vw"
