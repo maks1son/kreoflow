@@ -107,22 +107,14 @@ function Hero() {
         ))}
 
         <span className="kfn-signal-doodle" aria-hidden="true">
-          <svg viewBox="0 0 112 88" focusable="false">
-            <path
-              className="kfn-signal-doodle__echo"
-              d="M10 46C30 17 76 11 103 42C81 73 35 77 10 46Z"
-            />
-            <path
-              className="kfn-signal-doodle__main"
-              d="M8 43C30 16 74 13 104 41C80 72 33 74 8 43Z"
-            />
-            <path
-              className="kfn-signal-doodle__flick"
-              d="M48 42C48 32 56 26 65 28C74 30 78 40 74 49C70 58 59 61 51 54C47 51 46 47 48 42Z"
-            />
-            <path className="kfn-signal-doodle__echo" d="M27 14C45 4 75 5 91 15" />
-            <path className="kfn-signal-doodle__flick" d="M66 62C66 70 63 76 66 83" />
-          </svg>
+          <Image
+            src={asset("/media/campaign/kreoflow-signal-flame.png")}
+            alt=""
+            fill
+            priority
+            sizes="140px"
+            style={{ objectFit: "contain", transform: "scale(1.6)" }}
+          />
         </span>
         <span className="kfn-pencil-note" aria-hidden="true">art / product / motion</span>
       </div>

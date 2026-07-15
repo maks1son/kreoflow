@@ -24,5 +24,6 @@ The files under `campaign/` were generated specifically for the KreoFlow editori
 - `kreoflow-editorial-headphones.webp`
 - `kreoflow-editorial-backpack.webp`
 - `kreoflow-editorial-watch-still-life.webp`
+- `kreoflow-signal-flame.png`
 
 They are fictional, brandless product campaign concepts. The editorial set combines real-photoshoot art direction with paper, tape, marker, paint, and contact-sheet treatments. No logos, trademarks, client work, testimonials, or real performance claims are represented.
