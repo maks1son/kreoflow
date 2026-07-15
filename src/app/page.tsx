@@ -106,7 +106,19 @@ function Hero() {
           </figure>
         ))}
 
-        <span className="kfn-signal-star" aria-hidden="true">*</span>
+        <span className="kfn-signal-doodle" aria-hidden="true">
+          <svg viewBox="0 0 112 88" focusable="false">
+            <path
+              className="kfn-signal-doodle__echo"
+              d="M12 60C26 51 21 28 36 26C49 25 48 53 62 51"
+            />
+            <path
+              className="kfn-signal-doodle__main"
+              d="M8 57C23 48 18 24 35 22C50 20 46 50 61 48C76 46 69 17 86 15C103 13 110 31 100 44C88 59 64 49 57 66C50 84 28 80 31 62C34 46 62 34 80 41"
+            />
+            <path className="kfn-signal-doodle__flick" d="M94 8C98 13 104 11 108 15" />
+          </svg>
+        </span>
         <span className="kfn-pencil-note" aria-hidden="true">art / product / motion</span>
       </div>
 

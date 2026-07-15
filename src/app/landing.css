@@ -155,6 +155,7 @@
 }
 
 .kfn-hero-line--solid {
+  margin-bottom: clamp(0.25rem, 0.35vw, 0.45rem);
   color: var(--kfn-taupe);
   font-family: "Barlow Condensed", sans-serif;
   font-size: clamp(7rem, 11.6vw, 12.2rem);
@@ -196,9 +197,9 @@
 }
 
 .kfn-hero-shot--group {
-  top: 2%;
-  right: 4.2%;
-  width: clamp(210px, 17vw, 280px);
+  top: 1%;
+  right: 6%;
+  width: clamp(260px, 20vw, 360px);
   aspect-ratio: 16 / 9;
   transform: rotate(1deg);
 }
@@ -229,17 +230,44 @@
   transform: rotate(1deg);
 }
 
-.kfn-signal-star {
+.kfn-signal-doodle {
   position: absolute;
   z-index: 12;
-  top: 35%;
-  right: 22%;
+  top: 36%;
+  right: 21.5%;
+  width: clamp(76px, 6vw, 108px);
+  aspect-ratio: 112 / 88;
   color: var(--kfn-signal);
-  font-family: "Bodoni Moda", serif;
-  font-size: clamp(5rem, 7vw, 7.5rem);
-  font-weight: 500;
-  line-height: 1;
-  transform: rotate(14deg);
+  transform: rotate(-7deg);
+}
+
+.kfn-signal-doodle svg {
+  display: block;
+  overflow: visible;
+  width: 100%;
+  height: 100%;
+}
+
+.kfn-signal-doodle path {
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.kfn-signal-doodle__main {
+  stroke-width: 5.5;
+}
+
+.kfn-signal-doodle__echo {
+  opacity: 0.38;
+  stroke-width: 2.2;
+}
+
+.kfn-signal-doodle__flick {
+  opacity: 0.72;
+  stroke-width: 3.4;
 }
 
 .kfn-pencil-note {
@@ -835,10 +863,10 @@
     width: 44vw;
   }
 
-  .kfn-signal-star {
-    top: 35%;
-    right: 9%;
-    font-size: 4.6rem;
+  .kfn-signal-doodle {
+    top: 35.5%;
+    right: -1%;
+    width: 16vw;
   }
 
   .kfn-pencil-note {
