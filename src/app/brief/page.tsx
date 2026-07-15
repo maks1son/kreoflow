@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, type ReactNode, useEffect, useMemo, useState } from "react";
+import { ProtectedRoute } from "@/components/auth/protected-route";
 import { createOrderFromBrief } from "@/lib/generator";
 import { upsertOrder } from "@/lib/storage";
 import type { BriefInput, Goal, Niche, Style } from "@/lib/types";
@@ -58,6 +59,26 @@ const steps = [
 ];
 
 export default function BriefPage() {
+  return (
+    <Suspense fallback={<BriefAccessFallback />}>
+      <ProtectedRoute requireConfigured>
+        <BriefContent />
+      </ProtectedRoute>
+    </Suspense>
+  );
+}
+
+function BriefAccessFallback() {
+  return (
+    <main className="grid min-h-screen place-items-center bg-[#f4f0e9] px-6" aria-live="polite">
+      <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-[#706b65]">
+        Проверяем сессию…
+      </p>
+    </main>
+  );
+}
+
+function BriefContent() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [brief, setBrief] = useState<BriefInput>(initialBrief);
