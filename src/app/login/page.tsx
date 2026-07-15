@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { mapAuthError } from "@/lib/auth/errors";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { isValidEmail, normalizeEmail, normalizeOtp } from "@/lib/auth/validation";
+import authProofImage from "../../../public/media/campaign/kreoflow-editorial-watch-still-life.webp";
 import "./login.css";
 
 type LoginStep = "email" | "code";
@@ -99,7 +100,7 @@ function LoginContent() {
     <main className="auth-shell">
       <section className="auth-proof" aria-label="KreoFlow creative production">
         <Image
-          src="/media/campaign/kreoflow-editorial-watch-still-life.webp"
+          src={authProofImage}
           alt="Editorial product campaign created for KreoFlow"
           fill
           priority
