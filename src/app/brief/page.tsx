@@ -1,15 +1,17 @@
 "use client";
 
-import { FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { createOrderFromBrief } from "@/lib/generator";
 import { upsertOrder } from "@/lib/storage";
 import type { BriefInput, Goal, Niche, Style } from "@/lib/types";
 import { cn, goalLabels, styleLabels } from "@/lib/utils";
 
+const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
+const asset = (path: string) => `${mediaBase}${path}`;
 const draftKey = "reelsfactory.brief-draft.v1";
 
 const initialBrief: BriefInput = {
@@ -26,10 +28,34 @@ const initialBrief: BriefInput = {
 };
 
 const steps = [
-  { title: "Бизнес", text: "Название, ниша и ссылки" },
-  { title: "Оффер", text: "Что продаем и кому" },
-  { title: "Стиль", text: "Цель и подача" },
-  { title: "Контакт", text: "Куда отдавать демо" },
+  {
+    title: "Бизнес",
+    text: "Название, ниша и ссылки",
+    eyebrow: "Шаг 01 / Основа",
+    heading: "Покажи, что будем рекламировать.",
+    intro: "Название и ссылка помогут нам быстро понять продукт и его визуальный контекст.",
+  },
+  {
+    title: "Оффер",
+    text: "Что продаём и кому",
+    eyebrow: "Шаг 02 / Смысл",
+    heading: "Сформулируй предложение.",
+    intro: "Достаточно написать своими словами: что покупает клиент и почему это ему нужно.",
+  },
+  {
+    title: "Подача",
+    text: "Цель и характер кампании",
+    eyebrow: "Шаг 03 / Арт-дирекшн",
+    heading: "Задай характер креативов.",
+    intro: "Выбери главную задачу кампании и ощущение, которое должен оставить ролик.",
+  },
+  {
+    title: "Контакт",
+    text: "Куда отправить результат",
+    eyebrow: "Шаг 04 / Связь",
+    heading: "Оставь удобный контакт.",
+    intro: "Мы соберём первичную концепцию и свяжемся, чтобы согласовать следующий шаг.",
+  },
 ];
 
 export default function BriefPage() {
@@ -68,12 +94,26 @@ export default function BriefPage() {
     setBrief((current) => ({ ...current, [key]: value }));
   }
 
+  function moveToStep(nextStep: number) {
+    setStep(Math.min(Math.max(nextStep, 0), steps.length - 1));
+
+    if (window.matchMedia("(max-width: 920px)").matches) {
+      window.requestAnimationFrame(() => {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        document.querySelector(".brief-workspace")?.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!stepIsValid) return;
 
     if (step < steps.length - 1) {
-      setStep((current) => current + 1);
+      moveToStep(step + 1);
       return;
     }
 
@@ -88,81 +128,105 @@ export default function BriefPage() {
     router.push(`/delivery?orderId=${encodeURIComponent(order.id)}`);
   }
 
+  const currentStep = steps[step];
+
   return (
-    <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-8 flex items-center justify-between gap-4">
-          <Brand />
-          <Link
-            href="/"
-            className="rf-focus inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-950 hover:text-slate-950"
-          >
-            <ArrowLeft size={16} aria-hidden="true" />
-            На главную
-          </Link>
-        </header>
+    <main className="brief-page">
+      <a className="brief-skip-link" href="#brief-form">
+        К форме
+      </a>
 
-        <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
-          <aside className="rf-panel rounded-[8px] p-5 lg:sticky lg:top-5 lg:self-start">
-            <p className="rf-kicker text-rose-700">Client intake</p>
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
-              Бриф для первого пакета креативов.
+      <header className="brief-header">
+        <Link href="/" className="brief-wordmark" aria-label="KreoFlow, на главную">
+          KreoFlow
+        </Link>
+        <p className="brief-header-status" aria-hidden="true">
+          Заявка на кампанию / 0{step + 1}
+        </p>
+        <Link href="/" className="brief-back-link">
+          <ArrowLeft aria-hidden="true" />
+          На главную
+        </Link>
+      </header>
+
+      <div className="brief-shell">
+        <aside className="brief-aside">
+          <div className="brief-intro">
+            <p className="brief-kicker">Креативы для продукта</p>
+            <h1>
+              Покажи продукт.
+              <span>Мы соберём кампанию.</span>
             </h1>
-            <p className="mt-4 text-sm leading-6 text-slate-600">
-              Заполни вводные как клиент. На последнем шаге система создаст
-              заказ, сценарии, план и delivery-страницу.
+            <p className="brief-intro-copy">
+              Четыре коротких шага. Без длинного технического задания и сложных терминов.
             </p>
-            <div className="mt-6 space-y-3">
-              {steps.map((item, index) => (
-                <button
-                  key={item.title}
-                  type="button"
-                  onClick={() => setStep(index)}
-                  className={cn(
-                    "rf-focus flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-md border p-3 text-left transition",
-                    index === step
-                      ? "border-slate-950 bg-slate-950 text-white"
-                      : "border-rose-100 bg-white text-slate-700 hover:border-rose-300",
-                  )}
-                >
-                  <span className="grid size-8 shrink-0 place-items-center rounded-md bg-white/12 font-mono text-xs font-bold">
-                    0{index + 1}
-                  </span>
-                  <span>
-                    <span className="block font-bold">{item.title}</span>
-                    <span className={cn("text-xs", index === step ? "text-white/68" : "text-slate-500")}>
-                      {item.text}
-                    </span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </aside>
+          </div>
 
-          <form onSubmit={submit} className="rf-panel rounded-[8px] p-5 sm:p-7">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div>
-                <p className="rf-kicker text-blue-700">Step {step + 1} / 4</p>
-                <h2 className="mt-2 text-2xl font-black text-slate-950">{steps[step].title}</h2>
-              </div>
-              <div className="hidden rounded-md bg-rose-50 px-3 py-2 font-mono text-xs font-semibold text-rose-700 sm:block">
-                autosave on
-              </div>
-            </div>
+          <nav className="brief-steps" aria-label="Этапы заявки">
+            {steps.map((item, index) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={() => moveToStep(index)}
+                className={cn("brief-step", index === step && "is-active", index < step && "is-complete")}
+                aria-current={index === step ? "step" : undefined}
+              >
+                <span className="brief-step-number">0{index + 1}</span>
+                <span className="brief-step-copy">
+                  <strong>{item.title}</strong>
+                  <small>{item.text}</small>
+                </span>
+              </button>
+            ))}
+          </nav>
 
+          <figure className="brief-aside-visual">
+            <Image
+              src={asset("/media/campaign/kreoflow-editorial-group.webp")}
+              alt="Рекламная съёмка продукта в цветном студийном свете"
+              fill
+              sizes="(max-width: 920px) 0px, 34vw"
+              priority
+            />
+            <span className="brief-aside-tape" aria-hidden="true" />
+            <figcaption>От идеи до готовой серии / KreoFlow</figcaption>
+          </figure>
+        </aside>
+
+        <section className="brief-workspace" aria-labelledby="brief-step-title">
+          <div className="brief-workspace-head">
+            <div>
+              <p className="brief-kicker brief-kicker-dark">{currentStep.eyebrow}</p>
+              <h2 id="brief-step-title">{currentStep.heading}</h2>
+              <p>{currentStep.intro}</p>
+            </div>
+            <p className="brief-autosave">Черновик сохраняется автоматически</p>
+          </div>
+
+          <div className="brief-progress" aria-label={`Шаг ${step + 1} из ${steps.length}`}>
+            {steps.map((item, index) => (
+              <span
+                key={item.title}
+                className={cn(index <= step && "is-active")}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+
+          <form id="brief-form" onSubmit={submit} className="brief-form">
             {step === 0 && (
-              <section className="grid gap-4">
+              <section className="brief-fields" aria-label="Информация о бизнесе">
                 <Field label="Название бизнеса" required>
                   <input
                     name="businessName"
                     value={brief.businessName}
                     onChange={(event) => update("businessName", event.target.value)}
-                    className="input"
+                    className="brief-control"
                     placeholder="Например, Luma Skin Studio"
                     autoComplete="organization"
                   />
                 </Field>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="brief-field-grid">
                   <Choice
                     label="Ниша"
                     value={brief.niche}
@@ -176,7 +240,7 @@ export default function BriefPage() {
                     <input
                       value={brief.socialUrl}
                       onChange={(event) => update("socialUrl", event.target.value)}
-                      className="input"
+                      className="brief-control"
                       placeholder="VK, Instagram, Telegram"
                     />
                   </Field>
@@ -185,7 +249,7 @@ export default function BriefPage() {
                   <input
                     value={brief.websiteUrl}
                     onChange={(event) => update("websiteUrl", event.target.value)}
-                    className="input"
+                    className="brief-control"
                     placeholder="https://..."
                     inputMode="url"
                   />
@@ -194,58 +258,57 @@ export default function BriefPage() {
             )}
 
             {step === 1 && (
-              <section className="grid gap-4">
+              <section className="brief-fields" aria-label="Информация об оффере">
                 <Field label="Что продвигаем" required>
                   <textarea
                     value={brief.offer}
                     onChange={(event) => update("offer", event.target.value)}
-                    className="input min-h-32 resize-y"
-                    placeholder="Например: первичная консультация косметолога + уход сияние"
+                    className="brief-control brief-textarea"
+                    placeholder="Например: первичная консультация косметолога и программа ухода"
                   />
                 </Field>
-                <Field label="Кому продаем" required>
+                <Field label="Кому продаём" required>
                   <textarea
                     value={brief.audience}
                     onChange={(event) => update("audience", event.target.value)}
-                    className="input min-h-32 resize-y"
-                    placeholder="Кто эти люди, чего хотят, чего боятся перед записью"
+                    className="brief-control brief-textarea"
+                    placeholder="Кто эти люди, чего хотят и что мешает им решиться"
                   />
                 </Field>
               </section>
             )}
 
             {step === 2 && (
-              <section className="grid gap-4 sm:grid-cols-2">
-                <Choice
-                  label="Цель роликов"
-                  value={brief.goal}
-                  options={Object.entries(goalLabels)}
-                  onChange={(value) => update("goal", value as Goal)}
-                />
-                <Choice
-                  label="Стиль подачи"
-                  value={brief.style}
-                  options={Object.entries(styleLabels)}
-                  onChange={(value) => update("style", value as Style)}
-                />
-                <div className="rounded-md border border-blue-100 bg-blue-50 p-4 sm:col-span-2">
-                  <Sparkles className="text-blue-700" size={20} aria-hidden="true" />
-                  <p className="mt-3 text-sm leading-6 text-blue-950">
-                    На основе этих двух полей генератор подберет углы, хук,
-                    формат ролика и CTA. Это будущая точка подключения LLM.
-                  </p>
+              <section className="brief-fields" aria-label="Цель и подача креативов">
+                <div className="brief-choice-grid">
+                  <Choice
+                    label="Цель роликов"
+                    value={brief.goal}
+                    options={Object.entries(goalLabels)}
+                    onChange={(value) => update("goal", value as Goal)}
+                  />
+                  <Choice
+                    label="Стиль подачи"
+                    value={brief.style}
+                    options={Object.entries(styleLabels)}
+                    onChange={(value) => update("style", value as Style)}
+                  />
+                </div>
+                <div className="brief-note">
+                  <span>Арт-дирекшн</span>
+                  <p>По этим ответам мы подберём визуальные углы, первый кадр и характер всей серии.</p>
                 </div>
               </section>
             )}
 
             {step === 3 && (
-              <section className="grid gap-4">
+              <section className="brief-fields" aria-label="Контактные данные">
                 <Field label="Имя контактного человека" required>
                   <input
                     value={brief.contactName}
                     onChange={(event) => update("contactName", event.target.value)}
-                    className="input"
-                    placeholder="Кто будет принимать материалы"
+                    className="brief-control"
+                    placeholder="Как к тебе обращаться"
                     autoComplete="name"
                   />
                 </Field>
@@ -253,41 +316,40 @@ export default function BriefPage() {
                   <input
                     value={brief.contactMethod}
                     onChange={(event) => update("contactMethod", event.target.value)}
-                    className="input"
-                    placeholder="@username или +7..."
-                    autoComplete="email"
+                    className="brief-control"
+                    placeholder="@username, +7... или name@example.com"
                   />
                 </Field>
-                <div className="rounded-md border border-emerald-100 bg-emerald-50 p-4">
-                  <CheckCircle2 className="text-emerald-700" size={20} aria-hidden="true" />
-                  <p className="mt-3 text-sm leading-6 text-emerald-950">
-                    После отправки будет создан заказ, сценарии и ссылка на
-                    клиентскую галерею. Данные сохраняются только в браузере.
-                  </p>
+                <div className="brief-note">
+                  <span>После отправки</span>
+                  <p>Создадим страницу проекта с первичной структурой кампании. Данные останутся в этом браузере.</p>
                 </div>
               </section>
             )}
 
-            <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+            <div className="brief-actions">
               <button
                 type="button"
                 disabled={step === 0}
-                onClick={() => setStep((current) => Math.max(0, current - 1))}
-                className="rf-focus min-h-12 rounded-md border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:border-slate-950 disabled:cursor-not-allowed disabled:opacity-45"
+                onClick={() => moveToStep(step - 1)}
+                className="brief-button brief-button-secondary"
               >
                 Назад
               </button>
+              <p className="brief-action-note" aria-live="polite">
+                {stepIsValid ? "Шаг заполнен. Можно продолжать." : "Заполни обязательные поля."}
+              </p>
               <button
                 type="submit"
                 disabled={!stepIsValid || submitted}
-                className="rf-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-3 font-black text-white shadow-lg shadow-rose-600/18 transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
+                className="brief-button brief-button-primary"
               >
-                {step === steps.length - 1 ? "Создать пакет" : "Дальше"}
-                <ArrowRight size={17} aria-hidden="true" />
+                {step === steps.length - 1 ? "Отправить заявку" : "Продолжить"}
+                <ArrowRight aria-hidden="true" />
               </button>
             </div>
           </form>
-        </div>
+        </section>
       </div>
     </main>
   );
@@ -303,9 +365,9 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="mb-2 block text-sm font-bold text-slate-800">
-        {label} {required && <span className="text-rose-600">*</span>}
+    <label className="brief-field">
+      <span>
+        {label} {required && <b aria-label="обязательное поле">*</b>}
       </span>
       {children}
     </label>
@@ -324,20 +386,16 @@ function Choice({
   onChange: (value: string) => void;
 }) {
   return (
-    <fieldset>
-      <legend className="mb-2 text-sm font-bold text-slate-800">{label}</legend>
-      <div className="grid gap-2">
+    <fieldset className="brief-choice">
+      <legend>{label}</legend>
+      <div>
         {options.map(([key, text]) => (
           <button
             key={key}
             type="button"
             onClick={() => onChange(key)}
-            className={cn(
-              "rf-focus min-h-12 cursor-pointer rounded-md border px-4 py-3 text-left text-sm font-bold transition",
-              value === key
-                ? "border-slate-950 bg-slate-950 text-white"
-                : "border-rose-100 bg-white text-slate-700 hover:border-rose-300",
-            )}
+            className={cn("brief-choice-button", value === key && "is-active")}
+            aria-pressed={value === key}
           >
             {text}
           </button>
