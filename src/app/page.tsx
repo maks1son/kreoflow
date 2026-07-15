@@ -76,7 +76,7 @@ function Hero() {
           KreoFlow
         </Link>
         <nav className="kfn-nav" aria-label="Основная навигация">
-          <a href="#work">Работы</a>
+          <a href="#work">Кампания</a>
           <a href="#method">Процесс</a>
           <a href="#access">Старт</a>
         </nav>

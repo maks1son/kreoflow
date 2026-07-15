@@ -100,8 +100,10 @@
   align-items: center;
   justify-self: end;
   gap: 9px;
-  font-size: 0.92rem;
+  font-size: clamp(1.05rem, 1.2vw, 1.2rem);
   font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .kfn-header-link svg,
@@ -111,6 +113,12 @@
   width: 17px;
   height: 17px;
   stroke-width: 1.7;
+}
+
+.kfn-header-link svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.9;
 }
 
 .kfn-hero-stage {
@@ -769,7 +777,7 @@
   }
 
   .kfn-header-link {
-    font-size: 0.82rem;
+    font-size: 0.92rem;
   }
 
   .kfn-hero-stage {
