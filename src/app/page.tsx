@@ -80,8 +80,8 @@ function Hero() {
           <a href="#method">Процесс</a>
           <a href="#access">Старт</a>
         </nav>
-        <Link href="/brief" prefetch={false} className="kfn-header-link">
-          Обсудить проект
+        <Link href="/login" prefetch={false} className="kfn-header-link">
+          Войти
           <ArrowUpRight aria-hidden="true" />
         </Link>
       </header>
