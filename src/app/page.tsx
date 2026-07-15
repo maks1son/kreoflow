@@ -108,7 +108,7 @@ function Hero() {
 
         <span className="kfn-signal-doodle" aria-hidden="true">
           <Image
-            src={asset("/media/campaign/kreoflow-signal-flame.png")}
+            src={asset("/media/campaign/kreoflow-signal-bolt.png")}
             alt=""
             fill
             priority
