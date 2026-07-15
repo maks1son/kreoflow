@@ -63,6 +63,10 @@
   text-transform: uppercase;
 }
 
+.kfn-wordmark {
+  font-size: 1.2rem;
+}
+
 .kfn-nav {
   display: flex;
   align-items: center;
@@ -822,7 +826,7 @@
   }
 
   .kfn-wordmark {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .kfn-header-link {
