@@ -124,9 +124,7 @@ function Hero() {
         prefetch={false}
         className="kfn-hero-cta"
       >
-        <span className="kfn-hero-cta__liquid" aria-hidden="true" />
-        <span className="kfn-hero-cta__label">Запустить кампанию</span>
-        <ArrowUpRight aria-hidden="true" />
+        Запустить кампанию
       </Link>
     </section>
   );
