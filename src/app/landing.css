@@ -35,9 +35,8 @@
 
 .kfn-hero {
   position: relative;
-  height: calc(100svh - 18px);
+  height: 100svh;
   min-height: 760px;
-  max-height: 980px;
   overflow: hidden;
   border-bottom: 1px solid var(--kfn-line);
   background: var(--kfn-black);
@@ -750,9 +749,8 @@
 
 @media (max-width: 767px) {
   .kfn-hero {
-    height: calc(100svh - 12px);
+    height: 100svh;
     min-height: 720px;
-    max-height: 860px;
   }
 
   .kfn-header {
