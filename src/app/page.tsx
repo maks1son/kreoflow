@@ -191,7 +191,6 @@ function FormatBoard() {
         />
       </div>
       <div className="kfn-system-head">
-        <p className="kfn-kicker">Creative system / 01—06</p>
         <h2 id="system-title">Из продукта<br />в кампанию.</h2>
       </div>
       <div className="kfn-format-grid">
