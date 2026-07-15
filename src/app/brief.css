@@ -143,6 +143,7 @@
 
 .brief-intro h1 span {
   display: block;
+  margin-top: 0.12em;
   color: var(--brief-taupe);
   font-family: "Barlow Condensed", sans-serif;
   font-weight: 700;
