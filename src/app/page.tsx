@@ -71,11 +71,6 @@ export default function Home() {
 function Hero() {
   return (
     <section className="kfn-hero" aria-labelledby="hero-title">
-      <div className="kfn-rail" aria-hidden="true">
-        <span className="kfn-rail-mark">K</span>
-        <span className="kfn-rail-copy">AI creative production</span>
-      </div>
-
       <header className="kfn-header">
         <Link href="/" className="kfn-wordmark" aria-label="KreoFlow, на главную">
           KreoFlow

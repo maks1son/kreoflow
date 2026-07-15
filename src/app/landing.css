@@ -44,37 +44,9 @@
   isolation: isolate;
 }
 
-.kfn-rail {
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 30;
-  display: flex;
-  width: 68px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  border-right: 1px solid var(--kfn-line);
-  padding: 22px 0 28px;
-}
-
-.kfn-rail-mark {
-  font-family: "Bodoni Moda", serif;
-  font-size: 2rem;
-  font-style: italic;
-  font-weight: 500;
-}
-
-.kfn-rail-copy {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-}
-
 .kfn-header {
   position: absolute;
-  inset: 0 0 auto 68px;
+  inset: 0 0 auto 0;
   z-index: 40;
   display: grid;
   min-height: 72px;
@@ -136,7 +108,7 @@
 
 .kfn-hero-stage {
   position: absolute;
-  inset: 73px 0 70px 68px;
+  inset: 73px 0 70px;
 }
 
 .kfn-hero-title {
@@ -270,7 +242,7 @@
 
 .kfn-hero-foot {
   position: absolute;
-  inset: auto 0 0 68px;
+  inset: auto 0 0;
   z-index: 30;
   display: grid;
   min-height: 70px;
@@ -783,10 +755,6 @@
     height: calc(100svh - 12px);
     min-height: 720px;
     max-height: 860px;
-  }
-
-  .kfn-rail {
-    display: none;
   }
 
   .kfn-header {
