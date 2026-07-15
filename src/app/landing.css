@@ -395,8 +395,14 @@
 }
 
 .kfn-button--signal {
+  width: min(100%, 420px);
+  min-height: 64px;
+  justify-content: space-between;
+  border-radius: 16px;
+  padding: 0 28px;
   background: var(--kfn-signal);
   color: var(--kfn-black);
+  font-size: 1rem;
 }
 
 .kfn-button--signal:hover {
