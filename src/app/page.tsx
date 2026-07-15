@@ -110,14 +110,14 @@ function Hero() {
         <span className="kfn-pencil-note" aria-hidden="true">art / product / motion</span>
       </div>
 
-      <div className="kfn-hero-foot">
-        <p>Рекламные креативы для товаров и сервисов</p>
-        <Link href="/brief" prefetch={false} className="kfn-text-cta">
-          Показать свой продукт
-          <ArrowUpRight aria-hidden="true" />
-        </Link>
-        <p className="kfn-hero-location">KreoFlow / 2026</p>
-      </div>
+      <Link
+        href="/brief"
+        prefetch={false}
+        className="kfn-text-cta kfn-hero-cta"
+      >
+        Показать свой продукт
+        <ArrowUpRight aria-hidden="true" />
+      </Link>
     </section>
   );
 }
