@@ -100,7 +100,7 @@
   align-items: center;
   justify-self: end;
   gap: 9px;
-  font-size: clamp(1.05rem, 1.2vw, 1.2rem);
+  font-size: clamp(1.025rem, 1.15vw, 1.125rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -116,8 +116,8 @@
 }
 
 .kfn-header-link svg {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   stroke-width: 1.9;
 }
 
