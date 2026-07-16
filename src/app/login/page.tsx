@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { mapAuthError } from "@/lib/auth/errors";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { isValidEmail, normalizeEmail, normalizeOtp } from "@/lib/auth/validation";
+import { captureAnalyticsEvent } from "@/lib/analytics";
 import authProofImage from "../../../public/media/campaign/kreoflow-editorial-watch-still-life.webp";
 import "./login.css";
 
@@ -43,6 +44,7 @@ function LoginContent() {
 
   async function sendCode(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
+    const isResend = step === "code";
     const normalized = normalizeEmail(email);
     if (!isValidEmail(normalized)) {
       setError("Проверь адрес почты.");
@@ -54,6 +56,10 @@ function LoginContent() {
     setNotice("");
     try {
       await requestEmailCode(normalized);
+      captureAnalyticsEvent("email_auth_started", {
+        is_resend: isResend,
+        return_to: returnTo,
+      });
       setEmail(normalized);
       setCode("");
       setStep("code");
@@ -79,6 +85,7 @@ function LoginContent() {
     setNotice("");
     try {
       await verifyEmailCode(email, normalizedCode);
+      captureAnalyticsEvent("email_auth_completed", { return_to: returnTo });
       setNotice("Готово. Открываем Studio…");
       router.replace(returnTo);
     } catch (authError) {

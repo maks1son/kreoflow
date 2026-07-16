@@ -5,6 +5,7 @@ import BriefPage from "./page";
 const mocks = vi.hoisted(() => ({
   replace: vi.fn(),
   push: vi.fn(),
+  capture: vi.fn(),
   auth: {
     configured: true,
     loading: false,
@@ -22,10 +23,16 @@ vi.mock("@/components/auth/auth-provider", () => ({
   useAuth: () => mocks.auth,
 }));
 
+vi.mock("@/lib/analytics", () => ({
+  captureAnalyticsEvent: mocks.capture,
+  getBriefSubmissionProperties: vi.fn(),
+}));
+
 describe("BriefPage authentication", () => {
   beforeEach(() => {
     mocks.replace.mockReset();
     mocks.push.mockReset();
+    mocks.capture.mockReset();
     mocks.auth.configured = true;
     mocks.auth.loading = false;
     mocks.auth.user = null;
@@ -50,5 +57,6 @@ describe("BriefPage authentication", () => {
 
     expect(document.querySelector('input[name="businessName"]')).toBeInTheDocument();
     expect(mocks.replace).not.toHaveBeenCalled();
+    expect(mocks.capture).toHaveBeenCalledWith("brief_started");
   });
 });

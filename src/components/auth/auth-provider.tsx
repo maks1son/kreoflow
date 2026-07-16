@@ -5,6 +5,7 @@ import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, hasSupabaseConfig } from "@/lib/auth/client";
 import { createAuthService } from "@/lib/auth/service";
 import type { AuthState } from "@/lib/auth/types";
+import { identifyAnalyticsUser, resetAnalyticsUser } from "@/lib/analytics";
 
 type AuthContextValue = AuthState & {
   requestEmailCode(email: string): Promise<void>;
@@ -41,12 +42,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (session?.user.id) identifyAnalyticsUser(session.user.id);
+  }, [session?.user.id]);
+
   const value = useMemo<AuthContextValue>(() => {
     const client = getSupabaseBrowserClient();
     const unavailable = async () => {
       throw new Error("Supabase is not configured");
     };
     const service = client ? createAuthService(client) : null;
+
+    const signOut = service
+      ? async () => {
+          await service.signOut();
+          resetAnalyticsUser();
+        }
+      : unavailable;
 
     return {
       configured,
@@ -55,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: session?.user ?? null,
       requestEmailCode: service?.requestEmailCode ?? unavailable,
       verifyEmailCode: service?.verifyEmailCode ?? unavailable,
-      signOut: service?.signOut ?? unavailable,
+      signOut,
     };
   }, [configured, loading, session]);
 

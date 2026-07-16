@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { FormEvent, Suspense, type ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { captureAnalyticsEvent, getBriefSubmissionProperties } from "@/lib/analytics";
 import { createOrderFromBrief } from "@/lib/generator";
 import { upsertOrder } from "@/lib/storage";
 import type { BriefInput, Goal, Niche, Style } from "@/lib/types";
@@ -13,6 +14,7 @@ import { cn, goalLabels, styleLabels } from "@/lib/utils";
 import campaignGroup from "../../../public/media/campaign/kreoflow-editorial-group.webp";
 
 const draftKey = "reelsfactory.brief-draft.v1";
+const analyticsStepNames = ["business", "offer", "direction", "contact"] as const;
 
 const initialBrief: BriefInput = {
   businessName: "",
@@ -83,6 +85,13 @@ function BriefContent() {
   const [step, setStep] = useState(0);
   const [brief, setBrief] = useState<BriefInput>(initialBrief);
   const [submitted, setSubmitted] = useState(false);
+  const startedTracking = useRef(false);
+
+  useEffect(() => {
+    if (startedTracking.current) return;
+    startedTracking.current = true;
+    captureAnalyticsEvent("brief_started");
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -132,6 +141,11 @@ function BriefContent() {
     event.preventDefault();
     if (!stepIsValid) return;
 
+    captureAnalyticsEvent("brief_step_completed", {
+      step: step + 1,
+      step_name: analyticsStepNames[step],
+    });
+
     if (step < steps.length - 1) {
       moveToStep(step + 1);
       return;
@@ -143,6 +157,10 @@ function BriefContent() {
       socialUrl: brief.socialUrl?.trim() || undefined,
     });
     upsertOrder(order);
+    captureAnalyticsEvent(
+      "brief_submitted",
+      getBriefSubmissionProperties(order.id, brief),
+    );
     window.localStorage.removeItem(draftKey);
     setSubmitted(true);
     router.push(`/delivery?orderId=${encodeURIComponent(order.id)}`);

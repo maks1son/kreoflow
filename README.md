@@ -50,3 +50,20 @@ The `/login` route implements passwordless email sign-in through Supabase. Sessi
 5. Add the local and deployed site URLs to the project URL configuration.
 
 For GitHub Pages, create repository variable `NEXT_PUBLIC_SUPABASE_URL` and repository secret `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Never add a service-role key to this frontend.
+
+## Analytics funnel
+
+PostHog tracks the acquisition funnel without collecting the email address, contact field, offer text, or audience text:
+
+```text
+$pageview -> email_auth_started -> email_auth_completed -> brief_started -> brief_submitted
+```
+
+Create a free PostHog project in the EU region, then add these GitHub repository variables:
+
+```text
+NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=phc_...
+NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+The next GitHub Pages deployment will start collecting page views and funnel events. Confirmed email accounts remain visible in Supabase under `Authentication -> Users`; conversion and traffic are viewed in PostHog. The complete event dictionary and dashboard setup are in `project-docs/21-analytics-funnel.md`.
