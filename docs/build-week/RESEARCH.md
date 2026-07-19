@@ -25,6 +25,8 @@ The [official rules](https://openai.devpost.com/rules) exclude residents of Russ
 
 Therefore this repository can be made submission-ready and used as portfolio/community proof, but it must **not** be submitted through a proxy, with false residence, or represented as eligible. Re-check only if the entrant can truthfully establish eligibility under the rules.
 
+There is a separate runtime constraint: Russia is also absent from OpenAI's [API-supported countries and territories](https://developers.openai.com/api/docs/supported-countries), and the page warns that accessing or offering API access outside the listed locations may lead to suspension. The adapter can be implemented and tested with an injected client, but Максим should not buy or route API access through a false location. Live mode must remain disabled unless OpenAI officially supports the actual account/location and the account is otherwise compliant.
+
 ## Public signal shortlist
 
 This is not a global leaderboard. Signals are labelled so popularity and local judging are not confused with official global placement.
@@ -67,4 +69,3 @@ This is more specific and trustworthy than “AI makes videos”. It also answer
 - “any product”, “all formats”, “production-grade”, or “fully local” outside proven scope;
 - CTR, ROAS, conversion, time, or cost improvements without a measured experiment;
 - “live GPT-5.6” when the keyless demo is replaying a committed fixture.
-
