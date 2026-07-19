@@ -27,3 +27,12 @@ The files under `campaign/` were generated specifically for the KreoFlow editori
 - `kreoflow-signal-bolt.png`
 
 They are fictional, brandless product campaign concepts. The editorial set combines real-photoshoot art direction with paper, tape, marker, paint, and contact-sheet treatments. No logos, trademarks, client work, testimonials, or real performance claims are represented.
+
+## Build Week accountable-compiler sample
+
+Files under `build-week/ad-compiler/` are derived from the fictional NOVA ONE spec case created for KreoFlow on 2026-07-14:
+
+- `nova-one-master.webp`, `nova-one-control.webp`, and `nova-one-packshot.webp` are optimized conversions of the OpenAI-generated source references in `creative-cases/nova-one/assets/references/`.
+- `nova-one-score.m4a` is a 12-second, loudness-normalized extract of the original locally assembled NOVA ONE spec-campaign soundtrack.
+
+NOVA ONE is not a client, retail product, or measured campaign. The files may demonstrate the compiler and visual direction only when labelled `FICTIONAL SPEC / AI DEMO`. They do not prove product performance, identity fidelity across generated shots, CTR, ROAS, legal compliance, or platform approval.
