@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceMode": "fixture",
+  "campaignId": "nova-one-city-signal-v1",
+  "productId": "nova-one",
+  "objective": "Make NOVA ONE desirable to city commuters",
+  "platform": "instagram_reels",
+  "audience": "Design-conscious city commuters",
+  "angle": "Turn city noise into a calm personal signal",
+  "visualDirection": "Rain-soaked night city with a red-to-blue waveform",
+  "supportedPromiseClaimId": "adaptive-anc",
+  "durationSeconds": 12,
+  "aspectRatio": "9:16",
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "chaos",
+      "startSeconds": 0,
+      "endSeconds": 1.4,
+      "kind": "human_context",
+      "assetId": "city-portrait",
+      "productVisible": true,
+      "overlay": {
+        "text": "TOO MUCH CITY?",
+        "claimId": null
+      },
+      "cta": null
+    },
+    {
+      "id": "control",
+      "startSeconds": 1.4,
+      "endSeconds": 4.4,
+      "kind": "human_context",
+      "assetId": "city-portrait",
+      "productVisible": true,
+      "overlay": {
+        "text": "TAKE BACK THE SIGNAL",
+        "claimId": null
+      },
+      "cta": null
+    },
+    {
+      "id": "feature",
+      "startSeconds": 4.4,
+      "endSeconds": 7.6,
+      "kind": "clean_product",
+      "assetId": "clean-packshot",
+      "productVisible": true,
+      "overlay": {
+        "text": "ADAPTIVE NOISE CANCELLING",
+        "claimId": "adaptive-anc"
+      },
+      "cta": null
+    },
+    {
+      "id": "identity",
+      "startSeconds": 7.6,
+      "endSeconds": 10,
+      "kind": "human_context",
+      "assetId": "city-portrait",
+      "productVisible": true,
+      "overlay": {
+        "text": "YOUR CITY. YOUR VOLUME.",
+        "claimId": null
+      },
+      "cta": null
+    },
+    {
+      "id": "end-card",
+      "startSeconds": 10,
+      "endSeconds": 12,
+      "kind": "end_card",
+      "assetId": "clean-packshot",
+      "productVisible": true,
+      "overlay": {
+        "text": "NOVA ONE",
+        "claimId": null
+      },
+      "cta": "DISCOVER NOVA ONE"
+    }
+  ]
+}

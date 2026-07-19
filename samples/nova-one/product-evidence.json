@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceMode": "fixture",
+  "evidenceId": "nova-one-demo-v1",
+  "product": {
+    "id": "nova-one",
+    "name": "NOVA ONE",
+    "category": "wireless headphones"
+  },
+  "claims": [
+    {
+      "id": "adaptive-anc",
+      "text": "Adaptive noise cancelling",
+      "status": "source_attributed",
+      "source": {
+        "type": "client_brief",
+        "reference": "Fictional demo client brief, section 2",
+        "excerpt": "Adaptive noise cancelling"
+      }
+    },
+    {
+      "id": "forty-hours",
+      "text": "Up to 40 hours of battery life",
+      "status": "requires_approval",
+      "source": {
+        "type": "client_brief",
+        "reference": "Fictional demo client brief, unapproved note",
+        "excerpt": "Up to 40 hours"
+      }
+    },
+    {
+      "id": "best-in-class",
+      "text": "Best noise cancelling in the world",
+      "status": "blocked",
+      "source": {
+        "type": "manual_note",
+        "reference": "Unsupported fictional marketing draft",
+        "excerpt": "Best in class"
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "city-portrait",
+      "path": "samples/nova-one/assets/city-portrait.png",
+      "role": "human_context",
+      "alt": "City commuter wearing NOVA ONE headphones"
+    },
+    {
+      "id": "clean-packshot",
+      "path": "samples/nova-one/assets/clean-packshot.png",
+      "role": "clean_product",
+      "alt": "NOVA ONE headphones on a clean background"
+    }
+  ]
+}
