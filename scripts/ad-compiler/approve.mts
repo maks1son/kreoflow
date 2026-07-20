@@ -13,9 +13,8 @@ const defaults = {
   spec: "samples/nova-one/creative-spec.json",
   video:
     "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
-  qa: "samples/nova-one/output/technical-qa.json",
-  out: "samples/nova-one/output/approval.json",
-  approver: "KreoFlow fixture owner",
+  qa: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
+  out: "public/media/build-week/ad-compiler/nova-one-approval-receipt.json",
 };
 
 function usage(): string {
@@ -24,7 +23,7 @@ function usage(): string {
     "",
     "Usage:",
     "  pnpm ad:approve [--spec <json>] [--video <mp4>] [--qa <json>]",
-    "                    [--out <json>] [--approver <label>]",
+    "                    [--out <json>] --approver <human label>",
     "",
     "Optional reproducibility flag:",
     "  --approved-at <ISO-8601 timestamp>",
@@ -71,6 +70,12 @@ async function main(): Promise<void> {
   const videoPath = resolve(args.get("video") ?? defaults.video);
   const qaPath = resolve(args.get("qa") ?? defaults.qa);
   const outputPath = resolve(args.get("out") ?? defaults.out);
+  const approver = args.get("approver")?.trim();
+  if (!approver) {
+    throw new Error(
+      "Human approval requires an explicit --approver label after reviewing the rendered video",
+    );
+  }
 
   const spec = CreativeSpecSchema.parse(await readJson(specPath));
   const specHash = hashCreativeSpec(spec);
@@ -94,7 +99,7 @@ async function main(): Promise<void> {
   const receipt = createApprovalReceipt({
     spec,
     renderHash,
-    approver: args.get("approver") ?? defaults.approver,
+    approver,
     approvedAt: args.get("approved-at"),
   });
 

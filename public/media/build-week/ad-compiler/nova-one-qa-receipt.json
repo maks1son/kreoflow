@@ -1,0 +1,130 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-07-20T05:53:11.380Z",
+  "specHash": "40b6167455158aebd62d84c31a63d941fb29828ca0480578d6351efdc0feb211",
+  "renderHash": "7f9792d95118f04b6d70fdbf6a89a34f1e93898ae4605ecc0996eadef79f5c69",
+  "passed": true,
+  "checks": [
+    {
+      "id": "dimensions",
+      "label": "Vertical delivery dimensions",
+      "passed": true,
+      "expected": "1080x1920",
+      "actual": "1080x1920",
+      "blocking": true
+    },
+    {
+      "id": "video_codec",
+      "label": "Video codec",
+      "passed": true,
+      "expected": "h264",
+      "actual": "h264",
+      "blocking": true
+    },
+    {
+      "id": "video_profile",
+      "label": "H.264 profile",
+      "passed": true,
+      "expected": "High",
+      "actual": "High",
+      "blocking": true
+    },
+    {
+      "id": "pixel_format",
+      "label": "Pixel format",
+      "passed": true,
+      "expected": "yuv420p",
+      "actual": "yuv420p",
+      "blocking": true
+    },
+    {
+      "id": "fps",
+      "label": "Frame rate",
+      "passed": true,
+      "expected": "30",
+      "actual": "30",
+      "blocking": true
+    },
+    {
+      "id": "duration",
+      "label": "Runtime",
+      "passed": true,
+      "expected": "12s ±0.15s",
+      "actual": "12.053333s",
+      "blocking": true
+    },
+    {
+      "id": "audio_stream",
+      "label": "Audio stream",
+      "passed": true,
+      "expected": "present",
+      "actual": "present",
+      "blocking": true
+    },
+    {
+      "id": "audio_codec",
+      "label": "Audio codec",
+      "passed": true,
+      "expected": "aac",
+      "actual": "aac",
+      "blocking": true
+    },
+    {
+      "id": "audio_sample_rate",
+      "label": "Audio sample rate",
+      "passed": true,
+      "expected": "48000 Hz",
+      "actual": "48000",
+      "blocking": true
+    },
+    {
+      "id": "audio_channels",
+      "label": "Audio channels",
+      "passed": true,
+      "expected": "stereo (2)",
+      "actual": "2",
+      "blocking": true
+    },
+    {
+      "id": "loudness",
+      "label": "Integrated loudness",
+      "passed": true,
+      "expected": "-18 to -14 LUFS",
+      "actual": "-17.3 LUFS",
+      "blocking": true
+    },
+    {
+      "id": "true_peak",
+      "label": "True peak",
+      "passed": true,
+      "expected": "≤ -1 dBFS",
+      "actual": "-3.6 dBFS",
+      "blocking": true
+    },
+    {
+      "id": "file_nonempty",
+      "label": "Encoded file",
+      "passed": true,
+      "expected": "> 0 bytes",
+      "actual": "6686921",
+      "blocking": true
+    }
+  ],
+  "summary": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationSeconds": 12.053333,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "audioSampleRate": 48000,
+    "integratedLufs": -17.3,
+    "truePeakDbfs": -3.6
+  },
+  "heuristicLimitations": [
+    "contrast",
+    "product_identity",
+    "commercial_effectiveness",
+    "legal_and_platform_compliance"
+  ]
+}

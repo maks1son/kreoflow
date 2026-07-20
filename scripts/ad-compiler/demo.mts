@@ -10,9 +10,7 @@ const defaults = {
   spec: "samples/nova-one/creative-spec.json",
   video:
     "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
-  qa: "samples/nova-one/output/technical-qa.json",
-  approval: "samples/nova-one/output/approval.json",
-  approver: "KreoFlow fixture owner",
+  qa: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
 };
 
 function usage(): string {
@@ -21,9 +19,10 @@ function usage(): string {
     "",
     "Usage:",
     "  pnpm demo:ad [--evidence <json>] [--spec <json>] [--video <mp4>]",
-    "               [--qa <json>] [--approval <json>] [--approver <label>]",
+    "               [--qa <json>]",
     "",
-    "This command never calls OpenAI. Use ad:strategy:live explicitly for live strategy.",
+    "This command never calls OpenAI and never creates a human approval.",
+    "Use ad:strategy:live explicitly for live strategy, then ad:approve after review.",
   ].join("\n");
 }
 
@@ -72,7 +71,6 @@ async function main(): Promise<void> {
   const specPath = resolve(args.get("spec") ?? defaults.spec);
   const videoPath = resolve(args.get("video") ?? defaults.video);
   const qaPath = resolve(args.get("qa") ?? defaults.qa);
-  const approvalPath = resolve(args.get("approval") ?? defaults.approval);
   const evidence = await readJson(evidencePath);
   const spec = await readJson(specPath);
   const compiled = compileCreativeSpec({ evidence, spec });
@@ -86,7 +84,7 @@ async function main(): Promise<void> {
   console.log("KreoFlow accountable ad compiler · keyless fixture mode");
   console.log(`CreativeSpec valid · ${compiled.specHash}`);
 
-  runStep("1/3 Deterministic render", "render.mts", [
+  runStep("1/2 Deterministic render", "render.mts", [
     "--evidence",
     evidencePath,
     "--spec",
@@ -106,29 +104,12 @@ async function main(): Promise<void> {
   if (args.has("generated-at")) {
     qaArgs.push("--generated-at", args.get("generated-at")!);
   }
-  runStep("2/3 Technical QA gate", "qa.mts", qaArgs);
+  runStep("2/2 Technical QA gate", "qa.mts", qaArgs);
 
-  const approvalArgs = [
-    "--spec",
-    specPath,
-    "--video",
-    videoPath,
-    "--qa",
-    qaPath,
-    "--out",
-    approvalPath,
-    "--approver",
-    args.get("approver") ?? defaults.approver,
-  ];
-  if (args.has("approved-at")) {
-    approvalArgs.push("--approved-at", args.get("approved-at")!);
-  }
-  runStep("3/3 Human approval receipt", "approve.mts", approvalArgs);
-
-  console.log("\nPIPELINE PASS");
+  console.log("\nAUTOMATED PIPELINE PASS · HUMAN APPROVAL PENDING");
   console.log(`Video: ${videoPath}`);
   console.log(`QA: ${qaPath}`);
-  console.log(`Approval: ${approvalPath}`);
+  console.log('After human review: pnpm ad:approve -- --approver "<name>"');
 }
 
 main().catch((error: unknown) => {

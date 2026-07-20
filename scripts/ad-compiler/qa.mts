@@ -17,7 +17,7 @@ const defaults = {
   spec: "samples/nova-one/creative-spec.json",
   video:
     "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
-  out: "samples/nova-one/output/technical-qa.json",
+  out: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
 };
 
 function usage(): string {
