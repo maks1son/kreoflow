@@ -252,6 +252,47 @@ describe("compileCreativeSpecWithOpenAI", () => {
     ).rejects.toThrow(/claim "invented-claim" is missing/i);
   });
 
+  it.each([
+    ["platform", "tiktok", /platform does not match requested value/i],
+    ["objective", "A different objective", /objective does not match requested value/i],
+    ["audience", "A different audience", /audience does not match requested value/i],
+  ] as const)("rejects a live response that changes requested %s", async (field, value, error) => {
+    const { client } = makeClient();
+    client.responses.parse.mockResolvedValueOnce({
+      id: `resp_changed_${field}`,
+      model: "gpt-5.6-terra",
+      output_parsed: { ...parsedSpec, [field]: value },
+    });
+
+    await expect(
+      compileCreativeSpecWithOpenAI({
+        evidence,
+        platform: "instagram_reels",
+        objective: "Make NOVA ONE desirable to city commuters",
+        audience: "Design-conscious city commuters",
+        callerId: "customer@example.com",
+        client,
+      }),
+    ).rejects.toThrow(error);
+  });
+
+  it("rejects a non-GPT-5.6 model override before making a provider call", async () => {
+    const { client, parse } = makeClient();
+
+    await expect(
+      compileCreativeSpecWithOpenAI({
+        evidence,
+        platform: "instagram_reels",
+        objective: "Make NOVA ONE desirable to city commuters",
+        audience: "Design-conscious city commuters",
+        callerId: "customer@example.com",
+        client,
+        model: "gpt-4.1",
+      }),
+    ).rejects.toThrow(/supported GPT-5\.6 model/i);
+    expect(parse).not.toHaveBeenCalled();
+  });
+
   it("fails with an exact error before creating the default client without an API key", async () => {
     vi.stubEnv("OPENAI_API_KEY", "");
 

@@ -23,6 +23,12 @@ const LiveCreativeSpecSchema = CreativeSpecSchema.safeExtend({
   sourceMode: z.literal("live_gpt_5_6"),
 });
 
+const OpenAIAdCompilerModelSchema = z.enum([
+  "gpt-5.6-terra",
+  "gpt-5.6-sol",
+  "gpt-5.6",
+]);
+
 type OpenAICompilerRequest = Parameters<OpenAI["responses"]["parse"]>[0];
 
 type OpenAICompilerResponse = {
@@ -67,6 +73,12 @@ function safetyIdentifierFor(callerId: string): string {
   return createHash("sha256").update(normalizedCallerId).digest("hex");
 }
 
+function normalizeRequestedText(value: string, label: string): string {
+  const normalized = value.trim().replace(/\s+/gu, " ");
+  if (!normalized) throw new Error(`${label} is required for live OpenAI ad compilation.`);
+  return normalized;
+}
+
 function defaultClient(): OpenAI {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
@@ -85,14 +97,21 @@ export async function compileCreativeSpecWithOpenAI({
   client,
   model = DEFAULT_OPENAI_AD_COMPILER_MODEL,
 }: OpenAICompilerInput): Promise<LiveOpenAICompilerResult> {
+  const parsedModel = OpenAIAdCompilerModelSchema.safeParse(model);
+  if (!parsedModel.success) {
+    throw new Error("model must be a supported GPT-5.6 model.");
+  }
+  const requestedPlatform = CreativeSpecSchema.shape.platform.parse(platform);
+  const requestedObjective = normalizeRequestedText(objective, "objective");
+  const requestedAudience = normalizeRequestedText(audience, "audience");
   const evidence = ProductEvidenceSchema.parse(evidenceInput);
   const request: OpenAICompilerRequest = {
-    model,
+    model: parsedModel.data,
     instructions: CREATIVE_DIRECTOR_SYSTEM_PROMPT,
     input: buildCreativeDirectorUserPrompt({
-      platform,
-      objective,
-      audience,
+      platform: requestedPlatform,
+      objective: requestedObjective,
+      audience: requestedAudience,
       productEvidence: evidence,
       mediaInventory: evidence.assets,
     }),
@@ -122,13 +141,23 @@ export async function compileCreativeSpecWithOpenAI({
     spec: LiveCreativeSpecSchema.parse(spec),
   });
 
+  if (grounded.spec.platform !== requestedPlatform) {
+    throw new Error("Live compiler platform does not match requested value.");
+  }
+  if (normalizeRequestedText(grounded.spec.objective, "spec objective") !== requestedObjective) {
+    throw new Error("Live compiler objective does not match requested value.");
+  }
+  if (normalizeRequestedText(grounded.spec.audience, "spec audience") !== requestedAudience) {
+    throw new Error("Live compiler audience does not match requested value.");
+  }
+
   return {
     mode: "live",
     spec: grounded.spec,
     metadata: {
       provider: "openai",
       api: "responses",
-      model: response.model ?? model,
+      model: response.model ?? parsedModel.data,
       responseId: response.id,
     },
   };
