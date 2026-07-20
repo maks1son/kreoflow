@@ -16,6 +16,8 @@ const requiredFlags = [
   "caller-id",
 ] as const;
 
+const allowedFlags = new Set<string>(requiredFlags);
+
 function usage(): string {
   return [
     "Explicit live GPT-5.6 CreativeSpec generation (no fallback)",
@@ -37,10 +39,20 @@ function parseArgs(argv: string[]): Map<string, string> {
       console.log(usage());
       process.exit(0);
     }
-    if (!key.startsWith("--") || !argv[index + 1] || argv[index + 1].startsWith("--")) {
+    if (!key.startsWith("--")) {
       throw new Error(`Expected --flag value, received "${key}"`);
     }
-    args.set(key.slice(2), argv[index + 1]);
+    const flag = key.slice(2);
+    if (!allowedFlags.has(flag)) {
+      throw new Error(`Unknown --${flag}\n\n${usage()}`);
+    }
+    if (args.has(flag)) {
+      throw new Error(`Duplicate --${flag} is not allowed`);
+    }
+    if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
+      throw new Error(`Expected a value for --${flag}`);
+    }
+    args.set(flag, argv[index + 1]);
     index += 1;
   }
 

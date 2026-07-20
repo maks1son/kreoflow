@@ -1,8 +1,10 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-07-20T05:53:11.380Z",
-  "specHash": "40b6167455158aebd62d84c31a63d941fb29828ca0480578d6351efdc0feb211",
-  "renderHash": "7f9792d95118f04b6d70fdbf6a89a34f1e93898ae4605ecc0996eadef79f5c69",
+  "generatedAt": "2026-07-20T06:33:14.130Z",
+  "evidenceHash": "3375c3edab7bfdcd8861145a29f01aec12c60e4c0d041c4101ed55fd4475ac1b",
+  "mediaManifestHash": "aed4ddc492a82cb8a69181ea00d8810c6f848cc8d2add0fd548f347c34fcbcf4",
+  "specHash": "62f20cf4750324bb82ded69110d172c65aa8e012a7eadb2a94b20a0489896aeb",
+  "renderHash": "38aec32a1f6cc44154a473e5b48a897b60d1fa5d68fc0028dc770238c21c40dd",
   "passed": true,
   "checks": [
     {
@@ -106,7 +108,7 @@
       "label": "Encoded file",
       "passed": true,
       "expected": "> 0 bytes",
-      "actual": "6686921",
+      "actual": "7466178",
       "blocking": true
     }
   ],

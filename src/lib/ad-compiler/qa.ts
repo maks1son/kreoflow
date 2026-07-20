@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { hashCanonical } from "./schema";
+
 export const TECHNICAL_QA_VERSION = "1.0.0" as const;
 
 export const TECHNICAL_QA_CHECK_IDS = [
@@ -28,6 +30,62 @@ const TECHNICAL_QA_LIMITATIONS = [
 const Sha256Schema = z
   .string()
   .regex(/^[a-f0-9]{64}$/u, "Expected a lowercase SHA-256 hash");
+
+const MediaManifestAssetSchema = z
+  .object({
+    id: z.string().trim().min(1),
+    path: z.string().trim().min(1),
+    sha256: Sha256Schema,
+  })
+  .strict();
+
+export const MediaManifestSchema = z
+  .object({
+    assets: z.array(MediaManifestAssetSchema).min(1),
+    audio: z
+      .object({
+        path: z.string().trim().min(1),
+        sha256: Sha256Schema,
+      })
+      .strict(),
+  })
+  .strict()
+  .superRefine((manifest, context) => {
+    const ids = manifest.assets.map((asset) => asset.id);
+    if (new Set(ids).size !== ids.length) {
+      context.addIssue({
+        code: "custom",
+        path: ["assets"],
+        message: "Media manifest asset IDs must be unique",
+      });
+    }
+  });
+
+export type MediaManifest = z.infer<typeof MediaManifestSchema>;
+
+const normalizedManifestPath = (path: string): string =>
+  path.trim().replaceAll("\\", "/");
+
+export function buildMediaManifestHash(input: unknown): string {
+  const manifest = MediaManifestSchema.parse(input);
+  return hashCanonical({
+    assets: manifest.assets
+      .map((asset) => ({
+        id: asset.id,
+        path: normalizedManifestPath(asset.path),
+        sha256: asset.sha256,
+      }))
+      .sort((left, right) =>
+        left.id === right.id
+          ? left.path.localeCompare(right.path)
+          : left.id.localeCompare(right.id),
+      ),
+    audio: {
+      path: normalizedManifestPath(manifest.audio.path),
+      sha256: manifest.audio.sha256,
+    },
+  });
+}
 
 export const TechnicalQaCheckIdSchema = z.enum(TECHNICAL_QA_CHECK_IDS);
 
@@ -61,6 +119,7 @@ export const TechnicalQaReceiptSchema = z
     version: z.literal(TECHNICAL_QA_VERSION),
     generatedAt: z.string().datetime({ offset: true }),
     evidenceHash: Sha256Schema,
+    mediaManifestHash: Sha256Schema,
     specHash: Sha256Schema,
     renderHash: Sha256Schema,
     passed: z.boolean(),
@@ -249,6 +308,7 @@ export const buildTechnicalQaReceipt = ({
   loudness,
   expectedDurationSeconds,
   evidenceHash,
+  mediaManifestHash,
   specHash,
   renderHash,
   generatedAt = new Date().toISOString(),
@@ -257,6 +317,7 @@ export const buildTechnicalQaReceipt = ({
   loudness: LoudnessMeasurement | null;
   expectedDurationSeconds: number;
   evidenceHash: string;
+  mediaManifestHash: string;
   specHash: string;
   renderHash: string;
   generatedAt?: string;
@@ -330,6 +391,7 @@ export const buildTechnicalQaReceipt = ({
     version: TECHNICAL_QA_VERSION,
     generatedAt,
     evidenceHash,
+    mediaManifestHash,
     specHash,
     renderHash,
     passed: checks.every((item) => item.passed),

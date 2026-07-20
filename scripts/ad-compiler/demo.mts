@@ -13,6 +13,15 @@ const defaults = {
   qa: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
 };
 
+const allowedFlags = new Set([
+  "evidence",
+  "spec",
+  "audio",
+  "video",
+  "qa",
+  "generated-at",
+]);
+
 function usage(): string {
   return [
     "Run the complete, keyless KreoFlow fixture pipeline",
@@ -20,6 +29,7 @@ function usage(): string {
     "Usage:",
     "  pnpm demo:ad [--evidence <json>] [--spec <json>] [--audio <media>]",
     "               [--video <mp4>] [--qa <json>]",
+    "               [--generated-at <ISO-8601 timestamp>]",
     "",
     "This command never calls OpenAI and never creates a human approval.",
     "Use ad:strategy:live explicitly for live strategy, then ad:approve after review.",
@@ -35,14 +45,20 @@ function parseArgs(argv: string[]): Map<string, string> {
       console.log(usage());
       process.exit(0);
     }
-    if (
-      !key.startsWith("--") ||
-      !argv[index + 1] ||
-      argv[index + 1].startsWith("--")
-    ) {
+    if (!key.startsWith("--")) {
       throw new Error(`Expected --flag value, received "${key}"`);
     }
-    args.set(key.slice(2), argv[index + 1]);
+    const flag = key.slice(2);
+    if (!allowedFlags.has(flag)) {
+      throw new Error(`Unknown --${flag}\n\n${usage()}`);
+    }
+    if (args.has(flag)) {
+      throw new Error(`Duplicate --${flag} is not allowed`);
+    }
+    if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
+      throw new Error(`Expected a value for --${flag}`);
+    }
+    args.set(flag, argv[index + 1]);
     index += 1;
   }
   return args;
@@ -113,6 +129,8 @@ async function main(): Promise<void> {
     evidencePath,
     "--spec",
     specPath,
+    "--audio",
+    audioPath,
     "--video",
     videoPath,
     "--out",
@@ -126,7 +144,9 @@ async function main(): Promise<void> {
   console.log("\nAUTOMATED PIPELINE PASS · HUMAN APPROVAL PENDING");
   console.log(`Video: ${videoPath}`);
   console.log(`QA: ${qaPath}`);
-  console.log('After human review: pnpm ad:approve -- --approver "<name>"');
+  console.log(
+    `After human review: pnpm ad:approve -- --audio "${audioPath}" --approver "<name>"`,
+  );
 }
 
 main().catch((error: unknown) => {

@@ -2,7 +2,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 import { createApprovalReceipt } from "../../src/lib/ad-compiler/approval.ts";
-import { TechnicalQaReceiptSchema } from "../../src/lib/ad-compiler/qa.ts";
+import {
+  buildMediaManifestHash,
+  TechnicalQaReceiptSchema,
+} from "../../src/lib/ad-compiler/qa.ts";
 import {
   compileCreativeSpec,
   sha256Hex,
@@ -16,13 +19,25 @@ const defaults = {
   out: "public/media/build-week/ad-compiler/nova-one-approval-receipt.json",
 };
 
+const allowedFlags = new Set([
+  "evidence",
+  "spec",
+  "audio",
+  "video",
+  "qa",
+  "out",
+  "approver",
+  "approved-at",
+]);
+
 function usage(): string {
   return [
     "Approve the exact evidence + spec + render + QA chain",
     "",
     "Usage:",
-    "  pnpm ad:approve [--evidence <json>] [--spec <json>] [--video <mp4>]",
-    "                  [--qa <json>] [--out <json>] --approver <human label>",
+    "  pnpm ad:approve [--evidence <json>] [--spec <json>] --audio <media>",
+    "                  [--video <mp4>] [--qa <json>] [--out <json>]",
+    "                  --approver <human label>",
     "                  [--approved-at <ISO-8601 timestamp>]",
   ].join("\n");
 }
@@ -36,14 +51,20 @@ function parseArgs(argv: string[]): Map<string, string> {
       console.log(usage());
       process.exit(0);
     }
-    if (
-      !key.startsWith("--") ||
-      !argv[index + 1] ||
-      argv[index + 1].startsWith("--")
-    ) {
+    if (!key.startsWith("--")) {
       throw new Error(`Expected --flag value, received "${key}"`);
     }
-    args.set(key.slice(2), argv[index + 1]);
+    const flag = key.slice(2);
+    if (!allowedFlags.has(flag)) {
+      throw new Error(`Unknown --${flag}\n\n${usage()}`);
+    }
+    if (args.has(flag)) {
+      throw new Error(`Duplicate --${flag} is not allowed`);
+    }
+    if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
+      throw new Error(`Expected a value for --${flag}`);
+    }
+    args.set(flag, argv[index + 1]);
     index += 1;
   }
   return args;
@@ -58,10 +79,35 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+async function mediaManifestHashFor(
+  assets: readonly { id: string; path: string }[],
+  audioInput: string,
+  audioPath: string,
+): Promise<string> {
+  return buildMediaManifestHash({
+    assets: await Promise.all(
+      assets.map(async (asset) => ({
+        id: asset.id,
+        path: asset.path,
+        sha256: sha256Hex(await readFile(resolve(asset.path))),
+      })),
+    ),
+    audio: {
+      path: audioInput,
+      sha256: sha256Hex(await readFile(audioPath)),
+    },
+  });
+}
+
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   const evidencePath = resolve(args.get("evidence") ?? defaults.evidence);
   const specPath = resolve(args.get("spec") ?? defaults.spec);
+  const audioInput = args.get("audio")?.trim();
+  if (!audioInput) {
+    throw new Error("Human approval requires explicit --audio source media");
+  }
+  const audioPath = resolve(audioInput);
   const videoPath = resolve(args.get("video") ?? defaults.video);
   const qaPath = resolve(args.get("qa") ?? defaults.qa);
   const outputPath = resolve(args.get("out") ?? defaults.out);
@@ -77,10 +123,16 @@ async function main(): Promise<void> {
   const compiled = compileCreativeSpec({ evidence, spec });
   const qaReceipt = TechnicalQaReceiptSchema.parse(await readJson(qaPath));
   const renderHash = sha256Hex(await readFile(videoPath));
+  const mediaManifestHash = await mediaManifestHashFor(
+    compiled.evidence.assets,
+    audioInput,
+    audioPath,
+  );
   const receipt = createApprovalReceipt({
     evidence: compiled.evidence,
     spec: compiled.spec,
     renderHash,
+    mediaManifestHash,
     qaReceipt,
     approver,
     approvedAt: args.get("approved-at"),

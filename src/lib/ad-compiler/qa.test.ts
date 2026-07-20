@@ -1,12 +1,24 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildMediaManifestHash,
   buildTechnicalQaReceipt,
   parseEbur128Summary,
   parseFfprobeJson,
   TECHNICAL_QA_CHECK_IDS,
   TechnicalQaReceiptSchema,
 } from "./qa";
+
+const mediaManifest = {
+  assets: [
+    { id: "packshot", path: "public/media/packshot.webp", sha256: "1".repeat(64) },
+    { id: "portrait", path: "public\\media\\portrait.webp", sha256: "2".repeat(64) },
+  ],
+  audio: {
+    path: "public\\media\\score.m4a",
+    sha256: "3".repeat(64),
+  },
+};
 
 const passingProbe = {
   streams: [
@@ -40,6 +52,7 @@ const passingProbe = {
 
 const receiptInput = {
   evidenceHash: "e".repeat(64),
+  mediaManifestHash: buildMediaManifestHash(mediaManifest),
   specHash: "a".repeat(64),
   renderHash: "b".repeat(64),
   generatedAt: "2026-07-20T12:00:00.000Z",
@@ -58,6 +71,24 @@ const passingReceipt = () =>
   });
 
 describe("technical render QA", () => {
+  it("hashes declared asset and audio bytes deterministically", () => {
+    const reordered = {
+      ...mediaManifest,
+      assets: [...mediaManifest.assets].reverse(),
+    };
+    const changedAudio = {
+      ...mediaManifest,
+      audio: { ...mediaManifest.audio, sha256: "4".repeat(64) },
+    };
+
+    expect(buildMediaManifestHash(reordered)).toBe(
+      buildMediaManifestHash(mediaManifest),
+    );
+    expect(buildMediaManifestHash(changedAudio)).not.toBe(
+      buildMediaManifestHash(mediaManifest),
+    );
+  });
+
   it("parses ffprobe data and creates a strict passing receipt", () => {
     const receipt = passingReceipt();
 

@@ -22,6 +22,7 @@ const ApprovalPayloadSchema = z
     approvedAt: z.string().datetime({ offset: true }),
     approver: z.string().trim().min(1).max(100),
     evidenceHash: Sha256Schema,
+    mediaManifestHash: Sha256Schema,
     specHash: Sha256Schema,
     renderHash: Sha256Schema,
     qaReceiptHash: Sha256Schema,
@@ -49,6 +50,7 @@ export function createApprovalReceipt({
   evidence: evidenceInput,
   spec,
   renderHash,
+  mediaManifestHash,
   qaReceipt: qaReceiptInput,
   approver,
   approvedAt = new Date().toISOString(),
@@ -56,6 +58,7 @@ export function createApprovalReceipt({
   evidence: unknown;
   spec: unknown;
   renderHash: string;
+  mediaManifestHash: string;
   qaReceipt: unknown;
   approver: string;
   approvedAt?: string;
@@ -71,6 +74,9 @@ export function createApprovalReceipt({
   if (qaReceipt.evidenceHash !== evidenceHash) {
     throw new Error("Cannot approve: QA receipt is stale for the current evidence");
   }
+  if (qaReceipt.mediaManifestHash !== mediaManifestHash) {
+    throw new Error("Cannot approve: QA receipt is stale for the current media bytes");
+  }
   if (qaReceipt.specHash !== compiled.specHash) {
     throw new Error("Cannot approve: QA receipt is stale for the current CreativeSpec");
   }
@@ -83,6 +89,7 @@ export function createApprovalReceipt({
     approvedAt,
     approver,
     evidenceHash,
+    mediaManifestHash,
     specHash: compiled.specHash,
     renderHash,
     qaReceiptHash: hashCanonical(qaReceipt),
@@ -100,11 +107,13 @@ export function isApprovalReceiptCurrent(
     evidence: evidenceInput,
     spec,
     renderHash,
+    mediaManifestHash,
     qaReceipt: qaReceiptInput,
   }: {
     evidence: unknown;
     spec: unknown;
     renderHash: string;
+    mediaManifestHash: string;
     qaReceipt: unknown;
   },
 ): boolean {
@@ -119,9 +128,11 @@ export function isApprovalReceiptCurrent(
     return (
       qaReceipt.passed &&
       qaReceipt.evidenceHash === evidenceHash &&
+      qaReceipt.mediaManifestHash === mediaManifestHash &&
       qaReceipt.specHash === compiled.specHash &&
       qaReceipt.renderHash === renderHash &&
       receipt.evidenceHash === evidenceHash &&
+      receipt.mediaManifestHash === mediaManifestHash &&
       receipt.specHash === compiled.specHash &&
       receipt.renderHash === renderHash &&
       receipt.qaReceiptHash === hashCanonical(qaReceipt)
