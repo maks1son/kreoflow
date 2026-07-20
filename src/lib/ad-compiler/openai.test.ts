@@ -220,6 +220,29 @@ describe("compileCreativeSpecWithOpenAI", () => {
     ).rejects.toThrow(/live compiler returned a non-live creative spec/i);
   });
 
+  it("rejects a schema-valid live response that is not grounded in the supplied evidence", async () => {
+    const { client } = makeClient();
+    client.responses.parse.mockResolvedValueOnce({
+      id: "resp_ungrounded",
+      model: "gpt-5.6-terra",
+      output_parsed: {
+        ...parsedSpec,
+        supportedPromiseClaimId: "invented-claim",
+      },
+    });
+
+    await expect(
+      compileCreativeSpecWithOpenAI({
+        evidence,
+        platform: "instagram_reels",
+        objective: "Make NOVA ONE desirable to city commuters",
+        audience: "Design-conscious city commuters",
+        callerId: "customer@example.com",
+        client,
+      }),
+    ).rejects.toThrow(/claim "invented-claim" is missing/i);
+  });
+
   it("fails with an exact error before creating the default client without an API key", async () => {
     vi.stubEnv("OPENAI_API_KEY", "");
 

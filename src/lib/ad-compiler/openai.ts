@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 
 import {
+  compileCreativeSpec,
   CreativeSpecSchema,
   ProductEvidenceSchema,
   type CreativeSpec,
@@ -111,9 +112,11 @@ export async function compileCreativeSpecWithOpenAI({
     throw new Error("Live compiler returned a non-live Creative Spec.");
   }
 
+  const grounded = compileCreativeSpec({ evidence, spec });
+
   return {
     mode: "live",
-    spec,
+    spec: grounded.spec,
     metadata: {
       provider: "openai",
       api: "responses",
