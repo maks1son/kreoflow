@@ -1,4 +1,4 @@
-import type {CSSProperties, ReactNode} from "react";
+import type {ReactNode} from "react";
 
 import {
   AbsoluteFill,
@@ -12,6 +12,10 @@ import {
 
 import type {CreativeScene, CreativeSpec} from "../src/lib/ad-compiler/schema";
 import {
+  type ProductAdProps,
+  resolveSceneAsset,
+} from "./render-contract";
+import {
   clamp,
   condensedFont,
   easeOutQuart,
@@ -20,36 +24,32 @@ import {
   safeArea,
   sansFont,
   sceneOpacity,
-  trackingLabel,
 } from "./styles";
 
-export interface ProductAdMedia {
-  humanContext: string;
-  humanControl: string;
-  cleanProduct: string;
-  audio: string;
-}
+export type {ProductAdProps} from "./render-contract";
 
-export interface ProductAdProps extends Record<string, unknown> {
-  spec: CreativeSpec;
-  media: ProductAdMedia;
-}
+const mediaSource = (source: string) =>
+  /^(?:https?:|data:|blob:)/i.test(source) ? source : staticFile(source);
 
-const resolveMedia = (scene: CreativeScene, media: ProductAdMedia) => {
-  if (scene.kind === "clean_product" || scene.kind === "end_card") {
-    return media.cleanProduct;
+const wrapOverlayText = (text: string, preferredLineLength: number) => {
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (current && candidate.length > preferredLineLength && lines.length < 2) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
   }
-  if (scene.id === "control") {
-    return media.humanControl;
-  }
-  return media.humanContext;
+  if (current) lines.push(current);
+  return lines;
 };
 
-const Label = ({children, style}: {children: ReactNode; style?: CSSProperties}) => (
-  <div style={{...trackingLabel, color: palette.paper, ...style}}>{children}</div>
-);
-
-const BrandMark = ({dark = false}: {dark?: boolean}) => (
+const BrandMark = ({productName}: {productName: string}) => (
   <div
     style={{
       position: "absolute",
@@ -59,7 +59,7 @@ const BrandMark = ({dark = false}: {dark?: boolean}) => (
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      color: dark ? palette.ink : palette.paper,
+      color: palette.paper,
       zIndex: 20,
     }}
   >
@@ -68,14 +68,21 @@ const BrandMark = ({dark = false}: {dark?: boolean}) => (
         display: "flex",
         alignItems: "center",
         gap: 14,
+        maxWidth: 780,
         fontFamily: sansFont,
         fontSize: 44,
         fontWeight: 700,
-        letterSpacing: "0.14em",
+        letterSpacing: "0.12em",
+        lineHeight: 1,
+        textTransform: "uppercase",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
       }}
     >
       <span
         style={{
+          flex: "0 0 auto",
           width: 11,
           height: 11,
           borderRadius: "50%",
@@ -83,56 +90,95 @@ const BrandMark = ({dark = false}: {dark?: boolean}) => (
           boxShadow: `0 0 28px ${palette.electric}`,
         }}
       />
-      NOVA ONE
+      {productName}
     </div>
-    <div style={{...trackingLabel, color: dark ? "#27303e" : palette.muted}}>
-      01
-    </div>
+    <div
+      aria-hidden
+      style={{
+        width: 72,
+        height: 2,
+        background: "rgba(244,247,251,.56)",
+      }}
+    />
   </div>
 );
 
+const sceneVisuals: Record<
+  CreativeScene["kind"],
+  {
+    startScale: number;
+    endScale: number;
+    brightness: number;
+    saturation: number;
+    objectPosition: string;
+  }
+> = {
+  human_context: {
+    startScale: 1.105,
+    endScale: 1.045,
+    brightness: 0.76,
+    saturation: 0.82,
+    objectPosition: "50% 50%",
+  },
+  clean_product: {
+    startScale: 1.055,
+    endScale: 1.005,
+    brightness: 0.82,
+    saturation: 0.9,
+    objectPosition: "50% 52%",
+  },
+  product_detail: {
+    startScale: 1.12,
+    endScale: 1.04,
+    brightness: 0.78,
+    saturation: 0.88,
+    objectPosition: "50% 48%",
+  },
+  end_card: {
+    startScale: 1.035,
+    endScale: 1,
+    brightness: 0.58,
+    saturation: 0.74,
+    objectPosition: "50% 52%",
+  },
+};
+
 const ImageStage = ({
   src,
+  alt,
   progress,
-  scene,
+  kind,
 }: {
   src: string;
+  alt: string;
   progress: number;
-  scene: CreativeScene;
+  kind: CreativeScene["kind"];
 }) => {
-  const isPackshot = scene.kind === "clean_product" || scene.kind === "end_card";
-  const startScale = isPackshot ? 1.055 : scene.id === "chaos" ? 1.105 : 1.075;
-  const endScale = isPackshot ? 1.005 : scene.id === "control" ? 1.025 : 1.045;
-  const xShift = scene.id === "identity" ? interpolate(progress, [0, 1], [-16, 10]) : 0;
-  const yShift = isPackshot ? interpolate(progress, [0, 1], [18, -10]) : 0;
+  const visual = sceneVisuals[kind];
+  const isEndCard = kind === "end_card";
 
   return (
     <AbsoluteFill style={{overflow: "hidden", background: palette.ink}}>
       <Img
-        src={staticFile(src)}
+        src={mediaSource(src)}
+        alt={alt}
         style={{
           ...fullBleed,
           objectFit: "cover",
-          objectPosition: isPackshot ? "50% 52%" : "50% 50%",
-          transform: `translate3d(${xShift}px, ${yShift}px, 0) scale(${interpolate(
+          objectPosition: visual.objectPosition,
+          transform: `translate3d(0, ${interpolate(progress, [0, 1], [14, -8])}px, 0) scale(${interpolate(
             easeOutQuart(progress),
             [0, 1],
-            [startScale, endScale],
+            [visual.startScale, visual.endScale],
           )})`,
-          filter:
-            scene.id === "chaos"
-              ? "saturate(0.75) contrast(1.08) brightness(0.72)"
-              : scene.kind === "end_card"
-                ? "saturate(0.72) contrast(1.08) brightness(0.54)"
-                : "saturate(0.9) contrast(1.04) brightness(0.82)",
+          filter: `saturate(${visual.saturation}) contrast(1.06) brightness(${visual.brightness})`,
         }}
       />
       <AbsoluteFill
         style={{
-          background:
-            scene.kind === "end_card"
-              ? "linear-gradient(180deg, rgba(5,7,10,.2) 0%, rgba(5,7,10,.18) 38%, rgba(5,7,10,.92) 100%)"
-              : "linear-gradient(180deg, rgba(5,7,10,.16) 0%, rgba(5,7,10,.02) 42%, rgba(5,7,10,.92) 100%)",
+          background: isEndCard
+            ? "linear-gradient(180deg, rgba(5,7,10,.18) 0%, rgba(5,7,10,.12) 38%, rgba(5,7,10,.92) 100%)"
+            : "linear-gradient(180deg, rgba(5,7,10,.16) 0%, rgba(5,7,10,.02) 42%, rgba(5,7,10,.92) 100%)",
         }}
       />
       <AbsoluteFill
@@ -146,42 +192,47 @@ const ImageStage = ({
   );
 };
 
-const ChaosSignal = ({progress}: {progress: number}) => {
-  const pulse = interpolate(progress, [0, 1], [0.18, 1]);
+const HumanSignal = ({progress}: {progress: number}) => {
+  const travel = interpolate(progress, [0, 1], [-240, 300]);
   return (
     <AbsoluteFill style={{overflow: "hidden", mixBlendMode: "screen"}}>
-      {Array.from({length: 7}, (_, index) => {
-        const offset = (index - 3) * 84;
-        return (
-          <div
-            key={index}
-            style={{
-              position: "absolute",
-              left: -180,
-              right: -180,
-              top: 590 + offset,
-              height: index === 3 ? 6 : 2,
-              opacity: (0.1 + Math.abs(index - 3) * 0.025) * pulse,
-              background: index % 2 === 0 ? palette.signal : palette.electric,
-              transform: `rotate(-8deg) translateX(${interpolate(progress, [0, 1], [-240, 300])}px)`,
-              boxShadow: `0 0 ${24 + index * 4}px currentColor`,
-            }}
-          />
-        );
-      })}
+      {Array.from({length: 7}, (_, index) => (
+        <div
+          key={index}
+          style={{
+            position: "absolute",
+            left: -180,
+            right: -180,
+            top: 566 + (index - 3) * 84,
+            height: index === 3 ? 5 : 2,
+            opacity: 0.08 + Math.abs(index - 3) * 0.018,
+            background: index % 2 === 0 ? palette.signal : palette.electric,
+            transform: `rotate(-8deg) translateX(${travel}px)`,
+            boxShadow: `0 0 ${22 + index * 4}px currentColor`,
+          }}
+        />
+      ))}
+      <SignalRings progress={progress} />
     </AbsoluteFill>
   );
 };
 
-const CalmSignal = ({progress, compact = false}: {progress: number; compact?: boolean}) => {
+const SignalRings = ({
+  progress,
+  compact = false,
+}: {
+  progress: number;
+  compact?: boolean;
+}) => {
   const expansion = interpolate(easeOutQuart(progress), [0, 1], [0.35, 1]);
   const alpha = interpolate(progress, [0, 0.14, 0.78, 1], [0, 0.72, 0.46, 0.08]);
+  const size = compact ? 640 : 920;
   return (
     <div
       style={{
         position: "absolute",
-        width: compact ? 640 : 920,
-        height: compact ? 640 : 920,
+        width: size,
+        height: size,
         left: compact ? 218 : -132,
         top: compact ? 520 : 374,
         borderRadius: "50%",
@@ -203,26 +254,44 @@ const CalmSignal = ({progress, compact = false}: {progress: number; compact?: bo
   );
 };
 
+const ProductDetailGrid = ({progress}: {progress: number}) => (
+  <AbsoluteFill
+    style={{
+      opacity: interpolate(progress, [0, 0.18, 1], [0, 0.48, 0.12]),
+      backgroundImage:
+        "linear-gradient(rgba(142,171,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(142,171,255,.18) 1px, transparent 1px)",
+      backgroundSize: "96px 96px",
+      maskImage: "radial-gradient(circle at center, black, transparent 72%)",
+    }}
+  />
+);
+
 const WordReveal = ({
   lines,
   progress,
   accentLine,
   align = "left",
-  fontSize = 132,
+  fontSize,
 }: {
   lines: string[];
   progress: number;
-  accentLine?: number;
+  accentLine: number;
   align?: "left" | "center";
-  fontSize?: number;
+  fontSize: number;
 }) => (
-  <div style={{display: "flex", flexDirection: "column", alignItems: align === "center" ? "center" : "flex-start"}}>
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: align === "center" ? "center" : "flex-start",
+    }}
+  >
     {lines.map((line, index) => {
       const local = clamp((progress - index * 0.09) / 0.34);
       const reveal = easeOutQuart(local);
       return (
         <div
-          key={line}
+          key={`${index}-${line}`}
           style={{
             fontFamily: condensedFont,
             fontSize,
@@ -245,167 +314,130 @@ const WordReveal = ({
   </div>
 );
 
-const ChaosCopy = ({progress}: {progress: number}) => (
+const InlineCta = ({children, progress}: {children: ReactNode; progress: number}) => (
   <div
     style={{
-      position: "absolute",
-      left: safeArea.left,
-      right: safeArea.right,
-      bottom: 292,
-      zIndex: 10,
+      marginTop: 42,
+      display: "inline-flex",
+      padding: "23px 38px 22px",
+      borderRadius: 999,
+      border: "2px solid rgba(244,247,251,.72)",
+      color: palette.paper,
+      fontFamily: sansFont,
+      fontSize: 44,
+      fontWeight: 700,
+      letterSpacing: "0.08em",
+      lineHeight: 1,
+      opacity: easeOutQuart(clamp((progress - 0.18) / 0.36)),
     }}
   >
-    <Label style={{marginBottom: 30, color: palette.signal}}>CITY NOISE / OVERLOAD</Label>
-    <WordReveal lines={["TOO MUCH", "CITY?"]} progress={progress} accentLine={1} fontSize={150} />
+    {children}
   </div>
 );
 
-const ControlCopy = ({progress}: {progress: number}) => (
-  <div
-    style={{
-      position: "absolute",
-      left: safeArea.left,
-      right: safeArea.right,
-      bottom: 290,
-      zIndex: 10,
-    }}
-  >
-    <Label style={{marginBottom: 30, color: palette.electricSoft}}>SIGNAL RESTORED</Label>
-    <WordReveal lines={["TAKE BACK", "THE SIGNAL"]} progress={progress} accentLine={1} fontSize={132} />
-    <div
-      style={{
-        marginTop: 46,
-        width: interpolate(easeOutQuart(progress), [0, 1], [0, 460]),
-        height: 6,
-        borderRadius: 99,
-        background: `linear-gradient(90deg, ${palette.electric}, ${palette.electricSoft})`,
-        boxShadow: "0 0 34px rgba(79,124,255,.72)",
-      }}
-    />
-  </div>
-);
+const SceneCopy = ({scene, progress}: {scene: CreativeScene; progress: number}) => {
+  const productLed = scene.kind === "clean_product" || scene.kind === "product_detail";
+  const lines = wrapOverlayText(scene.overlay.text, productLed ? 13 : 16);
+  const fontSize =
+    scene.kind === "product_detail" ? 110 : productLed ? 122 : lines.length > 2 ? 118 : 140;
 
-const FeatureCopy = ({progress}: {progress: number}) => (
-  <>
+  return (
     <div
       style={{
         position: "absolute",
         left: safeArea.left,
         right: safeArea.right,
-        top: 1110,
-        zIndex: 12,
+        top: productLed ? 1090 : undefined,
+        bottom: productLed ? undefined : 292,
+        zIndex: 10,
       }}
     >
-      <Label style={{marginBottom: 28, color: palette.electricSoft}}>SOURCE-ATTRIBUTED FEATURE</Label>
-      <WordReveal lines={["ADAPTIVE", "NOISE", "CANCELLING"]} progress={progress} accentLine={2} fontSize={122} />
+      <WordReveal
+        lines={lines}
+        progress={progress}
+        accentLine={productLed ? lines.length - 1 : Math.min(1, lines.length - 1)}
+        fontSize={fontSize}
+      />
+      {scene.cta ? <InlineCta progress={progress}>{scene.cta}</InlineCta> : null}
     </div>
+  );
+};
+
+const EndCard = ({scene, progress}: {scene: CreativeScene; progress: number}) => {
+  const reveal = easeOutQuart(clamp(progress / 0.34));
+  const lines = wrapOverlayText(scene.overlay.text, 18);
+  return (
     <div
       style={{
         position: "absolute",
+        left: safeArea.left,
         right: safeArea.right,
-        top: 335,
-        width: 104,
-        height: 104,
-        border: "2px solid rgba(244,247,251,.4)",
-        borderRadius: "50%",
+        bottom: 272,
+        zIndex: 10,
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        fontFamily: sansFont,
-        color: palette.paper,
-        fontSize: 44,
-        letterSpacing: ".12em",
-        opacity: interpolate(progress, [0, 0.2, 1], [0, 1, 1]),
-        zIndex: 12,
+        opacity: reveal,
+        transform: `translateY(${interpolate(reveal, [0, 1], [56, 0])}px)`,
       }}
     >
-      ANC
-    </div>
-  </>
-);
-
-const IdentityCopy = ({progress}: {progress: number}) => (
-  <div
-    style={{
-      position: "absolute",
-      left: safeArea.left,
-      right: safeArea.right,
-      bottom: 298,
-      zIndex: 10,
-    }}
-  >
-    <Label style={{marginBottom: 30, color: palette.electricSoft}}>NOVA ONE / PERSONAL AUDIO</Label>
-    <WordReveal lines={["YOUR CITY.", "YOUR VOLUME."]} progress={progress} accentLine={1} fontSize={124} />
-  </div>
-);
-
-const EndCard = ({progress, cta}: {progress: number; cta: string}) => {
-  const reveal = easeOutQuart(clamp(progress / 0.34));
-  return (
-    <>
-      <div
-        style={{
-          position: "absolute",
-          left: safeArea.left,
-          right: safeArea.right,
-          bottom: 272,
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          opacity: reveal,
-          transform: `translateY(${interpolate(reveal, [0, 1], [56, 0])}px)`,
-        }}
-      >
-        <div
-          style={{
-            fontFamily: condensedFont,
-            fontSize: 164,
-            fontWeight: 600,
-            lineHeight: 0.86,
-            letterSpacing: "-0.045em",
-            color: palette.paper,
-            textAlign: "center",
-            textShadow: "0 8px 44px rgba(0,0,0,.5)",
-          }}
-        >
-          NOVA ONE
-        </div>
+      <WordReveal
+        lines={lines}
+        progress={progress}
+        accentLine={-1}
+        align="center"
+        fontSize={lines.length > 1 ? 132 : 164}
+      />
+      {scene.cta ? (
         <div
           style={{
             marginTop: 40,
-            minWidth: 540,
-            padding: "30px 54px 29px",
+            minWidth: 600,
+            padding: "28px 54px 27px",
             borderRadius: 999,
             background: palette.paper,
             color: palette.ink,
             fontFamily: sansFont,
             fontSize: 44,
             fontWeight: 800,
-            letterSpacing: "0.14em",
+            letterSpacing: "0.1em",
             lineHeight: 1,
             textAlign: "center",
             boxShadow: "0 14px 48px rgba(0,0,0,.24)",
           }}
         >
-          {cta}
+          {scene.cta}
         </div>
-      </div>
+      ) : null}
+    </div>
+  );
+};
+
+const ProgressRail = ({spec}: {spec: CreativeSpec}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: "absolute",
+        left: safeArea.left,
+        right: safeArea.right,
+        bottom: 174,
+        height: 2,
+        background: "rgba(244,247,251,.18)",
+        zIndex: 30,
+      }}
+    >
       <div
         style={{
-          position: "absolute",
-          left: "50%",
-          bottom: 204,
-          width: 8,
-          height: 8,
-          marginLeft: -4,
-          borderRadius: "50%",
+          width: `${clamp(frame / (spec.durationSeconds * fps)) * 100}%`,
+          height: "100%",
           background: palette.electric,
-          boxShadow: `0 0 26px ${palette.electric}`,
-          zIndex: 11,
+          boxShadow: "0 0 18px rgba(79,124,255,.72)",
         }}
       />
-    </>
+    </div>
   );
 };
 
@@ -413,14 +445,12 @@ const SceneLayer = ({
   scene,
   index,
   sceneCount,
-  spec,
-  media,
+  props,
 }: {
   scene: CreativeScene;
   index: number;
   sceneCount: number;
-  spec: CreativeSpec;
-  media: ProductAdMedia;
+  props: ProductAdProps;
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -438,70 +468,54 @@ const SceneLayer = ({
 
   if (opacity <= 0) return null;
 
+  const asset = resolveSceneAsset(scene, props);
   return (
     <AbsoluteFill style={{opacity}}>
-      <ImageStage src={resolveMedia(scene, media)} progress={progress} scene={scene} />
-      {scene.id === "chaos" ? <ChaosSignal progress={progress} /> : null}
-      {scene.id === "control" ? <CalmSignal progress={progress} /> : null}
-      {scene.kind === "clean_product" ? <CalmSignal progress={progress} compact /> : null}
-      {scene.kind !== "end_card" ? <BrandMark /> : null}
-      {scene.id === "chaos" ? <ChaosCopy progress={progress} /> : null}
-      {scene.id === "control" ? <ControlCopy progress={progress} /> : null}
-      {scene.kind === "clean_product" ? <FeatureCopy progress={progress} /> : null}
-      {scene.id === "identity" ? <IdentityCopy progress={progress} /> : null}
-      {scene.kind === "end_card" && scene.cta ? <EndCard progress={progress} cta={scene.cta} /> : null}
-      <div
-        style={{
-          position: "absolute",
-          left: safeArea.left,
-          right: safeArea.right,
-          bottom: 174,
-          height: 2,
-          background: "rgba(244,247,251,.18)",
-          zIndex: 30,
-        }}
-      >
-        <div
-          style={{
-            width: `${clamp(frame / (spec.durationSeconds * fps)) * 100}%`,
-            height: "100%",
-            background: palette.electric,
-            boxShadow: "0 0 18px rgba(79,124,255,.72)",
-          }}
-        />
-      </div>
+      <ImageStage src={asset.src} alt={asset.alt} progress={progress} kind={scene.kind} />
+      {scene.kind === "human_context" ? <HumanSignal progress={progress} /> : null}
+      {scene.kind === "clean_product" ? <SignalRings progress={progress} compact /> : null}
+      {scene.kind === "product_detail" ? <ProductDetailGrid progress={progress} /> : null}
+      <BrandMark productName={props.evidence.product.name} />
+      {scene.kind === "end_card" ? (
+        <EndCard scene={scene} progress={progress} />
+      ) : (
+        <SceneCopy scene={scene} progress={progress} />
+      )}
+      <ProgressRail spec={props.spec} />
     </AbsoluteFill>
   );
 };
 
-export const ProductAd = ({spec, media}: ProductAdProps) => {
+export const ProductAd = (props: ProductAdProps) => {
   const frame = useCurrentFrame();
   const {durationInFrames} = useVideoConfig();
 
   return (
     <AbsoluteFill style={{background: palette.ink, color: palette.paper, fontFamily: sansFont}}>
-      <Audio
-        src={staticFile(media.audio)}
-        volume={(audioFrame) =>
-          interpolate(
-            audioFrame,
-            [0, 10, durationInFrames - 12, durationInFrames - 1],
-            [0, 1, 1, 0],
-            {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
-          )
-        }
-      />
-      {spec.scenes.map((scene, index) => (
+      {props.audio ? (
+        <Audio
+          src={mediaSource(props.audio)}
+          volume={(audioFrame) =>
+            interpolate(
+              audioFrame,
+              [0, 10, durationInFrames - 12, durationInFrames - 1],
+              [0, 1, 1, 0],
+              {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
+            )
+          }
+        />
+      ) : null}
+      {props.spec.scenes.map((scene, index) => (
         <SceneLayer
           key={scene.id}
           scene={scene}
           index={index}
-          sceneCount={spec.scenes.length}
-          spec={spec}
-          media={media}
+          sceneCount={props.spec.scenes.length}
+          props={props}
         />
       ))}
       <AbsoluteFill
+        aria-hidden
         style={{
           pointerEvents: "none",
           opacity: 0.055,
