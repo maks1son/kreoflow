@@ -4,11 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "pnpm verify:ad-artifacts",
     "build": "next build",
-    "start": "next start",
+    "start": "serve out",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "ad:strategy:live": "tsx scripts/ad-compiler/strategy.mts",
+    "ad:render": "tsx scripts/ad-compiler/render.mts",
+    "ad:qa": "tsx scripts/ad-compiler/qa.mts",
+    "ad:approve": "tsx scripts/ad-compiler/approve.mts",
+    "demo:ad": "tsx scripts/ad-compiler/demo.mts",
+    "verify:ad-artifacts": "tsx scripts/ad-compiler/verify-artifacts.mts"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.2.8",
@@ -27,12 +34,18 @@
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.23.0",
     "next": "16.2.10",
+    "openai": "6.48.0",
     "posthog-js": "^1.400.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "tailwind-merge": "^3.6.0"
+    "remotion": "4.0.494",
+    "tailwind-merge": "^3.6.0",
+    "zod": "4.4.3"
   },
   "devDependencies": {
+    "@remotion/bundler": "4.0.494",
+    "@remotion/cli": "4.0.494",
+    "@remotion/renderer": "4.0.494",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -43,7 +56,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "jsdom": "^29.1.1",
+    "serve": "^14.2.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

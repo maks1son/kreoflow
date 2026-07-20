@@ -48,3 +48,7 @@ HANDOFF.md
 
 # isolated agent worktrees
 .worktrees/
+
+# local Codex scratch and attachment staging
+.codex-temp/
+.codex-remote-attachments/
