@@ -9,6 +9,10 @@ const schemaVersionSchema = z.literal(AD_COMPILER_SCHEMA_VERSION, {
 });
 
 const nonEmptyText = z.string().trim().min(1);
+const stillImagePath = nonEmptyText.refine(
+  (value) => /\.(?:png|jpe?g|webp)$/iu.test(value),
+  "Asset path must use a supported still-image format: PNG, JPEG, or WebP",
+);
 
 export const ClaimStatusSchema = z.enum([
   "source_attributed",
@@ -56,7 +60,7 @@ export const ProductEvidenceSchema = z
         z
           .object({
             id: nonEmptyText,
-            path: nonEmptyText,
+            path: stillImagePath,
             role: z.enum(["human_context", "clean_product", "product_detail"]),
             alt: nonEmptyText,
           })

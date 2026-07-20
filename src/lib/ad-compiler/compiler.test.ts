@@ -284,6 +284,15 @@ describe("compileCreativeSpec", () => {
     ).toThrow(/asset .* role .* cannot serve scene kind "clean_product"/i);
   });
 
+  it("blocks media that the still-image renderer cannot decode", () => {
+    const evidence = clone(validEvidence);
+    evidence.assets[0].path = "samples/nova-one/assets/source-video.mp4";
+
+    expect(() =>
+      compileCreativeSpec({ evidence, spec: validSpec }),
+    ).toThrow(/supported still-image format/i);
+  });
+
   it("requires the final CTA scene to remain visible for at least 1.5 seconds", () => {
     const spec = clone(validSpec);
     spec.scenes[3].endSeconds = 11.95;
