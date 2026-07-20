@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { relative, resolve } from "node:path";
 
-import { hashCanonical } from "./schema";
+import { hashCanonical } from "./schema.ts";
 
 export const TECHNICAL_QA_VERSION = "1.0.0" as const;
 
