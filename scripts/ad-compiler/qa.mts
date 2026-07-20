@@ -1,12 +1,13 @@
 import { spawnSync } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, relative, resolve } from "node:path";
 
 import {
   buildMediaManifestHash,
   buildTechnicalQaReceipt,
   parseEbur128Summary,
   parseFfprobeJson,
+  validateCurrentRenderReceipt,
 } from "../../src/lib/ad-compiler/qa.ts";
 import {
   compileCreativeSpec,
@@ -18,6 +19,8 @@ const defaults = {
   evidence: "samples/nova-one/product-evidence.json",
   spec: "samples/nova-one/creative-spec.json",
   video: "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
+  renderReceipt:
+    "public/media/build-week/ad-compiler/nova-one-render-receipt.json",
   out: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
 };
 
@@ -26,6 +29,7 @@ const allowedFlags = new Set([
   "spec",
   "audio",
   "video",
+  "render-receipt",
   "out",
   "generated-at",
 ]);
@@ -36,7 +40,7 @@ function usage(): string {
     "",
     "Usage:",
     "  pnpm ad:qa [--evidence <json>] [--spec <json>] --audio <media>",
-    "             [--video <mp4>] [--out <json>]",
+    "             [--video <mp4>] [--render-receipt <json>] [--out <json>]",
     "             [--generated-at <ISO-8601 timestamp>]",
   ].join("\n");
 }
@@ -134,6 +138,17 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+async function invalidateOutput(
+  outputPath: string,
+  protectedInputs: readonly string[],
+): Promise<void> {
+  if (protectedInputs.some((inputPath) => relative(inputPath, outputPath) === "")) {
+    throw new Error("QA --out must not overwrite an evidence, spec, audio, video, or render receipt input");
+  }
+  await mkdir(dirname(outputPath), { recursive: true });
+  await rm(outputPath, { force: true });
+}
+
 async function mediaManifestHashFor(
   assets: readonly { id: string; path: string }[],
   audioInput: string,
@@ -164,12 +179,39 @@ async function main(): Promise<void> {
   }
   const audioPath = resolve(audioInput);
   const videoPath = resolve(args.get("video") ?? defaults.video);
+  const renderReceiptPath = resolve(
+    args.get("render-receipt") ?? defaults.renderReceipt,
+  );
   const outputPath = resolve(args.get("out") ?? defaults.out);
   const compiled = compileCreativeSpec({
     evidence: await readJson(evidencePath),
     spec: await readJson(specPath),
   });
+  await invalidateOutput(outputPath, [
+    evidencePath,
+    specPath,
+    audioPath,
+    videoPath,
+    renderReceiptPath,
+    ...compiled.evidence.assets.map((asset) => resolve(asset.path)),
+  ]);
   const renderHash = sha256Hex(await readFile(videoPath));
+  const evidenceHash = hashCanonical(compiled.evidence);
+  const mediaManifestHash = await mediaManifestHashFor(
+    compiled.evidence.assets,
+    audioInput,
+    audioPath,
+  );
+  const renderReceipt = validateCurrentRenderReceipt(
+    await readJson(renderReceiptPath),
+    {
+      evidenceHash,
+      specHash: compiled.specHash,
+      mediaManifestHash,
+      renderHash,
+      outputPath: videoPath,
+    },
+  );
   const probeOutput = runRequired("ffprobe", [
     "-v",
     "error",
@@ -186,14 +228,11 @@ async function main(): Promise<void> {
     probe,
     loudness: loudnessOutput ? parseEbur128Summary(loudnessOutput) : null,
     expectedDurationSeconds: compiled.spec.durationSeconds,
-    evidenceHash: hashCanonical(compiled.evidence),
-    mediaManifestHash: await mediaManifestHashFor(
-      compiled.evidence.assets,
-      audioInput,
-      audioPath,
-    ),
+    evidenceHash,
+    mediaManifestHash,
     specHash: compiled.specHash,
     renderHash,
+    renderReceiptHash: hashCanonical(renderReceipt),
     generatedAt: args.get("generated-at"),
   });
 

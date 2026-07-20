@@ -1,5 +1,5 @@
 import { readFile, mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { dirname, relative, resolve } from "node:path";
 
 import { compileCreativeSpecWithOpenAI } from "../../src/lib/ad-compiler/openai.ts";
 import {
@@ -73,6 +73,16 @@ async function main(): Promise<void> {
   );
 
   console.log("LIVE GPT-5.6 strategy requested · no fixture fallback");
+  const protectedInputs = [
+    evidencePath,
+    ...evidence.assets.map((asset) => resolve(asset.path)),
+  ];
+  if (protectedInputs.some((inputPath) => relative(inputPath, outputPath) === "")) {
+    throw new Error(
+      "Live strategy --out must not overwrite evidence or declared media assets",
+    );
+  }
+
   const result = await compileCreativeSpecWithOpenAI({
     evidence,
     platform: args.get("platform")!,

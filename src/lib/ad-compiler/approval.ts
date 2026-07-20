@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   type TechnicalQaReceipt,
   TechnicalQaReceiptSchema,
+  validateCurrentRenderReceipt,
 } from "./qa";
 import {
   compileCreativeSpec,
@@ -51,6 +52,7 @@ export function createApprovalReceipt({
   spec,
   renderHash,
   mediaManifestHash,
+  renderReceipt: renderReceiptInput,
   qaReceipt: qaReceiptInput,
   approver,
   approvedAt = new Date().toISOString(),
@@ -59,6 +61,7 @@ export function createApprovalReceipt({
   spec: unknown;
   renderHash: string;
   mediaManifestHash: string;
+  renderReceipt: unknown;
   qaReceipt: unknown;
   approver: string;
   approvedAt?: string;
@@ -67,6 +70,12 @@ export function createApprovalReceipt({
   const compiled = compileCreativeSpec({ evidence, spec });
   const evidenceHash = hashCanonical(evidence);
   const qaReceipt = TechnicalQaReceiptSchema.parse(qaReceiptInput);
+  const renderReceipt = validateCurrentRenderReceipt(renderReceiptInput, {
+    evidenceHash,
+    specHash: compiled.specHash,
+    mediaManifestHash,
+    renderHash,
+  });
 
   if (!qaReceipt.passed) {
     throw new Error("Cannot approve: technical QA is not a complete PASS");
@@ -82,6 +91,9 @@ export function createApprovalReceipt({
   }
   if (qaReceipt.renderHash !== renderHash) {
     throw new Error("Cannot approve: QA receipt is stale for the current encoded render");
+  }
+  if (qaReceipt.renderReceiptHash !== hashCanonical(renderReceipt)) {
+    throw new Error("Cannot approve: QA receipt is stale for the current render receipt");
   }
 
   const payload = ApprovalPayloadSchema.parse({
@@ -108,12 +120,14 @@ export function isApprovalReceiptCurrent(
     spec,
     renderHash,
     mediaManifestHash,
+    renderReceipt: renderReceiptInput,
     qaReceipt: qaReceiptInput,
   }: {
     evidence: unknown;
     spec: unknown;
     renderHash: string;
     mediaManifestHash: string;
+    renderReceipt: unknown;
     qaReceipt: unknown;
   },
 ): boolean {
@@ -124,6 +138,12 @@ export function isApprovalReceiptCurrent(
     const qaReceipt: TechnicalQaReceipt =
       TechnicalQaReceiptSchema.parse(qaReceiptInput);
     const evidenceHash = hashCanonical(evidence);
+    const renderReceipt = validateCurrentRenderReceipt(renderReceiptInput, {
+      evidenceHash,
+      specHash: compiled.specHash,
+      mediaManifestHash,
+      renderHash,
+    });
 
     return (
       qaReceipt.passed &&
@@ -131,6 +151,7 @@ export function isApprovalReceiptCurrent(
       qaReceipt.mediaManifestHash === mediaManifestHash &&
       qaReceipt.specHash === compiled.specHash &&
       qaReceipt.renderHash === renderHash &&
+      qaReceipt.renderReceiptHash === hashCanonical(renderReceipt) &&
       receipt.evidenceHash === evidenceHash &&
       receipt.mediaManifestHash === mediaManifestHash &&
       receipt.specHash === compiled.specHash &&

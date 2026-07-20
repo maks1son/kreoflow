@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "pnpm verify:ad-artifacts",
     "build": "next build",
     "start": "serve out",
     "lint": "eslint",
@@ -13,7 +14,8 @@
     "ad:render": "tsx scripts/ad-compiler/render.mts",
     "ad:qa": "tsx scripts/ad-compiler/qa.mts",
     "ad:approve": "tsx scripts/ad-compiler/approve.mts",
-    "demo:ad": "tsx scripts/ad-compiler/demo.mts"
+    "demo:ad": "tsx scripts/ad-compiler/demo.mts",
+    "verify:ad-artifacts": "tsx scripts/ad-compiler/verify-artifacts.mts"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.2.8",

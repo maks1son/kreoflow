@@ -1,13 +1,15 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, relative, resolve } from "node:path";
 
 import { createApprovalReceipt } from "../../src/lib/ad-compiler/approval.ts";
 import {
   buildMediaManifestHash,
   TechnicalQaReceiptSchema,
+  validateCurrentRenderReceipt,
 } from "../../src/lib/ad-compiler/qa.ts";
 import {
   compileCreativeSpec,
+  hashCanonical,
   sha256Hex,
 } from "../../src/lib/ad-compiler/schema.ts";
 
@@ -16,6 +18,8 @@ const defaults = {
   spec: "samples/nova-one/creative-spec.json",
   video: "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
   qa: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
+  renderReceipt:
+    "public/media/build-week/ad-compiler/nova-one-render-receipt.json",
   out: "public/media/build-week/ad-compiler/nova-one-approval-receipt.json",
 };
 
@@ -25,6 +29,7 @@ const allowedFlags = new Set([
   "audio",
   "video",
   "qa",
+  "render-receipt",
   "out",
   "approver",
   "approved-at",
@@ -36,7 +41,8 @@ function usage(): string {
     "",
     "Usage:",
     "  pnpm ad:approve [--evidence <json>] [--spec <json>] --audio <media>",
-    "                  [--video <mp4>] [--qa <json>] [--out <json>]",
+    "                  [--video <mp4>] [--render-receipt <json>]",
+    "                  [--qa <json>] [--out <json>]",
     "                  --approver <human label>",
     "                  [--approved-at <ISO-8601 timestamp>]",
   ].join("\n");
@@ -79,6 +85,19 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+async function invalidateOutput(
+  outputPath: string,
+  protectedInputs: readonly string[],
+): Promise<void> {
+  if (protectedInputs.some((inputPath) => relative(inputPath, outputPath) === "")) {
+    throw new Error(
+      "Approval --out must not overwrite an evidence, spec, audio, video, QA, or render receipt input",
+    );
+  }
+  await mkdir(dirname(outputPath), { recursive: true });
+  await rm(outputPath, { force: true });
+}
+
 async function mediaManifestHashFor(
   assets: readonly { id: string; path: string }[],
   audioInput: string,
@@ -110,6 +129,9 @@ async function main(): Promise<void> {
   const audioPath = resolve(audioInput);
   const videoPath = resolve(args.get("video") ?? defaults.video);
   const qaPath = resolve(args.get("qa") ?? defaults.qa);
+  const renderReceiptPath = resolve(
+    args.get("render-receipt") ?? defaults.renderReceipt,
+  );
   const outputPath = resolve(args.get("out") ?? defaults.out);
   const approver = args.get("approver")?.trim();
   if (!approver) {
@@ -117,10 +139,18 @@ async function main(): Promise<void> {
       "Human approval requires an explicit --approver label after reviewing the rendered video",
     );
   }
-
   const evidence = await readJson(evidencePath);
   const spec = await readJson(specPath);
   const compiled = compileCreativeSpec({ evidence, spec });
+  await invalidateOutput(outputPath, [
+    evidencePath,
+    specPath,
+    audioPath,
+    videoPath,
+    qaPath,
+    renderReceiptPath,
+    ...compiled.evidence.assets.map((asset) => resolve(asset.path)),
+  ]);
   const qaReceipt = TechnicalQaReceiptSchema.parse(await readJson(qaPath));
   const renderHash = sha256Hex(await readFile(videoPath));
   const mediaManifestHash = await mediaManifestHashFor(
@@ -128,11 +158,22 @@ async function main(): Promise<void> {
     audioInput,
     audioPath,
   );
+  const renderReceipt = validateCurrentRenderReceipt(
+    await readJson(renderReceiptPath),
+    {
+      evidenceHash: hashCanonical(compiled.evidence),
+      specHash: compiled.specHash,
+      mediaManifestHash,
+      renderHash,
+      outputPath: videoPath,
+    },
+  );
   const receipt = createApprovalReceipt({
     evidence: compiled.evidence,
     spec: compiled.spec,
     renderHash,
     mediaManifestHash,
+    renderReceipt,
     qaReceipt,
     approver,
     approvedAt: args.get("approved-at"),

@@ -8,7 +8,10 @@ import {
   parseFfprobeJson,
   TECHNICAL_QA_CHECK_IDS,
   TechnicalQaReceiptSchema,
+  validateCurrentRenderReceipt,
 } from "./qa";
+import { buildRenderReceipt } from "./render-receipt";
+import { hashCanonical } from "./schema";
 
 const mediaManifest = {
   assets: [
@@ -56,6 +59,16 @@ const receiptInput = {
   mediaManifestHash: buildMediaManifestHash(mediaManifest),
   specHash: "a".repeat(64),
   renderHash: "b".repeat(64),
+  renderReceiptHash: hashCanonical(
+    buildRenderReceipt({
+      generatedAt: "2026-07-20T11:58:00.000Z",
+      outputPath: "public/media/ad.mp4",
+      evidenceHash: "e".repeat(64),
+      mediaManifestHash: buildMediaManifestHash(mediaManifest),
+      specHash: "a".repeat(64),
+      renderHash: "b".repeat(64),
+    }),
+  ),
   generatedAt: "2026-07-20T12:00:00.000Z",
 };
 
@@ -72,6 +85,27 @@ const passingReceipt = () =>
   });
 
 describe("technical render QA", () => {
+  it("rejects a render receipt when current source media bytes differ", () => {
+    const renderReceipt = buildRenderReceipt({
+      generatedAt: "2026-07-20T11:58:00.000Z",
+      outputPath: "public/media/ad.mp4",
+      evidenceHash: receiptInput.evidenceHash,
+      mediaManifestHash: receiptInput.mediaManifestHash,
+      specHash: receiptInput.specHash,
+      renderHash: receiptInput.renderHash,
+    });
+
+    expect(() =>
+      validateCurrentRenderReceipt(renderReceipt, {
+        evidenceHash: receiptInput.evidenceHash,
+        mediaManifestHash: "f".repeat(64),
+        specHash: receiptInput.specHash,
+        renderHash: receiptInput.renderHash,
+        outputPath: "public/media/ad.mp4",
+      }),
+    ).toThrow(/media bytes/i);
+  });
+
   it("hashes declared asset and audio bytes deterministically", () => {
     const reordered = {
       ...mediaManifest,

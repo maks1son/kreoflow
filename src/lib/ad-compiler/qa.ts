@@ -2,6 +2,10 @@ import { z } from "zod";
 import { relative, resolve } from "node:path";
 
 import { hashCanonical } from "./schema.ts";
+import {
+  type RenderReceipt,
+  RenderReceiptSchema,
+} from "./render-receipt.ts";
 
 export const TECHNICAL_QA_VERSION = "1.0.0" as const;
 
@@ -91,6 +95,39 @@ export function buildMediaManifestHash(input: unknown): string {
   });
 }
 
+export function validateCurrentRenderReceipt(
+  receiptInput: unknown,
+  current: {
+    evidenceHash: string;
+    specHash: string;
+    mediaManifestHash: string;
+    renderHash: string;
+    outputPath?: string;
+  },
+): RenderReceipt {
+  const receipt = RenderReceiptSchema.parse(receiptInput);
+  if (receipt.evidenceHash !== current.evidenceHash) {
+    throw new Error("Render receipt is stale for the current evidence");
+  }
+  if (receipt.specHash !== current.specHash) {
+    throw new Error("Render receipt is stale for the current CreativeSpec");
+  }
+  if (receipt.mediaManifestHash !== current.mediaManifestHash) {
+    throw new Error("Render receipt is stale for the current media bytes");
+  }
+  if (receipt.renderHash !== current.renderHash) {
+    throw new Error("Render receipt is stale for the current encoded render");
+  }
+  if (
+    current.outputPath &&
+    normalizedManifestPath(receipt.outputPath) !==
+      normalizedManifestPath(current.outputPath)
+  ) {
+    throw new Error("Render receipt output path does not match the encoded render");
+  }
+  return receipt;
+}
+
 export const TechnicalQaCheckIdSchema = z.enum(TECHNICAL_QA_CHECK_IDS);
 
 export const TechnicalQaCheckSchema = z
@@ -126,6 +163,7 @@ export const TechnicalQaReceiptSchema = z
     mediaManifestHash: Sha256Schema,
     specHash: Sha256Schema,
     renderHash: Sha256Schema,
+    renderReceiptHash: Sha256Schema,
     passed: z.boolean(),
     checks: z.array(TechnicalQaCheckSchema).length(TECHNICAL_QA_CHECK_IDS.length),
     summary: TechnicalQaSummarySchema,
@@ -315,6 +353,7 @@ export const buildTechnicalQaReceipt = ({
   mediaManifestHash,
   specHash,
   renderHash,
+  renderReceiptHash,
   generatedAt = new Date().toISOString(),
 }: {
   probe: MediaProbe;
@@ -324,6 +363,7 @@ export const buildTechnicalQaReceipt = ({
   mediaManifestHash: string;
   specHash: string;
   renderHash: string;
+  renderReceiptHash: string;
   generatedAt?: string;
 }): TechnicalQaReceipt => {
   const video = probe.video;
@@ -398,6 +438,7 @@ export const buildTechnicalQaReceipt = ({
     mediaManifestHash,
     specHash,
     renderHash,
+    renderReceiptHash,
     passed: checks.every((item) => item.passed),
     checks,
     summary: {

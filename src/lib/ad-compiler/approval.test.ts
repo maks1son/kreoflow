@@ -12,6 +12,7 @@ import {
   buildTechnicalQaReceipt,
   type TechnicalQaReceipt,
 } from "./qa";
+import { buildRenderReceipt } from "./render-receipt";
 import {
   hashCanonical,
   hashCreativeSpec,
@@ -31,6 +32,14 @@ const mediaManifestHash = buildMediaManifestHash({
     path: "public/media/build-week/ad-compiler/nova-one-score.m4a",
     sha256: "a".repeat(64),
   },
+});
+const renderReceipt = buildRenderReceipt({
+  generatedAt: "2026-07-20T11:58:00.000Z",
+  outputPath: "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
+  evidenceHash,
+  specHash,
+  mediaManifestHash,
+  renderHash,
 });
 
 const qaReceipt = (): TechnicalQaReceipt =>
@@ -58,6 +67,7 @@ const qaReceipt = (): TechnicalQaReceipt =>
     mediaManifestHash,
     specHash,
     renderHash,
+    renderReceiptHash: hashCanonical(renderReceipt),
     generatedAt: "2026-07-20T11:59:00.000Z",
   });
 
@@ -66,6 +76,7 @@ const approvalInput = () => ({
   spec: creativeSpec,
   renderHash,
   mediaManifestHash,
+  renderReceipt,
   qaReceipt: qaReceipt(),
   approver: "  KreoFlow human reviewer  ",
   approvedAt: "2026-07-20T12:00:00.000Z",
@@ -94,6 +105,7 @@ describe("approval receipts", () => {
         spec: creativeSpec,
         renderHash,
         mediaManifestHash,
+        renderReceipt: input.renderReceipt,
         qaReceipt: input.qaReceipt,
       }),
     ).toBe(true);
@@ -126,6 +138,7 @@ describe("approval receipts", () => {
         spec: creativeSpec,
         renderHash,
         mediaManifestHash,
+        renderReceipt: input.renderReceipt,
         qaReceipt: input.qaReceipt,
       }),
     ).toBe(false);
@@ -146,6 +159,7 @@ describe("approval receipts", () => {
         spec: changedSpec,
         renderHash,
         mediaManifestHash,
+        renderReceipt: input.renderReceipt,
         qaReceipt: input.qaReceipt,
       }),
     ).toBe(false);
@@ -155,6 +169,7 @@ describe("approval receipts", () => {
         spec: creativeSpec,
         renderHash: "c".repeat(64),
         mediaManifestHash,
+        renderReceipt: input.renderReceipt,
         qaReceipt: input.qaReceipt,
       }),
     ).toBe(false);
@@ -164,6 +179,7 @@ describe("approval receipts", () => {
         spec: creativeSpec,
         renderHash,
         mediaManifestHash,
+        renderReceipt: input.renderReceipt,
         qaReceipt: changedQa,
       }),
     ).toBe(false);
@@ -173,6 +189,20 @@ describe("approval receipts", () => {
         spec: creativeSpec,
         renderHash,
         mediaManifestHash: "d".repeat(64),
+        renderReceipt: input.renderReceipt,
+        qaReceipt: input.qaReceipt,
+      }),
+    ).toBe(false);
+    expect(
+      isApprovalReceiptCurrent(receipt, {
+        evidence: productEvidence,
+        spec: creativeSpec,
+        renderHash,
+        mediaManifestHash,
+        renderReceipt: {
+          ...input.renderReceipt,
+          mediaManifestHash: "d".repeat(64),
+        },
         qaReceipt: input.qaReceipt,
       }),
     ).toBe(false);
