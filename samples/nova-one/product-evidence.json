@@ -42,13 +42,19 @@
   "assets": [
     {
       "id": "city-portrait",
-      "path": "samples/nova-one/assets/city-portrait.png",
+      "path": "public/media/build-week/ad-compiler/nova-one-master.webp",
       "role": "human_context",
       "alt": "City commuter wearing NOVA ONE headphones"
     },
     {
+      "id": "city-control",
+      "path": "public/media/build-week/ad-compiler/nova-one-control.webp",
+      "role": "human_context",
+      "alt": "City commuter wearing NOVA ONE headphones as traffic light streaks pass"
+    },
+    {
       "id": "clean-packshot",
-      "path": "samples/nova-one/assets/clean-packshot.png",
+      "path": "public/media/build-week/ad-compiler/nova-one-packshot.webp",
       "role": "clean_product",
       "alt": "NOVA ONE headphones on a clean background"
     }
