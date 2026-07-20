@@ -258,6 +258,43 @@ describe("compileCreativeSpec", () => {
       compileCreativeSpec({ evidence: validEvidence, spec }),
     ).toThrow(/claim .* (missing|blocked|requires approval)/i);
   });
+
+  it("blocks claim laundering through unrelated visible copy", () => {
+    const spec = clone(validSpec);
+    spec.scenes[2].overlay.text = "CURES HEARING LOSS";
+
+    expect(() =>
+      compileCreativeSpec({ evidence: validEvidence, spec }),
+    ).toThrow(/visible copy .* match sourced claim/i);
+  });
+
+  it("requires the supported promise claim to appear in a scene", () => {
+    const spec = clone(validSpec);
+    spec.scenes[2].overlay.claimId = null;
+
+    expect(() =>
+      compileCreativeSpec({ evidence: validEvidence, spec }),
+    ).toThrow(/supported promise claim .* visible scene/i);
+  });
+
+  it("blocks scene assets whose evidence role does not match the scene kind", () => {
+    const spec = clone(validSpec);
+    spec.scenes[2].assetId = "city-portrait";
+
+    expect(() =>
+      compileCreativeSpec({ evidence: validEvidence, spec }),
+    ).toThrow(/asset .* role .* cannot serve scene kind "clean_product"/i);
+  });
+
+  it("requires the final CTA scene to remain visible for at least 1.5 seconds", () => {
+    const spec = clone(validSpec);
+    spec.scenes[3].endSeconds = 11.95;
+    spec.scenes[4].startSeconds = 11.95;
+
+    expect(() =>
+      compileCreativeSpec({ evidence: validEvidence, spec }),
+    ).toThrow(/final CTA scene .* at least 1\.5 seconds/i);
+  });
 });
 
 describe("content-addressed approvals", () => {

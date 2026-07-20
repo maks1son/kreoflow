@@ -180,6 +180,24 @@ function countWords(value: string): number {
   return value.trim().split(/\s+/u).filter(Boolean).length;
 }
 
+function normalizeClaimText(value: string): string {
+  return value
+    .normalize("NFKC")
+    .toLocaleLowerCase("en-US")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
+function sceneAcceptsAssetRole(
+  sceneKind: CreativeScene["kind"],
+  assetRole: ProductEvidence["assets"][number]["role"],
+): boolean {
+  if (sceneKind === "end_card") {
+    return assetRole === "clean_product" || assetRole === "product_detail";
+  }
+  return sceneKind === assetRole;
+}
+
 function claimIssue(
   claimId: string,
   claimById: ReadonlyMap<string, ProductEvidence["claims"][number]>,
@@ -262,6 +280,9 @@ export function compileCreativeSpec({
   if (finalScene.kind !== "end_card") {
     issues.push("Final scene must be an end_card");
   }
+  if (finalScene.endSeconds - finalScene.startSeconds < 1.5 - 0.000_001) {
+    issues.push("Final CTA scene must remain visible for at least 1.5 seconds");
+  }
 
   if (!scenes.some((scene) => scene.kind === "human_context")) {
     issues.push("Creative must include at least one human_context scene");
@@ -270,10 +291,15 @@ export function compileCreativeSpec({
     issues.push("Creative must include at least one clean_product scene");
   }
 
-  const assetIds = new Set(evidence.assets.map(({ id }) => id));
+  const assetById = new Map(evidence.assets.map((asset) => [asset.id, asset]));
   for (const scene of scenes) {
-    if (!assetIds.has(scene.assetId)) {
+    const asset = assetById.get(scene.assetId);
+    if (!asset) {
       issues.push(`Asset "${scene.assetId}" is missing`);
+    } else if (!sceneAcceptsAssetRole(scene.kind, asset.role)) {
+      issues.push(
+        `Asset "${scene.assetId}" role "${asset.role}" cannot serve scene kind "${scene.kind}"`,
+      );
     }
   }
 
@@ -289,6 +315,30 @@ export function compileCreativeSpec({
     const issue = claimIssue(claimId, claimById);
     if (issue) {
       issues.push(issue);
+    }
+  }
+
+  const visibleClaimIds = new Set(
+    scenes.flatMap((scene) =>
+      scene.overlay.claimId ? [scene.overlay.claimId] : [],
+    ),
+  );
+  if (!visibleClaimIds.has(spec.supportedPromiseClaimId)) {
+    issues.push(
+      `Supported promise claim "${spec.supportedPromiseClaimId}" must appear in a visible scene`,
+    );
+  }
+
+  for (const scene of scenes) {
+    if (!scene.overlay.claimId) continue;
+    const claim = claimById.get(scene.overlay.claimId);
+    if (
+      claim &&
+      normalizeClaimText(scene.overlay.text) !== normalizeClaimText(claim.text)
+    ) {
+      issues.push(
+        `Scene "${scene.id}" visible copy must match sourced claim "${claim.id}"`,
+      );
     }
   }
 
