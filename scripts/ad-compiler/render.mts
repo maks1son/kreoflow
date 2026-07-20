@@ -5,7 +5,9 @@ import {
   readFile,
   rm,
   stat,
+  writeFile,
 } from "node:fs/promises";
+import {createHash} from "node:crypto";
 import {tmpdir} from "node:os";
 import {
   basename,
@@ -13,6 +15,7 @@ import {
   extname,
   isAbsolute,
   join,
+  relative,
   resolve,
 } from "node:path";
 import {fileURLToPath} from "node:url";
@@ -21,7 +24,12 @@ import {bundle} from "@remotion/bundler";
 import {renderMedia, selectComposition} from "@remotion/renderer";
 
 // Node 24 executes TypeScript directly; the explicit extension is required at runtime.
-import {compileCreativeSpec} from "../../src/lib/ad-compiler/schema.ts";
+import {buildMediaManifestHash} from "../../src/lib/ad-compiler/qa.ts";
+import {buildRenderReceipt} from "../../src/lib/ad-compiler/render-receipt.ts";
+import {
+  compileCreativeSpec,
+  hashCanonical,
+} from "../../src/lib/ad-compiler/schema.ts";
 import {
   buildProductAdProps,
   requireAudioSource,
@@ -32,6 +40,7 @@ interface CliOptions {
   evidence: string;
   spec: string;
   out: string;
+  receipt: string;
   audio: string;
 }
 
@@ -39,13 +48,15 @@ interface StagedMedia {
   publicDir: string;
   assets: Record<string, string>;
   audio: string;
+  mediaManifestHash: string;
 }
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+process.chdir(projectRoot);
 const PRODUCT_AD_COMPOSITION_ID = "KreoFlowProductAd";
-const allowedFlags = new Set(["evidence", "spec", "out", "audio"]);
+const allowedFlags = new Set(["evidence", "spec", "out", "receipt", "audio"]);
 const usage =
-  "Usage: node scripts/ad-compiler/render.mts --evidence <json> --spec <json> --out <mp4> --audio <licensed-media>";
+  "Usage: node scripts/ad-compiler/render.mts --evidence <json> --spec <json> --out <mp4> --receipt <json> --audio <licensed-media>";
 
 const parseCli = (argv: string[]): CliOptions => {
   const values = new Map<string, string>();
@@ -69,12 +80,13 @@ const parseCli = (argv: string[]): CliOptions => {
   const evidence = values.get("evidence");
   const spec = values.get("spec");
   const out = values.get("out");
+  const receipt = values.get("receipt");
   const audio = values.get("audio");
-  if (!evidence || !spec || !out || !audio) {
+  if (!evidence || !spec || !out || !receipt || !audio) {
     throw new Error(usage);
   }
 
-  return {evidence, spec, out, audio};
+  return {evidence, spec, out, receipt, audio};
 };
 
 const projectPath = (path: string) =>
@@ -91,6 +103,9 @@ const assertFile = async (path: string, label: string) => {
     throw new Error(`${label} does not exist or is not a file: ${path}`);
   }
 };
+
+const sha256File = async (path: string) =>
+  createHash("sha256").update(await readFile(path)).digest("hex");
 
 const safeFilename = (index: number, sourcePath: string) => {
   const original = basename(sourcePath);
@@ -119,20 +134,40 @@ const stageMedia = async ({
     ]);
 
     const assets: Record<string, string> = {};
+    const manifestAssets: Array<{id: string; path: string; sha256: string}> = [];
     for (const [index, asset] of evidence.assets.entries()) {
       const source = projectPath(asset.path);
       await assertFile(source, `Evidence asset "${asset.id}"`);
       const filename = safeFilename(index, source);
-      await copyFile(source, join(assetDir, filename));
+      const stagedPath = join(assetDir, filename);
+      await copyFile(source, stagedPath);
       assets[asset.id] = `assets/${filename}`;
+      manifestAssets.push({
+        id: asset.id,
+        path: source,
+        sha256: await sha256File(stagedPath),
+      });
     }
 
     const resolvedAudio = projectPath(audioPath);
     await assertFile(resolvedAudio, "Audio source");
     const audioFilename = safeFilename(0, resolvedAudio);
-    await copyFile(resolvedAudio, join(audioDir, audioFilename));
+    const stagedAudioPath = join(audioDir, audioFilename);
+    await copyFile(resolvedAudio, stagedAudioPath);
+    const mediaManifestHash = buildMediaManifestHash({
+      assets: manifestAssets,
+      audio: {
+        path: resolvedAudio,
+        sha256: await sha256File(stagedAudioPath),
+      },
+    });
 
-    return {publicDir, assets, audio: `audio/${audioFilename}`};
+    return {
+      publicDir,
+      assets,
+      audio: `audio/${audioFilename}`,
+      mediaManifestHash,
+    };
   } catch (error) {
     await rm(publicDir, {recursive: true, force: true});
     throw error;
@@ -150,24 +185,34 @@ const main = async () => {
     evidence: evidenceInput,
     spec: specInput,
   });
+  const outputLocation = projectPath(options.out);
+  const receiptLocation = projectPath(options.receipt);
+  if (outputLocation === receiptLocation) {
+    throw new Error("--out and --receipt must point to different files");
+  }
   const staged = await stageMedia({
     evidence: compiled.evidence,
     audioPath,
   });
-  const inputProps = buildProductAdProps({
-    evidence: compiled.evidence,
-    spec: compiled.spec,
-    audio: staged.audio,
-    resolveAssetPath: (asset) => {
-      const source = staged.assets[asset.id];
-      if (!source) throw new Error(`Asset "${asset.id}" was not staged`);
-      return source;
-    },
-  });
-  const outputLocation = projectPath(options.out);
 
   try {
-    await mkdir(dirname(outputLocation), {recursive: true});
+    const inputProps = buildProductAdProps({
+      evidence: compiled.evidence,
+      spec: compiled.spec,
+      audio: staged.audio,
+      resolveAssetPath: (asset) => {
+        const source = staged.assets[asset.id];
+        if (!source) throw new Error(`Asset "${asset.id}" was not staged`);
+        return source;
+      },
+    });
+    const evidenceHash = hashCanonical(compiled.evidence);
+    const specHash = compiled.specHash;
+    await Promise.all([
+      mkdir(dirname(outputLocation), {recursive: true}),
+      mkdir(dirname(receiptLocation), {recursive: true}),
+    ]);
+    await rm(receiptLocation, {force: true});
     process.stdout.write(`Validated CreativeSpec ${compiled.specHash.slice(0, 12)}\n`);
     process.stdout.write(
       `Staged ${compiled.evidence.assets.length} declared asset(s) and explicit audio\n`,
@@ -212,7 +257,20 @@ const main = async () => {
       },
     });
 
+    const renderHash = await sha256File(outputLocation);
+    const outputPath =
+      relative(projectRoot, outputLocation).replaceAll("\\", "/") || basename(outputLocation);
+    const receipt = buildRenderReceipt({
+      evidenceHash,
+      specHash,
+      mediaManifestHash: staged.mediaManifestHash,
+      renderHash,
+      outputPath,
+    });
+    await writeFile(receiptLocation, `${JSON.stringify(receipt, null, 2)}\n`, "utf8");
+
     process.stdout.write(`Rendered ${outputLocation}\n`);
+    process.stdout.write(`Render receipt ${receiptLocation}\n`);
   } finally {
     await rm(staged.publicDir, {recursive: true, force: true});
   }
