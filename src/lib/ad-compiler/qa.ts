@@ -1,4 +1,112 @@
+import { z } from "zod";
+
 export const TECHNICAL_QA_VERSION = "1.0.0" as const;
+
+export const TECHNICAL_QA_CHECK_IDS = [
+  "dimensions",
+  "video_codec",
+  "video_profile",
+  "pixel_format",
+  "fps",
+  "duration",
+  "audio_stream",
+  "audio_codec",
+  "audio_sample_rate",
+  "audio_channels",
+  "loudness",
+  "true_peak",
+  "file_nonempty",
+] as const;
+
+const TECHNICAL_QA_LIMITATIONS = [
+  "contrast",
+  "product_identity",
+  "commercial_effectiveness",
+  "legal_and_platform_compliance",
+] as const;
+
+const Sha256Schema = z
+  .string()
+  .regex(/^[a-f0-9]{64}$/u, "Expected a lowercase SHA-256 hash");
+
+export const TechnicalQaCheckIdSchema = z.enum(TECHNICAL_QA_CHECK_IDS);
+
+export const TechnicalQaCheckSchema = z
+  .object({
+    id: TechnicalQaCheckIdSchema,
+    label: z.string().trim().min(1),
+    passed: z.boolean(),
+    expected: z.string().trim().min(1),
+    actual: z.string().trim().min(1),
+    blocking: z.literal(true),
+  })
+  .strict();
+
+const TechnicalQaSummarySchema = z
+  .object({
+    width: z.number().int().positive().nullable(),
+    height: z.number().int().positive().nullable(),
+    fps: z.number().finite().positive().nullable(),
+    durationSeconds: z.number().finite().nonnegative(),
+    videoCodec: z.string().trim().min(1).nullable(),
+    audioCodec: z.string().trim().min(1).nullable(),
+    audioSampleRate: z.number().int().positive().nullable(),
+    integratedLufs: z.number().finite().nullable(),
+    truePeakDbfs: z.number().finite().nullable(),
+  })
+  .strict();
+
+export const TechnicalQaReceiptSchema = z
+  .object({
+    version: z.literal(TECHNICAL_QA_VERSION),
+    generatedAt: z.string().datetime({ offset: true }),
+    evidenceHash: Sha256Schema,
+    specHash: Sha256Schema,
+    renderHash: Sha256Schema,
+    passed: z.boolean(),
+    checks: z.array(TechnicalQaCheckSchema).length(TECHNICAL_QA_CHECK_IDS.length),
+    summary: TechnicalQaSummarySchema,
+    heuristicLimitations: z
+      .array(z.enum(TECHNICAL_QA_LIMITATIONS))
+      .length(TECHNICAL_QA_LIMITATIONS.length),
+  })
+  .strict()
+  .superRefine((receipt, context) => {
+    const counts = new Map<string, number>();
+    for (const check of receipt.checks) {
+      counts.set(check.id, (counts.get(check.id) ?? 0) + 1);
+    }
+    for (const id of TECHNICAL_QA_CHECK_IDS) {
+      if (counts.get(id) !== 1) {
+        context.addIssue({
+          code: "custom",
+          path: ["checks"],
+          message: `QA receipt must contain exactly one "${id}" check`,
+        });
+      }
+    }
+
+    const allChecksPassed = receipt.checks.every((check) => check.passed);
+    if (receipt.passed !== allChecksPassed) {
+      context.addIssue({
+        code: "custom",
+        path: ["passed"],
+        message: "Receipt passed must equal the result of all blocking checks",
+      });
+    }
+
+    if (new Set(receipt.heuristicLimitations).size !== TECHNICAL_QA_LIMITATIONS.length) {
+      context.addIssue({
+        code: "custom",
+        path: ["heuristicLimitations"],
+        message: "Heuristic limitations must be complete and unique",
+      });
+    }
+  });
+
+export type TechnicalQaCheckId = z.infer<typeof TechnicalQaCheckIdSchema>;
+export type TechnicalQaCheck = z.infer<typeof TechnicalQaCheckSchema>;
+export type TechnicalQaReceipt = z.infer<typeof TechnicalQaReceiptSchema>;
 
 export type VideoProbe = {
   codec: string;
@@ -28,36 +136,6 @@ export type LoudnessMeasurement = {
   truePeakDbfs: number;
 };
 
-export type TechnicalQaCheck = {
-  id: string;
-  label: string;
-  passed: boolean;
-  expected: string;
-  actual: string;
-  blocking: true;
-};
-
-export type TechnicalQaReceipt = {
-  version: typeof TECHNICAL_QA_VERSION;
-  generatedAt: string;
-  specHash: string;
-  renderHash: string;
-  passed: boolean;
-  checks: TechnicalQaCheck[];
-  summary: {
-    width: number | null;
-    height: number | null;
-    fps: number | null;
-    durationSeconds: number;
-    videoCodec: string | null;
-    audioCodec: string | null;
-    audioSampleRate: number | null;
-    integratedLufs: number | null;
-    truePeakDbfs: number | null;
-  };
-  heuristicLimitations: readonly string[];
-};
-
 type UnknownRecord = Record<string, unknown>;
 
 const asRecord = (value: unknown, label: string): UnknownRecord => {
@@ -85,28 +163,27 @@ const parseFrameRate = (value: unknown): number => {
   const denominator = denominatorText
     ? finiteNumber(denominatorText, "video frame-rate denominator")
     : 1;
-  if (denominator === 0) throw new Error("video frame-rate denominator cannot be zero");
+  if (denominator === 0) {
+    throw new Error("video frame-rate denominator cannot be zero");
+  }
   return numerator / denominator;
 };
 
 export const parseFfprobeJson = (input: unknown): MediaProbe => {
   const root = asRecord(input, "ffprobe output");
-  if (!Array.isArray(root.streams)) throw new Error("ffprobe streams must be an array");
+  if (!Array.isArray(root.streams)) {
+    throw new Error("ffprobe streams must be an array");
+  }
   const format = asRecord(root.format, "ffprobe format");
-
-  const videoStream = root.streams
-    .map((stream, index) => asRecord(stream, `ffprobe stream ${index}`))
-    .find((stream) => stream.codec_type === "video");
-  const audioStream = root.streams
-    .map((stream, index) => asRecord(stream, `ffprobe stream ${index}`))
-    .find((stream) => stream.codec_type === "audio");
-
-  const durationSeconds = finiteNumber(format.duration, "format duration");
-  const sizeBytes = finiteNumber(format.size, "format size");
+  const streams = root.streams.map((stream, index) =>
+    asRecord(stream, `ffprobe stream ${index}`),
+  );
+  const videoStream = streams.find((stream) => stream.codec_type === "video");
+  const audioStream = streams.find((stream) => stream.codec_type === "audio");
 
   return {
-    durationSeconds,
-    sizeBytes,
+    durationSeconds: finiteNumber(format.duration, "format duration"),
+    sizeBytes: finiteNumber(format.size, "format size"),
     video: videoStream
       ? {
           codec: optionalString(videoStream.codec_name) ?? "unknown",
@@ -114,7 +191,9 @@ export const parseFfprobeJson = (input: unknown): MediaProbe => {
           width: finiteNumber(videoStream.width, "video width"),
           height: finiteNumber(videoStream.height, "video height"),
           pixelFormat: optionalString(videoStream.pix_fmt),
-          fps: parseFrameRate(videoStream.avg_frame_rate ?? videoStream.r_frame_rate),
+          fps: parseFrameRate(
+            videoStream.avg_frame_rate ?? videoStream.r_frame_rate,
+          ),
         }
       : null,
     audio: audioStream
@@ -135,24 +214,41 @@ const lastMeasurement = (text: string, pattern: RegExp): number | null => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-export const parseEbur128Summary = (output: string): LoudnessMeasurement | null => {
-  const integratedLufs = lastMeasurement(output, /^\s*I:\s*(-?\d+(?:\.\d+)?)\s+LUFS\s*$/gim);
-  const loudnessRangeLu = lastMeasurement(output, /^\s*LRA:\s*(-?\d+(?:\.\d+)?)\s+LU\s*$/gim);
-  const truePeakDbfs = lastMeasurement(output, /^\s*Peak:\s*(-?\d+(?:\.\d+)?)\s+dBFS\s*$/gim);
+export const parseEbur128Summary = (
+  output: string,
+): LoudnessMeasurement | null => {
+  const integratedLufs = lastMeasurement(
+    output,
+    /^\s*I:\s*(-?\d+(?:\.\d+)?)\s+LUFS\s*$/gim,
+  );
+  const loudnessRangeLu = lastMeasurement(
+    output,
+    /^\s*LRA:\s*(-?\d+(?:\.\d+)?)\s+LU\s*$/gim,
+  );
+  const truePeakDbfs = lastMeasurement(
+    output,
+    /^\s*Peak:\s*(-?\d+(?:\.\d+)?)\s+dBFS\s*$/gim,
+  );
 
-  if (integratedLufs === null || loudnessRangeLu === null || truePeakDbfs === null) {
+  if (
+    integratedLufs === null ||
+    loudnessRangeLu === null ||
+    truePeakDbfs === null
+  ) {
     return null;
   }
 
   return { integratedLufs, loudnessRangeLu, truePeakDbfs };
 };
 
-const actual = (value: unknown): string => (value === null || value === undefined ? "missing" : String(value));
+const actual = (value: unknown): string =>
+  value === null || value === undefined ? "missing" : String(value);
 
 export const buildTechnicalQaReceipt = ({
   probe,
   loudness,
   expectedDurationSeconds,
+  evidenceHash,
   specHash,
   renderHash,
   generatedAt = new Date().toISOString(),
@@ -160,6 +256,7 @@ export const buildTechnicalQaReceipt = ({
   probe: MediaProbe;
   loudness: LoudnessMeasurement | null;
   expectedDurationSeconds: number;
+  evidenceHash: string;
   specHash: string;
   renderHash: string;
   generatedAt?: string;
@@ -167,12 +264,19 @@ export const buildTechnicalQaReceipt = ({
   const video = probe.video;
   const audio = probe.audio;
   const check = (
-    id: string,
+    id: TechnicalQaCheckId,
     label: string,
     passed: boolean,
     expected: string,
     measured: unknown,
-  ): TechnicalQaCheck => ({ id, label, passed, expected, actual: actual(measured), blocking: true });
+  ): TechnicalQaCheck => ({
+    id,
+    label,
+    passed,
+    expected,
+    actual: actual(measured),
+    blocking: true,
+  });
 
   const checks: TechnicalQaCheck[] = [
     check(
@@ -195,12 +299,20 @@ export const buildTechnicalQaReceipt = ({
     ),
     check("audio_stream", "Audio stream", audio !== null, "present", audio ? "present" : null),
     check("audio_codec", "Audio codec", audio?.codec === "aac", "aac", audio?.codec),
-    check("audio_sample_rate", "Audio sample rate", audio?.sampleRate === 48_000, "48000 Hz", audio?.sampleRate),
+    check(
+      "audio_sample_rate",
+      "Audio sample rate",
+      audio?.sampleRate === 48_000,
+      "48000 Hz",
+      audio?.sampleRate,
+    ),
     check("audio_channels", "Audio channels", audio?.channels === 2, "stereo (2)", audio?.channels),
     check(
       "loudness",
       "Integrated loudness",
-      loudness !== null && loudness.integratedLufs >= -18 && loudness.integratedLufs <= -14,
+      loudness !== null &&
+        loudness.integratedLufs >= -18 &&
+        loudness.integratedLufs <= -14,
       "-18 to -14 LUFS",
       loudness ? `${loudness.integratedLufs} LUFS` : null,
     ),
@@ -214,9 +326,10 @@ export const buildTechnicalQaReceipt = ({
     check("file_nonempty", "Encoded file", probe.sizeBytes > 0, "> 0 bytes", probe.sizeBytes),
   ];
 
-  return {
+  return TechnicalQaReceiptSchema.parse({
     version: TECHNICAL_QA_VERSION,
     generatedAt,
+    evidenceHash,
     specHash,
     renderHash,
     passed: checks.every((item) => item.passed),
@@ -232,11 +345,6 @@ export const buildTechnicalQaReceipt = ({
       integratedLufs: loudness?.integratedLufs ?? null,
       truePeakDbfs: loudness?.truePeakDbfs ?? null,
     },
-    heuristicLimitations: [
-      "contrast",
-      "product_identity",
-      "commercial_effectiveness",
-      "legal_and_platform_compliance",
-    ],
-  };
+    heuristicLimitations: [...TECHNICAL_QA_LIMITATIONS],
+  });
 };

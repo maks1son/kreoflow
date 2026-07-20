@@ -1,32 +1,29 @@
-import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 import { createApprovalReceipt } from "../../src/lib/ad-compiler/approval.ts";
-import { TECHNICAL_QA_VERSION } from "../../src/lib/ad-compiler/qa.ts";
+import { TechnicalQaReceiptSchema } from "../../src/lib/ad-compiler/qa.ts";
 import {
-  CreativeSpecSchema,
-  hashCreativeSpec,
+  compileCreativeSpec,
   sha256Hex,
 } from "../../src/lib/ad-compiler/schema.ts";
 
 const defaults = {
+  evidence: "samples/nova-one/product-evidence.json",
   spec: "samples/nova-one/creative-spec.json",
-  video:
-    "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
+  video: "public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4",
   qa: "public/media/build-week/ad-compiler/nova-one-qa-receipt.json",
   out: "public/media/build-week/ad-compiler/nova-one-approval-receipt.json",
 };
 
 function usage(): string {
   return [
-    "Approve the exact KreoFlow spec + encoded render pair",
+    "Approve the exact evidence + spec + render + QA chain",
     "",
     "Usage:",
-    "  pnpm ad:approve [--spec <json>] [--video <mp4>] [--qa <json>]",
-    "                    [--out <json>] --approver <human label>",
-    "",
-    "Optional reproducibility flag:",
-    "  --approved-at <ISO-8601 timestamp>",
+    "  pnpm ad:approve [--evidence <json>] [--spec <json>] [--video <mp4>]",
+    "                  [--qa <json>] [--out <json>] --approver <human label>",
+    "                  [--approved-at <ISO-8601 timestamp>]",
   ].join("\n");
 }
 
@@ -39,20 +36,17 @@ function parseArgs(argv: string[]): Map<string, string> {
       console.log(usage());
       process.exit(0);
     }
-    if (!key.startsWith("--") || !argv[index + 1] || argv[index + 1].startsWith("--")) {
+    if (
+      !key.startsWith("--") ||
+      !argv[index + 1] ||
+      argv[index + 1].startsWith("--")
+    ) {
       throw new Error(`Expected --flag value, received "${key}"`);
     }
     args.set(key.slice(2), argv[index + 1]);
     index += 1;
   }
   return args;
-}
-
-function record(value: unknown, label: string): Record<string, unknown> {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${label} must be a JSON object`);
-  }
-  return value as Record<string, unknown>;
 }
 
 async function readJson(path: string): Promise<unknown> {
@@ -66,6 +60,7 @@ async function writeJson(path: string, value: unknown): Promise<void> {
 
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
+  const evidencePath = resolve(args.get("evidence") ?? defaults.evidence);
   const specPath = resolve(args.get("spec") ?? defaults.spec);
   const videoPath = resolve(args.get("video") ?? defaults.video);
   const qaPath = resolve(args.get("qa") ?? defaults.qa);
@@ -77,28 +72,16 @@ async function main(): Promise<void> {
     );
   }
 
-  const spec = CreativeSpecSchema.parse(await readJson(specPath));
-  const specHash = hashCreativeSpec(spec);
+  const evidence = await readJson(evidencePath);
+  const spec = await readJson(specPath);
+  const compiled = compileCreativeSpec({ evidence, spec });
+  const qaReceipt = TechnicalQaReceiptSchema.parse(await readJson(qaPath));
   const renderHash = sha256Hex(await readFile(videoPath));
-  const qa = record(await readJson(qaPath), "QA receipt");
-  const checks = Array.isArray(qa.checks) ? qa.checks : [];
-
-  if (qa.version !== TECHNICAL_QA_VERSION) {
-    throw new Error(`QA receipt version must be ${TECHNICAL_QA_VERSION}`);
-  }
-  if (qa.passed !== true || checks.length === 0 || checks.some((item) => record(item, "QA check").passed !== true)) {
-    throw new Error("Cannot approve: technical QA is not a complete PASS");
-  }
-  if (qa.specHash !== specHash) {
-    throw new Error("Cannot approve: QA receipt is stale for the current CreativeSpec");
-  }
-  if (qa.renderHash !== renderHash) {
-    throw new Error("Cannot approve: QA receipt is stale for the current encoded render");
-  }
-
   const receipt = createApprovalReceipt({
-    spec,
+    evidence: compiled.evidence,
+    spec: compiled.spec,
     renderHash,
+    qaReceipt,
     approver,
     approvedAt: args.get("approved-at"),
   });
