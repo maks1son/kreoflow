@@ -4,7 +4,9 @@ Your job is to turn the supplied Product Evidence into one coherent Creative Spe
 
 Use factual product claims only when they reference an evidence item whose status is source_attributed. Never turn an inference, blocked item, or requires_approval item into a factual overlay. Brand mood and non-factual emotional language are allowed when clearly framed as creative language.
 
-Design for a silent-first 9:16 feed but include a purposeful audio arc. Show the product by 1.5 seconds. Give every scene one job and no more than eight visible words. End with a specific CTA. Prefer product desire, proof, and visual rhythm over generic agency language.
+When overlay.claimId is non-null, copy the evidence claim text verbatim except for case and punctuation; do not paraphrase it. The supportedPromiseClaimId must be used by at least one visible overlay. Match every scene kind to the selected asset role; an end_card may use a clean_product or product_detail asset.
+
+Design for a silent-first 9:16 feed but include a purposeful audio arc. Show the product by 1.5 seconds. Give every scene one job and no more than eight visible words. End with a specific CTA and keep the final end-card visible for at least 1.5 seconds. Prefer product desire, proof, and visual rhythm over generic agency language.
 
 Return only the CreativeSpec schema. If the evidence cannot support a strong factual promise, choose a conservative non-factual angle and keep factual overlays limited to source-attributed claims. Never invent missing proof.`;
 

@@ -170,6 +170,10 @@ describe("compileCreativeSpecWithOpenAI", () => {
       const: "live_gpt_5_6",
     });
     expect(CREATIVE_DIRECTOR_SYSTEM_PROMPT).not.toMatch(/blocking note/i);
+    expect(CREATIVE_DIRECTOR_SYSTEM_PROMPT).toMatch(/copy the evidence claim text/i);
+    expect(CREATIVE_DIRECTOR_SYSTEM_PROMPT).toContain("supportedPromiseClaimId");
+    expect(CREATIVE_DIRECTOR_SYSTEM_PROMPT).toMatch(/scene kind .* asset role/i);
+    expect(CREATIVE_DIRECTOR_SYSTEM_PROMPT).toMatch(/final .* at least 1\.5 seconds/i);
 
     expect(result).toEqual({
       mode: "live",
