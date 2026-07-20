@@ -32,7 +32,7 @@ interface CliOptions {
   evidence: string;
   spec: string;
   out: string;
-  audio?: string;
+  audio: string;
 }
 
 interface StagedMedia {
@@ -45,7 +45,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const PRODUCT_AD_COMPOSITION_ID = "KreoFlowProductAd";
 const allowedFlags = new Set(["evidence", "spec", "out", "audio"]);
 const usage =
-  "Usage: node scripts/ad-compiler/render.mts --evidence <json> --spec <json> --out <mp4> [--audio <licensed-media>]";
+  "Usage: node scripts/ad-compiler/render.mts --evidence <json> --spec <json> --out <mp4> --audio <licensed-media>";
 
 const parseCli = (argv: string[]): CliOptions => {
   const values = new Map<string, string>();
@@ -69,11 +69,12 @@ const parseCli = (argv: string[]): CliOptions => {
   const evidence = values.get("evidence");
   const spec = values.get("spec");
   const out = values.get("out");
-  if (!evidence || !spec || !out) {
+  const audio = values.get("audio");
+  if (!evidence || !spec || !out || !audio) {
     throw new Error(usage);
   }
 
-  return {evidence, spec, out, audio: values.get("audio")};
+  return {evidence, spec, out, audio};
 };
 
 const projectPath = (path: string) =>
