@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   compileCreativeSpec,
   hashCanonical,
-  hashCreativeSpec,
-  isApprovalCurrent,
 } from "./schema";
 import creativeSpecFixture from "../../../samples/nova-one/creative-spec.json";
 import productEvidenceFixture from "../../../samples/nova-one/product-evidence.json";
@@ -297,22 +295,10 @@ describe("compileCreativeSpec", () => {
   });
 });
 
-describe("content-addressed approvals", () => {
+describe("canonical content hashing", () => {
   it("hashes canonical JSON independently of object key order", () => {
     expect(hashCanonical({ b: 2, a: { d: 4, c: 3 } })).toBe(
       hashCanonical({ a: { c: 3, d: 4 }, b: 2 }),
     );
-  });
-
-  it("invalidates approval when either spec or render changes", () => {
-    const specHash = hashCreativeSpec(validSpec);
-    const approval = { specHash, renderHash: "a".repeat(64) };
-
-    expect(isApprovalCurrent(approval, validSpec, "a".repeat(64))).toBe(true);
-
-    const changedSpec = clone(validSpec);
-    changedSpec.angle = "A materially different creative angle";
-    expect(isApprovalCurrent(approval, changedSpec, "a".repeat(64))).toBe(false);
-    expect(isApprovalCurrent(approval, validSpec, "b".repeat(64))).toBe(false);
   });
 });

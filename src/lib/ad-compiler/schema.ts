@@ -138,11 +138,6 @@ export interface CompiledCreativeSpec {
   specHash: string;
 }
 
-export interface ApprovalHashes {
-  specHash: string;
-  renderHash: string;
-}
-
 export class AdCompilerValidationError extends Error {
   readonly issues: readonly string[];
 
@@ -393,19 +388,4 @@ export function hashCanonical(value: unknown): string {
 export function hashCreativeSpec(input: unknown): string {
   const spec = parseOrThrow("spec", CreativeSpecSchema, input);
   return hashCanonical(spec);
-}
-
-export function isApprovalCurrent(
-  approval: ApprovalHashes,
-  currentSpec: unknown,
-  currentRenderHash: string,
-): boolean {
-  try {
-    return (
-      approval.specHash === hashCreativeSpec(currentSpec) &&
-      approval.renderHash === currentRenderHash
-    );
-  } catch {
-    return false;
-  }
 }
