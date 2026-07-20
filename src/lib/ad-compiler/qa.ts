@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { relative, resolve } from "node:path";
 
 import { hashCanonical } from "./schema";
 
@@ -63,8 +64,11 @@ export const MediaManifestSchema = z
 
 export type MediaManifest = z.infer<typeof MediaManifestSchema>;
 
-const normalizedManifestPath = (path: string): string =>
-  path.trim().replaceAll("\\", "/");
+const normalizedManifestPath = (path: string): string => {
+  const projectRoot = resolve(process.cwd());
+  const projectRelativePath = relative(projectRoot, resolve(projectRoot, path.trim()));
+  return (projectRelativePath || ".").replaceAll("\\", "/");
+};
 
 export function buildMediaManifestHash(input: unknown): string {
   const manifest = MediaManifestSchema.parse(input);

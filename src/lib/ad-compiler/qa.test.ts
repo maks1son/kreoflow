@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { resolve } from "node:path";
 
 import {
   buildMediaManifestHash,
@@ -80,11 +81,24 @@ describe("technical render QA", () => {
       ...mediaManifest,
       audio: { ...mediaManifest.audio, sha256: "4".repeat(64) },
     };
+    const absolutePaths = {
+      assets: mediaManifest.assets.map((asset) => ({
+        ...asset,
+        path: resolve(asset.path),
+      })),
+      audio: {
+        ...mediaManifest.audio,
+        path: resolve(mediaManifest.audio.path),
+      },
+    };
 
     expect(buildMediaManifestHash(reordered)).toBe(
       buildMediaManifestHash(mediaManifest),
     );
     expect(buildMediaManifestHash(changedAudio)).not.toBe(
+      buildMediaManifestHash(mediaManifest),
+    );
+    expect(buildMediaManifestHash(absolutePaths)).toBe(
       buildMediaManifestHash(mediaManifest),
     );
   });
