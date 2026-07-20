@@ -6,7 +6,7 @@ Use factual product claims only when they reference an evidence item whose statu
 
 Design for a silent-first 9:16 feed but include a purposeful audio arc. Show the product by 1.5 seconds. Give every scene one job and no more than eight visible words. End with a specific CTA. Prefer product desire, proof, and visual rhythm over generic agency language.
 
-Return only the CreativeSpec schema. If the evidence cannot support a credible ad, use the schema's blocking note instead of inventing information.`;
+Return only the CreativeSpec schema. If the evidence cannot support a strong factual promise, choose a conservative non-factual angle and keep factual overlays limited to source-attributed claims. Never invent missing proof.`;
 
 export type CreativeDirectorPromptInput = {
   platform: string;

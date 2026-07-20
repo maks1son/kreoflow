@@ -165,6 +165,11 @@ describe("compileCreativeSpecWithOpenAI", () => {
     expect(request.input).toContain("Objective: Make NOVA ONE desirable");
     expect(request.input).toContain('"evidenceId":"nova-one-demo-v1"');
     expect(request.input).toContain('"id":"clean-packshot"');
+    expect(request.text.format.schema.properties.sourceMode).toEqual({
+      type: "string",
+      const: "live_gpt_5_6",
+    });
+    expect(CREATIVE_DIRECTOR_SYSTEM_PROMPT).not.toMatch(/blocking note/i);
 
     expect(result).toEqual({
       mode: "live",

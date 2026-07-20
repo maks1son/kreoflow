@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
+import { z } from "zod";
 
 import {
   compileCreativeSpec,
@@ -17,6 +18,10 @@ import {
 export const DEFAULT_OPENAI_AD_COMPILER_MODEL = "gpt-5.6-terra";
 export const MISSING_OPENAI_API_KEY_ERROR =
   "OPENAI_API_KEY is required for live OpenAI ad compilation.";
+
+const LiveCreativeSpecSchema = CreativeSpecSchema.safeExtend({
+  sourceMode: z.literal("live_gpt_5_6"),
+});
 
 type OpenAICompilerRequest = Parameters<OpenAI["responses"]["parse"]>[0];
 
@@ -95,7 +100,7 @@ export async function compileCreativeSpecWithOpenAI({
     safety_identifier: safetyIdentifierFor(callerId),
     store: false,
     text: {
-      format: zodTextFormat(CreativeSpecSchema, "creative_spec"),
+      format: zodTextFormat(LiveCreativeSpecSchema, "creative_spec"),
     },
   };
 
@@ -112,7 +117,10 @@ export async function compileCreativeSpecWithOpenAI({
     throw new Error("Live compiler returned a non-live Creative Spec.");
   }
 
-  const grounded = compileCreativeSpec({ evidence, spec });
+  const grounded = compileCreativeSpec({
+    evidence,
+    spec: LiveCreativeSpecSchema.parse(spec),
+  });
 
   return {
     mode: "live",
