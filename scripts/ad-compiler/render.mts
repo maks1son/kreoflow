@@ -25,7 +25,10 @@ import {renderMedia, selectComposition} from "@remotion/renderer";
 
 // Node 24 executes TypeScript directly; the explicit extension is required at runtime.
 import {buildMediaManifestHash} from "../../src/lib/ad-compiler/qa.ts";
-import {buildRenderReceipt} from "../../src/lib/ad-compiler/render-receipt.ts";
+import {
+  assertSafeRenderTargets,
+  buildRenderReceipt,
+} from "../../src/lib/ad-compiler/render-receipt.ts";
 import {
   compileCreativeSpec,
   hashCanonical,
@@ -187,9 +190,19 @@ const main = async () => {
   });
   const outputLocation = projectPath(options.out);
   const receiptLocation = projectPath(options.receipt);
-  if (outputLocation === receiptLocation) {
-    throw new Error("--out and --receipt must point to different files");
-  }
+  assertSafeRenderTargets({
+    outputPath: outputLocation,
+    receiptPath: receiptLocation,
+    protectedInputs: [
+      {label: "evidence", path: projectPath(options.evidence)},
+      {label: "spec", path: projectPath(options.spec)},
+      {label: "audio", path: projectPath(audioPath)},
+      ...compiled.evidence.assets.map((asset) => ({
+        label: `asset "${asset.id}"`,
+        path: projectPath(asset.path),
+      })),
+    ],
+  });
   const staged = await stageMedia({
     evidence: compiled.evidence,
     audioPath,
