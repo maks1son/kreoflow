@@ -1,7 +1,7 @@
 # KreoFlow video quality audit
 
 **Date:** 2026-07-20  
-**Verdict:** none of the current MP4s is ready to be called a finished performance ad. They are motion/spec studies; most sell KreoFlow’s production style rather than the client’s product.
+**Pre-implementation verdict:** none of the earlier MP4s audited below was ready to be called a finished performance ad. They were motion/spec studies; most sold KreoFlow’s production style rather than the client’s product.
 
 This is a preflight assessment, not a CTR/CVR prediction.
 
@@ -104,3 +104,23 @@ Stop iterating one long provider prompt. The minimum reliable path is:
 
 The renderer must not start until product truth and provenance pass. A provider generation is raw footage, not a ready ad.
 
+## Post-implementation observations — accountable compiler replay
+
+Artifact: `public/media/build-week/ad-compiler/nova-one-accountable-ad.mp4`
+
+These are internal, non-independent heuristic observations. They are not a score,
+external validation, campaign-performance evidence, or human commercial approval.
+Human review remains pending.
+
+| Dimension | Observed evidence |
+|---|---|
+| Product clarity and desire | Headphones dominate frame zero; the clean packshot makes the fictional SKU legible. |
+| Hook and payoff | “TOO MUCH CITY?” resolves into control/ANC; the intended payoff is understandable without sound. |
+| Identity, continuity, provenance | Human and packshot sources are visually coherent and disclosed as fictional; a human must still confirm identity. |
+| Ad structure and pacing | Problem, emotional shift, sourced feature, identity, and two-second CTA form a complete 12-second arc. |
+| Framing and visual craft | Controlled crop, blue/red signal system, and restrained motion; limited by still-source material. |
+| Copy, CTA, safe zones | Short copy, clear hierarchy, safe-zone placement, and a specific final action. |
+| Sound | Existing score measured -17.3 LUFS and -3.6 dBFS true peak; no original product sound design was created. |
+| Delivery spec | H.264 High, yuv420p, 1080x1920, 30 fps, AAC LC 48 kHz stereo, 12.053 seconds. |
+
+No hard reject was observed in the internal contact-sheet, keyframe, full-decode, or technical-probe pass. The generic renderer used all three declared image assets by `scene.assetId`; its source-byte manifest also includes the explicit audio file. This is not a performance result or legal/platform approval. The MP4 is public as a fictional proof artifact but is not approved for campaign use; this prototype records human approval against current evidence, source-media, spec, QA, and render hashes but does not implement publishing enforcement.

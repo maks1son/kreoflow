@@ -48,7 +48,7 @@ This is not a global leaderboard. Signals are labelled so popularity and local j
 
 The strongest defensible framing is:
 
-> KreoFlow is an accountable compiler for product ads. GPT-5.6 converts messy product evidence into a typed creative plan; deterministic rendering and QA stop unsupported claims and broken exports; a human approves the exact hashed MP4.
+> KreoFlow is an accountable compiler for product ads. GPT-5.6 converts messy product evidence into a typed creative plan; deterministic validation rejects ungrounded referenced claims and broken exports; a human reviews semantics and approves the exact hashed MP4.
 
 This is more specific and trustworthy than “AI makes videos”. It also answers the current product failure: generic visual templates are not evidence that the system understood the product.
 
@@ -57,7 +57,7 @@ This is more specific and trustworthy than “AI makes videos”. It also answer
 - `0–10s`: show the finished ad and the pain of manual production.
 - `10–45s`: one real SKU, evidence ingestion, one deliberately blocked claim.
 - `45–90s`: GPT-5.6 creates the typed Creative Spec; show only the useful fields.
-- `90–130s`: deterministic render, one failed QA check, automated correction, passing receipt.
+- `90–130s`: schema-bound render, one failed validation check, manual or Codex-assisted spec correction, passing receipt.
 - `130–155s`: real MP4 playback, render/spec hashes, human approval.
 - `155–175s`: exactly why GPT-5.6 and Codex were necessary; honest current limits.
 

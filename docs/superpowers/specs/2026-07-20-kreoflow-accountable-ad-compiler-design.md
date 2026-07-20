@@ -8,9 +8,9 @@
 
 KreoFlow is not positioned as another prompt-to-video lottery. It is an **accountable compiler for product ads**:
 
-`product evidence → GPT-5.6 Creative Spec → deterministic video → QA receipt → human approval`
+`product evidence → GPT-5.6 Creative Spec → schema-bound video → exact-output receipt → QA → human approval`
 
-The user gives product facts and media. GPT-5.6 turns ambiguity into a typed creative direction. Deterministic code renders a repeatable 9:16 ad and refuses unsupported claims or invalid layouts. Every export carries a machine-readable receipt that explains what passed, what remains heuristic, and which source supports each claim.
+The user gives product facts and media. GPT-5.6 turns ambiguity into a typed creative direction. Deterministic validation constrains a schema-driven 9:16 composition and refuses unsupported claims or invalid layouts. Every encode carries a fresh machine-readable receipt for its exact bytes; repeat encodes are not promised to have the same hash.
 
 ## 2. Why the current output fails
 
@@ -32,7 +32,7 @@ The rebuild therefore enforces:
 
 - A versioned `CreativeSpec` schema and fixtures.
 - A lean GPT-5.6 creative-director prompt and optional live Responses API adapter.
-- A deterministic Remotion renderer for a polished 1080×1920, 30 fps, 12-second product ad.
+- A schema-driven Remotion renderer for a polished 1080×1920, 30 fps, 12-second product ad.
 - Semantic preflight checks and technical post-render checks using `ffprobe`.
 - A content-addressed approval receipt whose validity changes when spec or render changes.
 - A one-command, keyless sample flow using committed evidence/spec fixtures.
@@ -64,7 +64,7 @@ The live adapter uses the official Responses API, `gpt-5.6-terra`, `reasoning.ef
 
 The API is optional because no API key is available in this environment. Keyless demo mode uses a checked-in Creative Spec and must label itself `fixture`, never `live GPT`.
 
-### 4.3 Deterministic compiler
+### 4.3 Deterministic validation and schema-driven composition
 
 Code is responsible for invariants the model must not decide:
 
@@ -74,12 +74,12 @@ Code is responsible for invariants the model must not decide:
 - text density and safe-zone constraints;
 - required product reveal and end card;
 - media existence and supported types;
-- deterministic Remotion composition and MP4 export;
+- schema-driven Remotion composition and per-encode MP4 receipt;
 - post-render codec, dimensions, fps, duration, audio, and hash checks.
 
 ### 4.4 Human approval
 
-Approval contains the spec hash, render hash, approver label, timestamp, and receipt version. Any spec or render change invalidates the prior approval. It is an audit record, not a cryptographic or legal guarantee.
+Approval binds the evidence, source-media manifest, spec, causal render receipt, full QA receipt, and exact encoded MP4 hash, plus the approver label and timestamp. Any bound input or artifact change invalidates the prior approval. It is an audit record, not a cryptographic or legal guarantee.
 
 ## 5. Visual direction
 
@@ -146,9 +146,9 @@ The Build Week page leads with the rendered result, then shows a compact trace:
 
 1. source-attributed claims, including one blocked claim;
 2. the typed GPT-5.6 Creative Spec;
-3. deterministic render and QA receipt;
+3. schema-bound render with a fresh exact-output receipt and QA receipt;
 4. human approval and hashes;
-5. exact limitations and keyless reproduction command.
+5. exact limitations and a keyless replay command; repeated encodes are not promised to be byte-identical.
 
 The three-minute demo is output-first and follows one SKU. It does not spend time on auth, generic dashboards, or fake campaign metrics.
 
@@ -160,4 +160,3 @@ The three-minute demo is output-first and follows one SKU. It does not spend tim
 - The public proof page never claims a live API run when showing fixture data.
 - The rendered ad is visually reviewed at desktop and mobile sizes and has a contact sheet.
 - README clearly separates pre-existing work, Build Week delta, working scope, and limitations.
-

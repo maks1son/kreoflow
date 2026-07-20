@@ -1,24 +1,68 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import qaReceipt from "../../../public/media/build-week/ad-compiler/nova-one-qa-receipt.json";
+import creativeSpec from "../../../samples/nova-one/creative-spec.json";
+import productEvidence from "../../../samples/nova-one/product-evidence.json";
+
 import "./showcase.css";
 
 export const metadata: Metadata = {
   title: "KreoFlow — accountable ad compiler",
   description:
-    "A proof-first KreoFlow prototype: product evidence becomes a typed CreativeSpec, a deterministic ad render, and an inspectable QA receipt.",
+    "A proof-first KreoFlow prototype: product evidence becomes a typed CreativeSpec, a schema-bound ad render, and an inspectable QA receipt.",
 };
 
 const mediaBase = process.env.GITHUB_PAGES === "true" ? "/kreoflow" : "";
 const asset = (path: string) => `${mediaBase}${path}`;
+const shortHash = (hash: string) => `${hash.slice(0, 12)}…`;
+const observedAt = `${qaReceipt.generatedAt.slice(0, 16).replace("T", " ")} UTC`;
+const blockingChecks = qaReceipt.checks.filter((check) => check.blocking);
+const passedChecks = blockingChecks.filter((check) => check.passed).length;
+const receiptCheck = (id: string) =>
+  qaReceipt.checks.find((check) => check.id === id);
+const checkActual = (id: string) => receiptCheck(id)?.actual ?? "missing";
+const checkResult = (ids: string[], source: string) =>
+  `${ids.every((id) => receiptCheck(id)?.passed === true) ? "PASS" : "FAIL"} · ${source}`;
+
+const displaySigned = (value: number | null, unit: string) =>
+  value === null ? "missing" : `${String(value).replace("-", "−")} ${unit}`;
+
+const productName = productEvidence.product.name;
+const supportedClaim =
+  productEvidence.claims.find(
+    (claim) => claim.id === creativeSpec.supportedPromiseClaimId,
+  ) ?? productEvidence.claims[0];
+const blockedClaim =
+  productEvidence.claims.find((claim) => claim.status === "blocked") ??
+  productEvidence.claims.at(-1)!;
+const supportedClaimSceneIndex = creativeSpec.scenes.findIndex(
+  (scene) => scene.overlay.claimId === supportedClaim.id,
+);
+const supportedClaimScene = creativeSpec.scenes[supportedClaimSceneIndex];
+const referencedClaimIds = new Set(
+  creativeSpec.scenes
+    .map((scene) => scene.overlay.claimId)
+    .filter((claimId): claimId is string => claimId !== null),
+);
+const allowedReferencedClaims = productEvidence.claims.filter(
+  (claim) =>
+    referencedClaimIds.has(claim.id) && claim.status === "source_attributed",
+).length;
+const sceneRoleLabels: Record<string, string> = {
+  human_context: "Human context",
+  clean_product: "Clean product",
+  product_detail: "Product detail",
+  end_card: "End card",
+};
 
 const pipeline = [
   {
     id: "01",
     label: "Evidence",
     title: "Lock the product truth",
-    copy: "KreoFlow accepts named product assets and source-attributed claims. Unsupported language is blocked before it can reach the ad.",
-    status: "3 assets · 1 sourced claim",
+    copy: "KreoFlow accepts named product assets and source-attributed claims. Referenced factual lines must match their evidence; semantic copy review stays human.",
+    status: `${productEvidence.assets.length} assets · ${allowedReferencedClaims} sourced ${allowedReferencedClaims === 1 ? "claim" : "claims"}`,
   },
   {
     id: "02",
@@ -31,38 +75,76 @@ const pipeline = [
     id: "03",
     label: "Render",
     title: "Execute, don’t improvise",
-    copy: "The renderer follows scene timings, assets, overlays, CTA and sound from the validated spec. The render can be reproduced from the same inputs.",
-    status: "deterministic path",
+    copy: "The renderer follows scene timings, assets, overlays, CTA and sound from the validated spec. The composition can be re-rendered; each encode gets its own exact receipt.",
+    status: "repeatable composition",
   },
   {
     id: "04",
     label: "QA + approval",
     title: "Ship with a receipt",
     copy: "FFprobe and loudness checks create a technical receipt. Human approval stays mandatory for identity, legibility, claims and commercial quality.",
-    status: "publish remains locked",
+    status: "technical PASS · human pending",
   },
 ];
 
-const scenes = [
-  ["00.0—01.4", "Human context", "TOO MUCH CITY?"],
-  ["01.4—04.4", "Human context", "TAKE BACK THE SIGNAL"],
-  ["04.4—07.6", "Clean product", "ADAPTIVE NOISE CANCELLING"],
-  ["07.6—10.0", "Product detail", "YOUR CITY. YOUR VOLUME."],
-  ["10.0—12.0", "End card", "DISCOVER NOVA ONE"],
-];
+const scenes = creativeSpec.scenes.map((scene) => [
+  `${scene.startSeconds.toFixed(1).padStart(4, "0")}—${scene.endSeconds.toFixed(1).padStart(4, "0")}`,
+  sceneRoleLabels[scene.kind] ?? scene.kind,
+  scene.cta ?? scene.overlay.text,
+]);
 
 const receiptRows = [
-  ["Frame", "1080 × 1920", "from ffprobe"],
-  ["Video", "H.264 High / 30 fps", "from ffprobe"],
-  ["Audio", "AAC / 48 kHz / stereo", "from ffprobe"],
-  ["Loudness", "−18 to −14 LUFS", "from ebur128"],
-  ["True peak", "≤ −1 dBFS", "from ebur128"],
-  ["Approval", "matching spec + render hashes", "human sign-off"],
+  [
+    "Frame",
+    `${qaReceipt.summary.width ?? "missing"} × ${qaReceipt.summary.height ?? "missing"}`,
+    checkResult(["dimensions"], "ffprobe"),
+  ],
+  [
+    "Video",
+    `${checkActual("video_codec").toUpperCase()} ${checkActual("video_profile")} / ${checkActual("pixel_format")} / ${checkActual("fps")} fps`,
+    checkResult(
+      ["video_codec", "video_profile", "pixel_format", "fps"],
+      "ffprobe",
+    ),
+  ],
+  [
+    "Runtime",
+    `${qaReceipt.summary.durationSeconds.toFixed(3)} seconds`,
+    checkResult(["duration"], "target ±0.15"),
+  ],
+  [
+    "Audio",
+    `${checkActual("audio_codec").toUpperCase()} / ${qaReceipt.summary.audioSampleRate === null ? "missing" : `${qaReceipt.summary.audioSampleRate / 1000} kHz`} / ${checkActual("audio_channels") === "2" ? "stereo" : `${checkActual("audio_channels")} channels`}`,
+    checkResult(
+      ["audio_stream", "audio_codec", "audio_sample_rate", "audio_channels"],
+      "ffprobe",
+    ),
+  ],
+  [
+    "Loudness",
+    displaySigned(qaReceipt.summary.integratedLufs, "LUFS"),
+    checkResult(["loudness"], "ebur128"),
+  ],
+  [
+    "True peak",
+    displaySigned(qaReceipt.summary.truePeakDbfs, "dBFS"),
+    checkResult(["true_peak"], "ebur128"),
+  ],
+  [
+    "Media manifest",
+    shortHash(qaReceipt.mediaManifestHash),
+    `${productEvidence.assets.length} images + audio bytes`,
+  ],
+  [
+    "Causal render",
+    shortHash(qaReceipt.renderReceiptHash),
+    "BOUND · receipt matched",
+  ],
 ];
 
 export default function BuildWeekPage() {
   return (
-    <main className="bw-page">
+    <main className="bw-page" lang="en">
       <header className="bw-nav">
         <Link href="/" className="bw-wordmark" aria-label="KreoFlow home">
           KreoFlow
@@ -79,16 +161,18 @@ export default function BuildWeekPage() {
         <div className="bw-hero-film">
           <div className="bw-video-header" aria-hidden="true">
             <span>Output / 001</span>
-            <span>NOVA ONE</span>
-            <span>9:16</span>
+            <span>{productName}</span>
+            <span>{creativeSpec.aspectRatio}</span>
           </div>
           <div className="bw-video-stage">
             <video
               controls
               playsInline
               preload="metadata"
-              poster={asset("/media/build-week/nova-one-poster.jpg")}
-              aria-label="NOVA ONE fictional product advertisement, rendered by the KreoFlow fixture pipeline"
+              poster={asset(
+                "/media/build-week/ad-compiler/nova-one-accountable-poster.jpg",
+              )}
+              aria-label={`${productName} fictional product advertisement, rendered by the KreoFlow fixture pipeline`}
             >
               <source
                 src={asset(
@@ -122,31 +206,33 @@ export default function BuildWeekPage() {
         <div className="bw-hero-copy">
           <div className="bw-status-row" aria-label="Prototype status">
             <span className="bw-badge bw-badge-fixture">Fixture replay</span>
-            <span className="bw-badge bw-badge-ready">Live adapter ready</span>
+            <span className="bw-badge bw-badge-ready">Live adapter implemented</span>
           </div>
           <p className="bw-kicker">Product evidence → finished vertical ad</p>
           <h1 id="bw-title">A finished ad with a receipt.</h1>
           <p className="bw-lede">
             KreoFlow is an accountable compiler for product advertising. It constrains the
-            strategy to sourced product facts, renders the approved scene plan, then records
+            strategy to sourced product facts, renders the validated scene plan, then records
             what passed and what still needs a human decision.
           </p>
 
           <div className="bw-hero-proof" aria-label="Current proof state">
             <div>
               <span>Output</span>
-              <strong>12.0 s</strong>
+              <strong>{qaReceipt.summary.durationSeconds.toFixed(3)} s</strong>
               <p>Vertical H.264 master</p>
             </div>
             <div>
               <span>Claim safety</span>
-              <strong>1 / 1</strong>
+              <strong>
+                {allowedReferencedClaims} / {referencedClaimIds.size}
+              </strong>
               <p>Visible claim is sourced</p>
             </div>
             <div>
-              <span>Publish state</span>
-              <strong>Locked</strong>
-              <p>Until QA + approval match</p>
+              <span>Human review</span>
+              <strong>Pending</strong>
+              <p>Required before campaign use</p>
             </div>
           </div>
 
@@ -192,31 +278,35 @@ export default function BuildWeekPage() {
         <div className="bw-contract-grid">
           <article className="bw-claim-card bw-claim-card-supported">
             <div className="bw-claim-topline">
-              <span>claim / adaptive-anc</span>
+              <span>claim / {supportedClaim.id}</span>
               <strong>Source attributed</strong>
             </div>
-            <blockquote>“Adaptive noise cancelling”</blockquote>
+            <blockquote>“{supportedClaim.text}”</blockquote>
             <dl>
               <div>
                 <dt>Source</dt>
-                <dd>Client brief / product evidence fixture</dd>
+                <dd>{supportedClaim.source.reference}</dd>
               </div>
               <div>
                 <dt>Used at</dt>
-                <dd>Scene 03 · 04.4—07.6</dd>
+                <dd>
+                  Scene {String(supportedClaimSceneIndex + 1).padStart(2, "0")} ·{" "}
+                  {supportedClaimScene.startSeconds.toFixed(1)}—
+                  {supportedClaimScene.endSeconds.toFixed(1)}
+                </dd>
               </div>
             </dl>
           </article>
 
           <article className="bw-claim-card bw-claim-card-blocked">
             <div className="bw-claim-topline">
-              <span>claim / superlative-01</span>
+              <span>claim / {blockedClaim.id}</span>
               <strong>Blocked</strong>
             </div>
-            <blockquote>“The world’s best silence”</blockquote>
+            <blockquote>“{blockedClaim.text}”</blockquote>
             <p>
-              No source supplied. The compiler refuses the line instead of quietly turning it
-              into advertising copy.
+              No substantiating source supplied. The compiler refuses the line instead of
+              quietly turning a marketing draft into product evidence.
             </p>
           </article>
         </div>
@@ -264,9 +354,13 @@ export default function BuildWeekPage() {
             <h2 id="receipt-title">No green badge without fresh evidence.</h2>
           </div>
           <div className="bw-score-card">
-            <span>Acceptance gate</span>
-            <strong>80 / 100</strong>
-            <p>Target · commercial review still required</p>
+            <span>Human commercial review</span>
+            <strong>Pending</strong>
+            <p>
+              <a href="https://github.com/maks1son/kreoflow/blob/main/docs/build-week/VIDEO-AUDIT.md">
+                Inspect the rubric ↗
+              </a>
+            </p>
           </div>
         </header>
 
@@ -275,9 +369,15 @@ export default function BuildWeekPage() {
             <header>
               <div>
                 <span>Technical receipt</span>
-                <strong>Awaiting generated JSON</strong>
+                <strong>
+                  {passedChecks} / {blockingChecks.length} blocking checks
+                </strong>
               </div>
-              <span className="bw-receipt-pending">Pending</span>
+              <span
+                className={qaReceipt.passed ? "bw-receipt-pass" : "bw-receipt-pending"}
+              >
+                {qaReceipt.passed ? "Pass" : "Fail"}
+              </span>
             </header>
             <div className="bw-receipt-table">
               {receiptRows.map(([check, target, source]) => (
@@ -289,8 +389,28 @@ export default function BuildWeekPage() {
               ))}
             </div>
             <p className="bw-receipt-foot">
-              These are gates, not fabricated results. The demo command writes observed values,
-              spec hash and render hash into the receipt after a fresh render.
+              Observed {observedAt}. Evidence <code>{shortHash(qaReceipt.evidenceHash)}</code>,
+              spec <code>{shortHash(qaReceipt.specHash)}</code>, render{" "}
+              <code>{shortHash(qaReceipt.renderHash)}</code>, source media{" "}
+              <code>{shortHash(qaReceipt.mediaManifestHash)}</code>, and causal render receipt{" "}
+              <code>{shortHash(qaReceipt.renderReceiptHash)}</code> are content-bound in the
+              fresh QA receipt. {" "}
+              <a
+                href={asset(
+                  "/media/build-week/ad-compiler/nova-one-qa-receipt.json",
+                )}
+                download
+              >
+                Inspect QA JSON ↓
+              </a>{" "}
+              <a
+                href={asset(
+                  "/media/build-week/ad-compiler/nova-one-render-receipt.json",
+                )}
+                download
+              >
+                Inspect render JSON ↓
+              </a>
             </p>
           </article>
 
@@ -304,7 +424,10 @@ export default function BuildWeekPage() {
               <li>Type stays legible in platform safe zones</li>
               <li>CTA earns its final 1.5 seconds</li>
             </ul>
-            <p>Approval expires whenever the spec or rendered file hash changes.</p>
+            <p>
+              Approval expires whenever evidence, source media, spec, QA receipt, or rendered
+              file changes.
+            </p>
           </aside>
         </div>
       </section>
@@ -348,27 +471,39 @@ export default function BuildWeekPage() {
           <h2 id="limits-title">Honest prototype, useful next step.</h2>
         </div>
         <ul>
-          <li>NOVA ONE is a fictional spec product, not a client performance case.</li>
+          <li>{productName} is a fictional spec product, not a client performance case.</li>
           <li>The public route replays a fixture; it does not perform a live GPT-5.6 call.</li>
           <li>Technical QA cannot prove identity fidelity, legality or conversion lift.</li>
+          <li>Human review must catch factual copy incorrectly labelled as creative language.</li>
           <li>Provider generation and live product-page ingestion are not part of this proof.</li>
+          <li>The current renderer accepts declared PNG, JPEG or WebP stills; video inputs are not implemented.</li>
+          <li>The browser brief is still a legacy intake and is not connected to this local render CLI.</li>
           <li>No Build Week submission is claimed while the eligibility blocker remains.</li>
         </ul>
       </section>
 
       <section className="bw-cta" aria-labelledby="cta-title">
         <p className="bw-kicker">Inspect the work</p>
-        <h2 id="cta-title">Bring one real product. Leave with one accountable ad.</h2>
+        <h2 id="cta-title">Replay one accountable ad. Inspect every artifact.</h2>
         <div className="bw-cta-actions">
-          <Link href="/brief" className="bw-button bw-button-primary">
-            Open the product brief <span aria-hidden="true">→</span>
-          </Link>
+          <a
+            href={asset(
+              "/media/build-week/ad-compiler/nova-one-qa-receipt.json",
+            )}
+            className="bw-button bw-button-primary"
+            download
+          >
+            Download QA receipt <span aria-hidden="true">↓</span>
+          </a>
           <a
             href="https://github.com/maks1son/kreoflow"
             className="bw-button bw-button-secondary"
           >
             Inspect the repository <span aria-hidden="true">↗</span>
           </a>
+          <Link href="/" className="bw-button bw-button-secondary">
+            See the KreoFlow service <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </section>
 

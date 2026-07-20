@@ -674,6 +674,13 @@
   color: var(--bw-amber-ink) !important;
 }
 
+.bw-receipt-pass {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #77c5a5;
+  background: var(--bw-mint);
+  color: var(--bw-mint-ink) !important;
+}
+
 .bw-receipt-table > div {
   display: grid;
   grid-template-columns: 0.52fr 1fr 0.6fr;
@@ -701,6 +708,19 @@
   color: var(--bw-ink-soft);
   font-size: 0.78rem;
   line-height: 1.5;
+}
+
+.bw-receipt-foot a {
+  color: var(--bw-cobalt);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.bw-score-card a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .bw-human-review {

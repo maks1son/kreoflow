@@ -1,6 +1,6 @@
 # KreoFlow Accountable Ad Compiler — Implementation Plan
 
-**Goal:** ship a reproducible `evidence → CreativeSpec → MP4 → QA → approval` path and a judge-ready proof package.
+**Goal:** ship a replayable `evidence → CreativeSpec → MP4 → QA → approval` path with a fresh exact-output receipt for every encode, plus a judge-ready proof package.
 
 ## Task 1 — Contract and red tests
 
@@ -30,7 +30,7 @@
 3. Fail clearly when live mode lacks `OPENAI_API_KEY`; never silently claim GPT output.
 4. Verify with an injected fake client; do not spend API money.
 
-## Task 3 — Deterministic video composition
+## Task 3 — Schema-bound, repeatable video composition
 
 **Files:**
 
@@ -75,7 +75,7 @@
 - `docs/build-week/RESEARCH.md`
 
 1. Add `pnpm demo:ad` for the keyless fixture path and `pnpm demo:ad:live` for explicit API mode.
-2. Document exact setup, architecture, Build Week delta, tests, privacy, constraints, and reproducibility.
+2. Document exact setup, architecture, Build Week delta, tests, privacy, constraints, replayability, and the non-guarantee of byte-identical encodes.
 3. Save three reusable prompts: creative director, adversarial video QA, and submission storyteller.
 4. Draft human-editable submission copy and a sub-three-minute demo script without claiming official ranking or eligibility.
 
@@ -100,4 +100,3 @@
 4. Commit only intended files in coherent commits.
 5. Push/deploy only if remote auth and the existing deployment path work without payment or destructive changes.
 6. Update the canonical KreoFlow project note and decision log with only durable state.
-

@@ -32,7 +32,9 @@ They are fictional, brandless product campaign concepts. The editorial set combi
 
 Files under `build-week/ad-compiler/` are derived from the fictional NOVA ONE spec case created for KreoFlow on 2026-07-14:
 
-- `nova-one-master.webp`, `nova-one-control.webp`, and `nova-one-packshot.webp` are optimized conversions of the OpenAI-generated source references in `creative-cases/nova-one/assets/references/`.
+- `nova-one-master.webp`, `nova-one-control.webp`, and `nova-one-packshot.webp` are the checked-in source artifacts used by the compiler. They were optimized locally from three OpenAI-generated fictional-product references; the original PNG working files are intentionally not part of the repository and are not required to re-run the composition.
 - `nova-one-score.m4a` is a 12-second, loudness-normalized extract of the original locally assembled NOVA ONE spec-campaign soundtrack.
+- `nova-one-accountable-ad.mp4` is the schema-driven Remotion output assembled from those disclosed inputs and the checked-in Creative Spec; `nova-one-accountable-poster.jpg` is a frame extracted from that MP4. Repeated encodes are not promised to be byte-identical, which is why each run receives a fresh exact-output receipt.
+- `nova-one-render-receipt.json` binds the successful render to its evidence, Creative Spec, source-media bytes, output path, and encoded MP4 hash. `nova-one-qa-receipt.json` binds the technical measurements to that causal render receipt.
 
 NOVA ONE is not a client, retail product, or measured campaign. The files may demonstrate the compiler and visual direction only when labelled `FICTIONAL SPEC / AI DEMO`. They do not prove product performance, identity fidelity across generated shots, CTR, ROAS, legal compliance, or platform approval.
