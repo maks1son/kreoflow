@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "ad:strategy:live": "tsx scripts/ad-compiler/strategy.mts",
+    "ad:render": "tsx scripts/ad-compiler/render.mts",
+    "ad:qa": "tsx scripts/ad-compiler/qa.mts",
+    "ad:approve": "tsx scripts/ad-compiler/approve.mts",
+    "demo:ad": "tsx scripts/ad-compiler/demo.mts"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.2.8",
@@ -50,6 +55,7 @@
     "eslint-config-next": "16.2.10",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }
