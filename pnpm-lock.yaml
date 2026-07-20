@@ -58,7 +58,7 @@ importers:
         version: 16.2.10(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       openai:
         specifier: 6.48.0
-        version: 6.48.0(ws@8.21.0)(zod@4.4.3)
+        version: 6.48.0(ws@8.21.0)(zod@4.3.6)
       posthog-js:
         specifier: ^1.400.1
         version: 1.400.1
@@ -75,8 +75,8 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0
       zod:
-        specifier: 4.4.3
-        version: 4.4.3
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@remotion/bundler':
         specifier: 4.0.494
@@ -6715,10 +6715,10 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openai@6.48.0(ws@8.21.0)(zod@4.4.3):
+  openai@6.48.0(ws@8.21.0)(zod@4.3.6):
     optionalDependencies:
       ws: 8.21.0
-      zod: 4.4.3
+      zod: 4.3.6
 
   optionator@0.9.4:
     dependencies:

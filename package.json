@@ -15,6 +15,7 @@
     "ad:qa": "tsx scripts/ad-compiler/qa.mts",
     "ad:approve": "tsx scripts/ad-compiler/approve.mts",
     "demo:ad": "tsx scripts/ad-compiler/demo.mts",
+    "demo:devpost": "remotion render video/index.ts KreoFlowDevpostDemo public/media/build-week/kreoflow-devpost-demo.mp4 --codec=h264 --pixel-format=yuv420p --audio-codec=aac --crf=18",
     "verify:ad-artifacts": "tsx scripts/ad-compiler/verify-artifacts.mts"
   },
   "dependencies": {
@@ -40,7 +41,7 @@
     "react-dom": "19.2.4",
     "remotion": "4.0.494",
     "tailwind-merge": "^3.6.0",
-    "zod": "4.4.3"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@remotion/bundler": "4.0.494",

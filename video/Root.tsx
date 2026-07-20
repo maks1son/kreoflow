@@ -1,6 +1,12 @@
 import {Composition} from "remotion";
 
 import type {CreativeSpec, ProductEvidence} from "../src/lib/ad-compiler/schema";
+import {
+  DEVPOST_DEMO_COMPOSITION_ID,
+  DEVPOST_DEMO_DURATION_IN_FRAMES,
+  DEVPOST_DEMO_FPS,
+  DevpostDemo,
+} from "./DevpostDemo";
 import {ProductAd} from "./ProductAd";
 import {buildProductAdProps} from "./render-contract";
 
@@ -101,20 +107,29 @@ export const defaultProductAdProps = buildProductAdProps({
 });
 
 export const RemotionRoot = () => (
-  <Composition
-    id={PRODUCT_AD_COMPOSITION_ID}
-    component={ProductAd}
-    durationInFrames={180}
-    fps={30}
-    width={1080}
-    height={1920}
-    defaultProps={defaultProductAdProps}
-    calculateMetadata={({props}) => ({
-      durationInFrames: Math.round(props.spec.durationSeconds * props.spec.fps),
-      fps: props.spec.fps,
-      width: 1080,
-      height: 1920,
-    })}
-  />
+  <>
+    <Composition
+      id={PRODUCT_AD_COMPOSITION_ID}
+      component={ProductAd}
+      durationInFrames={180}
+      fps={30}
+      width={1080}
+      height={1920}
+      defaultProps={defaultProductAdProps}
+      calculateMetadata={({props}) => ({
+        durationInFrames: Math.round(props.spec.durationSeconds * props.spec.fps),
+        fps: props.spec.fps,
+        width: 1080,
+        height: 1920,
+      })}
+    />
+    <Composition
+      id={DEVPOST_DEMO_COMPOSITION_ID}
+      component={DevpostDemo}
+      durationInFrames={DEVPOST_DEMO_DURATION_IN_FRAMES}
+      fps={DEVPOST_DEMO_FPS}
+      width={1920}
+      height={1080}
+    />
+  </>
 );
-
